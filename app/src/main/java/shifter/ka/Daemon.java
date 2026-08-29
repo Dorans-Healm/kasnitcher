@@ -5,16 +5,22 @@ import shifter.ka.configuration.context.AppContext;
 
 public class Daemon extends DaemonStartup {
 
+    private final String[] args;
+
     private final AppContext appContext;
 
     private Daemon() {
-        this.appContext =
-                super.getAppContext();
+        this.args = new String[0];
+        this.appContext = null;
     }
 
-    public static void start() {
-        new Daemon()
-                .startDaemon();
+    private Daemon(String... args) {
+        this.args = args;
+        this.appContext = super.getAppContext();
+    }
+
+    public static void start(String... args) {
+        new Daemon(args).startDaemon();
     }
 
     private void startDaemon() {

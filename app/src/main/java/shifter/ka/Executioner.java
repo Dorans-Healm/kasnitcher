@@ -2,10 +2,18 @@ package shifter.ka;
 
 public class Executioner {
 
-    private Executioner() { }
+    private final String[] args;
 
-    public static void start() {
-        new Executioner()
+    private Executioner() {
+        this.args = new String[0];
+    }
+
+    private Executioner(String... args) {
+        this.args = args;
+    }
+
+    public static void execute(String... args) {
+        new Executioner(args)
                 .startSingleExecution();
     }
 

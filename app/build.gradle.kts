@@ -1,5 +1,4 @@
 plugins {
-
     // Apply the application plugin to add support for building a CLI application in Java.
     application
 
@@ -8,13 +7,11 @@ plugins {
 }
 
 repositories {
-
     // Use Maven Central for resolving dependencies.
     mavenCentral()
 }
 
 dependencies {
-
     // This dependency is used by the application.
     implementation(libs.guava)
 
@@ -50,13 +47,11 @@ java {
 }
 
 application {
-
     // Define the main class for the application.
     mainClass = "snitcher.ka.Main"
 }
 
 tasks.named<Test>("test") {
-
     // Use JUnit Platform for unit tests.
     useJUnitPlatform()
 }
