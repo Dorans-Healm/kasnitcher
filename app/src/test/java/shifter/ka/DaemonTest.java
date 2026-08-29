@@ -4,11 +4,10 @@
 package shifter.ka;
 
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
 
-class MainTest {
+class DaemonTest {
     @Test void appHasAGreeting() {
-        Main classUnderTest = new Main();
+        Daemon classUnderTest = new Daemon();
         assertNotNull(classUnderTest.getGreeting(), "app should have a greeting");
     }
 }
