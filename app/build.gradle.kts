@@ -48,7 +48,7 @@ java {
 
 application {
     // Define the main class for the application.
-    mainClass = "snitcher.ka.Main"
+    mainClass = "prism.Main"
 }
 
 tasks.named<Test>("test") {
