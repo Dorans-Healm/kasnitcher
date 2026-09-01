@@ -1,20 +1,20 @@
-package shifter.ka.configuration;
+package prism.base;
 
 import lombok.Getter;
-import shifter.ka.application.daemon.SocketServer;
-import shifter.ka.application.service.CacheService;
-import shifter.ka.application.service.StorageService;
-import shifter.ka.application.service.WatchService;
-import shifter.ka.application.service.WriteService;
-import shifter.ka.configuration.context.AppContext;
-import shifter.ka.observability.systemd.Notifier;
+import prism.unix.daemon.SocketServer;
+import prism.unix.service.CacheService;
+import prism.unix.service.StorageService;
+import prism.unix.service.WatchService;
+import prism.unix.service.WriteService;
+import prism.base.context.AppContext;
+import prism.observability.systemd.Notifier;
 
-public abstract class DaemonStartup {
+public abstract class AppStartup {
 
     @Getter
     private AppContext appContext;
 
-    public DaemonStartup() {
+    public AppStartup() {
         this.startup();
     }
 

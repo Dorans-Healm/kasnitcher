@@ -1,10 +1,10 @@
-package shifter.ka.application.daemon;
+package prism.unix.daemon;
 
 import lombok.Getter;
 import lombok.Setter;
 import org.jspecify.annotations.Nullable;
-import shifter.ka.exception.SocketInterruptionException;
-import shifter.ka.utils.ObjectUtils;
+import prism.exception.SocketInterruptionException;
+import prism.utils.ObjectUtils;
 
 import javax.validation.constraints.NotNull;
 import java.io.IOException;

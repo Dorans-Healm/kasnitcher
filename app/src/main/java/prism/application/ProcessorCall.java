@@ -1,4 +1,4 @@
-package shifter.ka.application;
+package prism.application;
 
 
 public class ProcessorCall {

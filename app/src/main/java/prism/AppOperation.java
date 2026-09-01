@@ -1,26 +1,26 @@
-package shifter.ka;
+package prism;
 
-import shifter.ka.configuration.DaemonStartup;
-import shifter.ka.configuration.context.AppContext;
+import prism.base.AppStartup;
+import prism.base.context.AppContext;
 
-public class Daemon extends DaemonStartup {
+public class AppOperation extends AppStartup {
 
     private final String[] args;
 
     private final AppContext appContext;
 
-    private Daemon() {
+    private AppOperation() {
         this.args = new String[0];
         this.appContext = null;
     }
 
-    private Daemon(String... args) {
+    private AppOperation(String... args) {
         this.args = args;
         this.appContext = super.getAppContext();
     }
 
     public static void start(String... args) {
-        new Daemon(args).startDaemon();
+        new AppOperation(args).startDaemon();
     }
 
     private void startDaemon() {

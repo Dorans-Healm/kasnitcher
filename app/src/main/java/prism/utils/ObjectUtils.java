@@ -1,4 +1,4 @@
-package shifter.ka.utils;
+package prism.utils;
 
 import org.jspecify.annotations.Nullable;
 

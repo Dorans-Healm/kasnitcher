@@ -1,16 +1,17 @@
-package shifter.ka;
+package prism;
 
-import shifter.ka.application.ProcessorCall;
-import shifter.ka.utils.ObjectUtils;
+import prism.application.ProcessorCall;
+import prism.utils.ObjectUtils;
 
 public class Main {
 
     public static final String START_CMD = "start";
+    public static final String STOP_CMD = "start";
 
     static void main(String... args) {
         try {
             if (args.length <= 0) {
-                Daemon.start();
+                AppOperation.start();
                 return;
             }
 
@@ -20,13 +21,13 @@ public class Main {
             if (ObjectUtils.stringsNotEqualsCaseInsensitive(cmd, START_CMD)) {
                 ProcessorCall.justifyExecutionerCall(args);
 
-                Executioner.execute();
+                ExecutionerOperation.execute();
                 return;
             }
 
             ProcessorCall.justifyExecutionerCall(args);
 
-            Daemon.start(args);
+            AppOperation.start(args);
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }

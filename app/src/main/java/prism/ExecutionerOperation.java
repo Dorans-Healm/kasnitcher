@@ -1,19 +1,19 @@
-package shifter.ka;
+package prism;
 
-public class Executioner {
+public class ExecutionerOperation {
 
     private final String[] args;
 
-    private Executioner() {
+    private ExecutionerOperation() {
         this.args = new String[0];
     }
 
-    private Executioner(String... args) {
+    private ExecutionerOperation(String... args) {
         this.args = args;
     }
 
     public static void execute(String... args) {
-        new Executioner(args)
+        new ExecutionerOperation(args)
                 .startSingleExecution();
     }
 

@@ -1,7 +1,7 @@
-package shifter.ka.exception;
+package prism.exception;
 
 import lombok.Getter;
-import shifter.ka.application.daemon.SocketStatusType;
+import prism.unix.daemon.SocketStatusType;
 
 public class SocketInterruptionException extends RuntimeException {
 

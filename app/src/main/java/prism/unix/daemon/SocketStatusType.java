@@ -1,4 +1,4 @@
-package shifter.ka.application.daemon;
+package prism.unix.daemon;
 
 public enum SocketStatusType {
 

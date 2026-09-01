@@ -1,4 +1,4 @@
-package shifter.ka.application.service;
+package prism.unix.service;
 
 import lombok.Getter;
 
