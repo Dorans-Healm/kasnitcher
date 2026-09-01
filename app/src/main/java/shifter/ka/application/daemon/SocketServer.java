@@ -43,7 +43,9 @@ public class SocketServer implements AutoCloseable {
         }
 
         try {
-            this.serverSocketChannel.close();
+            if (this.serverSocketChannel.isOpen()) {
+                this.serverSocketChannel.close();
+            }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
