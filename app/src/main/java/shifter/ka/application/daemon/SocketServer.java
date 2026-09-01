@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.jspecify.annotations.Nullable;
 import shifter.ka.exception.SocketInterruptionException;
+import shifter.ka.utils.ObjectUtils;
 
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
@@ -57,10 +58,10 @@ public class SocketServer implements AutoCloseable {
         try {
             return this.serverSocketChannel.accept();
         } catch (AsynchronousCloseException e) {
-            if (Objects.equals(
+            if (ObjectUtils.notEquals(
                         SocketStatusType.GRACEFULL_INTERRUPTION, this.socketStatusType)) {
                 throw new SocketInterruptionException(
-                        "Interrupted socket communication", SocketStatusType.GRACEFULL_INTERRUPTION);
+                        "Interrupted socket communication", SocketStatusType.FORCEFULL_INTERRUPTION);
             }
 
             this.interrupt();
