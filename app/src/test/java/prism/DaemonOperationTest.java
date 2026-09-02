@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 
 class DaemonOperationTest {
     @Test void appHasAGreeting() {
-        AppOperation classUnderTest = new AppOperation();
+        DaemonOperation classUnderTest = new DaemonOperation();
         assertNotNull(classUnderTest.getGreeting(), "app should have a greeting");
     }
 }

@@ -1,7 +1,7 @@
-package prism.application;
+package prism.application.processing;
 
 
-public class ProcessorCall {
+public class ProcessJustifier {
 
     public static void assertCall(String arg) throws Exception {
 

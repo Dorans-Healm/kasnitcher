@@ -3,24 +3,24 @@ package prism;
 import prism.base.AppStartup;
 import prism.base.context.AppContext;
 
-public class AppOperation extends AppStartup {
+public class DaemonOperation extends AppStartup {
 
     private final String[] args;
 
     private final AppContext appContext;
 
-    private AppOperation() {
+    private DaemonOperation() {
         this.args = new String[0];
         this.appContext = null;
     }
 
-    private AppOperation(String... args) {
+    private DaemonOperation(String... args) {
         this.args = args;
         this.appContext = super.getAppContext();
     }
 
     public static void start(String... args) {
-        new AppOperation(args).startDaemon();
+        new DaemonOperation(args).startDaemon();
     }
 
     private void startDaemon() {
