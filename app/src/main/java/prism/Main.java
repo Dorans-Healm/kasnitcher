@@ -1,14 +1,16 @@
 package prism;
 
+
 import lombok.extern.java.Log;
-import prism.application.processing.ProcessJustifier;
-import prism.utils.ObjectUtils;
+import prism.adapter.operation.DaemonOperation;
+import prism.adapter.operation.ExecutionerOperation;
+import prism.adapter.cli.procedure.ProcedureJustifier;
 
 @Log
 public class Main {
 
     public static final String START_CMD = "start";
-    public static final String STOP_CMD = "start";
+    public static final String STOP_CMD = "stop";
 
     static void main(String... args) {
         try {
@@ -21,24 +23,24 @@ public class Main {
             }
 
             String cmd = args[0];
-            ProcessJustifier.assertCall(cmd);
+            ProcedureJustifier.assertCall(cmd);
 
-            if (ObjectUtils.stringsNotEqualsCaseInsensitive(cmd, START_CMD)) {
-                ProcessJustifier.justifyExecutionerCall(args);
+            if (START_CMD.equalsIgnoreCase(cmd)) {
+                ProcedureJustifier.justifyExecutionerCall(args);
 
-                log.info("Single execution mode " +
+                log.info("Daemon mode " +
                         "identified. Starting the process.");
 
-                ExecutionerOperation.execute();
+                DaemonOperation.start(args);
                 return;
             }
 
-            ProcessJustifier.justifyExecutionerCall(args);
+            ProcedureJustifier.justifyExecutionerCall(args);
 
-            log.info("Daemon mode " +
+            log.info("Single execution mode " +
                     "identified. Starting the process.");
 
-            DaemonOperation.start(args);
+            ExecutionerOperation.execute();
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }

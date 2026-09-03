@@ -4,6 +4,7 @@
 package prism;
 
 import org.junit.jupiter.api.Test;
+import prism.adapter.operation.DaemonOperation;
 
 class DaemonOperationTest {
     @Test void appHasAGreeting() {
