@@ -8,7 +8,11 @@ public enum AppSubCommandType {
 
     FILE(new String[]{"-f", "--file"}),
 
-    AMOUNT(new String[]{"-a", "--amount"});
+    AMOUNT(new String[]{"-a", "--amount"}),
+
+    TYPE(new String[]{"-t", "--type"})
+
+    ;
 
     @Getter
     private final String[] subCommands;
