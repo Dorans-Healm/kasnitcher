@@ -18,11 +18,11 @@ import java.util.stream.Stream;
 public class SocketServer implements AutoCloseable {
 
     @Getter
-    private ServerSocketChannel serverSocketChannel;
+    @Setter
+    private static SocketStatusType socketStatusType;
 
     @Getter
-    @Setter
-    private SocketStatusType socketStatusType;
+    private ServerSocketChannel serverSocketChannel;
 
     @Override
     public void close() {
@@ -33,7 +33,7 @@ public class SocketServer implements AutoCloseable {
         this.serverSocketChannel =
                 ServerSocketChannel.open(StandardProtocolFamily.UNIX);
 
-        this.socketStatusType = SocketStatusType.ACTIVATING;
+        socketStatusType = SocketStatusType.ACTIVATING;
     }
 
     public void interrupt()  {
@@ -59,7 +59,7 @@ public class SocketServer implements AutoCloseable {
         try {
             return this.serverSocketChannel.accept();
         } catch (AsynchronousCloseException e) {
-            if (Objects.equals(SocketStatusType.GRACEFULL_INTERRUPTION, this.socketStatusType)) {
+            if (Objects.equals(SocketStatusType.GRACEFULL_INTERRUPTION, socketStatusType)) {
                 this.interrupt();
                 return null;
             }

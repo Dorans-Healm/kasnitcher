@@ -23,7 +23,7 @@ public final class AppContext {
 
     public static synchronized AppContext initialize(Object... objs) {
         if (Objects.nonNull(instance)) {
-            throw new IllegalStateException("Already initialized");
+            throw new IllegalStateException("App context already initialized");
         }
 
         instance = new AppContext(objs);
@@ -32,7 +32,7 @@ public final class AppContext {
 
     public static AppContext instance() {
         if (instance == null) {
-            throw new IllegalStateException("AppContext has not been initialized");
+            throw new IllegalStateException("App context has not been initialized");
         }
 
         return instance;

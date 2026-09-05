@@ -5,6 +5,13 @@ import lombok.extern.java.Log;
 import prism.adapter.operation.DaemonOperation;
 import prism.adapter.operation.ExecutionerOperation;
 import prism.adapter.cli.procedure.ProcedureJustifier;
+import prism.domain.exception.CommandNotFoundException;
+import prism.domain.exception.DaemonDownOnCommandException;
+import prism.domain.exception.OrphanSubCommandTypeException;
+import prism.infrastructure.daemon.SocketServer;
+
+import java.util.Objects;
+import java.util.logging.Level;
 
 @Log
 public class Main {
@@ -41,8 +48,19 @@ public class Main {
                     "identified. Starting the process.");
 
             ExecutionerOperation.execute();
+        } catch (DaemonDownOnCommandException
+                 | CommandNotFoundException | OrphanSubCommandTypeException e) {
+
+            log.warning(e.getMessage());
+
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            if (Objects.nonNull(SocketServer.getSocketStatusType()))
+                log.log(Level.SEVERE, ("System error, " +
+                        "exiting program with: %s").formatted(e.getCause()), e);
+
+            log.severe(e.getMessage());
+
+            System.exit(1);
         }
     }
 }
