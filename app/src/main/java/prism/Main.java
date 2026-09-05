@@ -4,7 +4,7 @@ package prism;
 import lombok.extern.java.Log;
 import prism.adapter.operation.DaemonOperation;
 import prism.adapter.operation.ExecutionerOperation;
-import prism.adapter.cli.procedure.ProcedureJustifier;
+import prism.adapter.cli.procedure.ProcedureAssertion;
 import prism.domain.exception.CommandNotFoundException;
 import prism.domain.exception.DaemonDownOnCommandException;
 import prism.domain.exception.OrphanSubCommandTypeException;
@@ -30,10 +30,10 @@ public class Main {
             }
 
             String cmd = args[0];
-            ProcedureJustifier.assertCall(cmd);
+            ProcedureAssertion.assertCall(cmd);
 
             if (START_CMD.equalsIgnoreCase(cmd)) {
-                ProcedureJustifier.justifyExecutionerCall(args);
+                ProcedureAssertion.assertExecutionerCall(args);
 
                 log.info("Daemon mode " +
                         "identified. Starting the process.");
@@ -42,7 +42,7 @@ public class Main {
                 return;
             }
 
-            ProcedureJustifier.justifyExecutionerCall(args);
+            ProcedureAssertion.assertDaemonCall(args);
 
             log.info("Single execution mode " +
                     "identified. Starting the process.");

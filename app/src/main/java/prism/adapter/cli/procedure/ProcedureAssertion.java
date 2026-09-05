@@ -13,7 +13,7 @@ import prism.utils.ArrayUtils;
 
 import java.util.Objects;
 
-public class ProcedureJustifier {
+public class ProcedureAssertion {
 
     public static void assertCall(String arg) {
         if (Main.START_CMD.equalsIgnoreCase(arg)) {
@@ -44,11 +44,11 @@ public class ProcedureJustifier {
                 "not found. Check --help for system usages.").formatted(arg));
     }
 
-    public static void justifyExecutionerCall(String... args) {
+    public static void assertExecutionerCall(String... args) {
 
     }
 
-    public static void justifyDaemonCall(String... args) {
+    public static void assertDaemonCall(String... args) {
 
     }
 }
