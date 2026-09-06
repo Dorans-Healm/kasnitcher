@@ -139,6 +139,23 @@ public enum AppCommandType {
         return cmds;
     }
 
+    public static @NonNull String[] getDaemonNonPolymathCmds() {
+        AppCommandType[] values = values();
+
+        String[] cmds = new String[values.length * 2];
+        int index = 0;
+
+        for (AppCommandType value : values) {
+            if (DAEMON.equals(value.workingType)) {
+                for (String command : value.commands) {
+                    cmds[index++] = command;
+                }
+            }
+        }
+
+        return cmds;
+    }
+
     public static @NonNull String[] getExeCmds() {
         AppCommandType[] values = values();
 
@@ -148,6 +165,23 @@ public enum AppCommandType {
         for (AppCommandType value : values) {
             if (POLYMATH.equals(value.workingType)
                     || SINGLE_EXECUTIONER.equals(value.workingType)) {
+                for (String command : value.commands) {
+                    cmds[index++] = command;
+                }
+            }
+        }
+
+        return cmds;
+    }
+
+    public static @NonNull String[] getExeNonPolymathCmds() {
+        AppCommandType[] values = values();
+
+        String[] cmds = new String[values.length * 2];
+        int index = 0;
+
+        for (AppCommandType value : values) {
+            if (SINGLE_EXECUTIONER.equals(value.workingType)) {
                 for (String command : value.commands) {
                     cmds[index++] = command;
                 }

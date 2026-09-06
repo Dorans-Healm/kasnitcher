@@ -1,20 +1,22 @@
 package prism.adapter.operation;
 
+import prism.domain.model.Command;
+
 public class ExecutionerOperation {
 
-    private final String[] args;
+    private final Command[] commands;
 
     private ExecutionerOperation() {
-        this.args = new String[0];
+        this.commands = new Command[]{};
     }
 
-    private ExecutionerOperation(String... args) {
-        this.args = args;
+    private ExecutionerOperation(Command[] commands) {
+        this.commands = commands;
     }
 
-    public static void execute(String... args) {
-        new ExecutionerOperation(args)
-                .startSingleExecution();
+    public static void execute(Command[] commands) {
+        new ExecutionerOperation(
+                commands).startSingleExecution();
     }
 
     private void startSingleExecution() {

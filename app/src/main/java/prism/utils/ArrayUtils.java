@@ -8,6 +8,15 @@ import java.util.Objects;
 
 public class ArrayUtils {
 
+    public static Object[] add(Object[] array, Object value) {
+        Object[] copy =
+                Arrays.copyOf(array, array.length + 1);
+
+        copy[copy.length - 1] = value;
+
+        return copy;
+    }
+
     public static @Nullable Object get(Object key, @NonNull Object[] map) {
         for (int i = 0; i < map.length; i += 2) {
             if (map[i].equals(key)) {

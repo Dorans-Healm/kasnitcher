@@ -8,6 +8,7 @@ import prism.adapter.cli.procedure.ProcedureAssertion;
 import prism.domain.exception.CommandNotFoundException;
 import prism.domain.exception.DaemonDownOnCommandException;
 import prism.domain.exception.OrphanSubCommandTypeException;
+import prism.domain.model.Command;
 import prism.infrastructure.daemon.SocketServer;
 
 import java.util.Objects;
@@ -25,7 +26,7 @@ public class Main {
                 log.info("No arguments provided," +
                         "assuming Daemon initialization with no parameters");
 
-                DaemonOperation.start();
+                DaemonOperation.start(new Command[]{});
                 return;
             }
 
@@ -33,21 +34,23 @@ public class Main {
             ProcedureAssertion.assertCall(cmd);
 
             if (START_CMD.equalsIgnoreCase(cmd)) {
-                ProcedureAssertion.assertExecutionerCall(args);
+                Command[] commands =
+                        ProcedureAssertion.assertAndGetExecutionerCall(args);
 
                 log.info("Daemon mode " +
                         "identified. Starting the process.");
 
-                DaemonOperation.start(args);
+                DaemonOperation.start(commands);
                 return;
             }
 
-            ProcedureAssertion.assertDaemonCall(args);
+            Command[] commands =
+                    ProcedureAssertion.assertAndGetDaemonCall(args);
 
             log.info("Single execution mode " +
                     "identified. Starting the process.");
 
-            ExecutionerOperation.execute();
+            ExecutionerOperation.execute(commands);
         } catch (DaemonDownOnCommandException
                  | CommandNotFoundException | OrphanSubCommandTypeException e) {
 

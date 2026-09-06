@@ -1,6 +1,7 @@
 package prism.adapter.cli;
 
 import lombok.Getter;
+import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import prism.utils.ArrayUtils;
 
@@ -68,6 +69,20 @@ public enum AppSubCommandType {
         }
 
         return (AppSubCommandType) obj;
+    }
+
+    public static @NonNull String[] getCommandsByArray(AppSubCommandType[] subCommands) {
+        String[] commands = new String[subCommands.length * 2];
+        int index = 0;
+
+        for (AppSubCommandType type : subCommands) {
+            String[] subCmds = type.subCommands;
+
+            commands[index++] = subCmds[0];
+            commands[index++] = subCmds[1];
+        }
+
+        return commands;
     }
 
     public static String[] getSubCmds() {
