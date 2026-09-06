@@ -3,9 +3,20 @@ package prism.utils;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
+import java.util.Arrays;
 import java.util.Objects;
 
 public class ArrayUtils {
+
+    public static @Nullable Object get(Object key, @NonNull Object[] map) {
+        for (int i = 0; i < map.length; i += 2) {
+            if (map[i].equals(key)) {
+                return map[i + 1];
+            }
+        }
+
+        return null;
+    }
 
     public static @NonNull Boolean contains(@Nullable Object[] array, @Nullable Object value) {
         if (Objects.isNull(array) || array.length == 0) {
@@ -17,9 +28,7 @@ public class ArrayUtils {
         }
 
         for (Object item : array) {
-            assert item != null;
-
-            if (item.equals(value)) {
+            if (value.equals(item)) {
                 return true;
             }
         }

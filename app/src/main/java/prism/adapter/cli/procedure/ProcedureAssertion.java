@@ -45,6 +45,23 @@ public class ProcedureAssertion {
     }
 
     public static void assertExecutionerCall(String... args) {
+        AppCommandType commandType;
+        for (String arg : args) {
+             commandType = AppCommandType.getByCommand(arg);
+
+
+            if (commandType == null) {
+                String[] exeCmd = AppCommandType.getExeCmds();
+                if (!ArrayUtils.contains(exeCmd, arg)) {
+                    throw new IllegalStateException(("Daemon command %s, should " +
+                            "not be used as a single execution system command").formatted(arg));
+                }
+            }
+
+            // TODO - need to reset the command type on command formation
+
+            // TODO - need to assert subcommand and also reset it on command formation
+        }
 
     }
 

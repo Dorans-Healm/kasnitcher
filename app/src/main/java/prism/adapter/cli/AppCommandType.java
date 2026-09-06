@@ -7,10 +7,9 @@ import prism.application.service.CacheService;
 import prism.application.service.ListeningService;
 import prism.application.service.StorageService;
 import prism.application.service.WriteService;
+import prism.utils.ArrayUtils;
 
-import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.ConcurrentHashMap;
 
 import static prism.adapter.cli.AppSubCommandType.*;
 import static prism.adapter.cli.AppServiceType.*;
@@ -65,12 +64,18 @@ public enum AppCommandType {
     @Getter
     private final Class<?> service;
 
-    private static final Map<String, AppCommandType> enumMap = new ConcurrentHashMap<>();
+    private static final String[] enumMap;
 
     static {
-        for (AppCommandType type : values()) {
+        AppCommandType[] values = values();
+
+        enumMap = new String[values.length * 2 * 2];
+        int index = 0;
+
+        for (AppCommandType type : values) {
             for (String command : type.commands) {
-                enumMap.put(command, type);
+                enumMap[index++] = command;
+                enumMap[index++] = type.name();
             }
         }
     }
@@ -81,6 +86,21 @@ public enum AppCommandType {
             AppSubCommandType[] subCommands,
             Class<?> service
     ) {
+        if (Objects.isNull(commands)) {
+            throw new IllegalArgumentException(
+                    "ubCommands is null");
+        }
+
+        if (commands.length <= 0) {
+            throw new IllegalArgumentException(
+                    "subCommands is empty");
+        }
+
+        if (commands.length > 2) {
+            throw new IllegalArgumentException(
+                    "subCommands must be exactly 2");
+        }
+
         this.commands = commands;
         this.workingType = appServiceType;
         this.subCommands = subCommands;
@@ -92,22 +112,19 @@ public enum AppCommandType {
             return null;
         }
 
-        return enumMap.getOrDefault(command, null);
+        Object obj = ArrayUtils.get(command, enumMap);
+        if (Objects.nonNull(obj) && !(obj instanceof AppCommandType)) {
+            throw new IllegalArgumentException(
+                    "Invalid sub command inserted into the enum map: " + command);
+        }
+
+        return (AppCommandType) obj;
     }
 
     public static @NonNull String[] getDaemonCmds() {
         AppCommandType[] values = values();
 
-        int commandCount = 0;
-
-        for (AppCommandType value : values) {
-            if (POLYMATH.equals(value.workingType)
-                    || DAEMON.equals(value.workingType)) {
-                commandCount += value.commands.length;
-            }
-        }
-
-        String[] cmds = new String[commandCount];
+        String[] cmds = new String[values.length * 2];
         int index = 0;
 
         for (AppCommandType value : values) {
@@ -125,16 +142,7 @@ public enum AppCommandType {
     public static @NonNull String[] getExeCmds() {
         AppCommandType[] values = values();
 
-        int commandCount = 0;
-
-        for (AppCommandType value : values) {
-            if (POLYMATH.equals(value.workingType)
-                    || SINGLE_EXECUTIONER.equals(value.workingType)) {
-                commandCount += value.commands.length;
-            }
-        }
-
-        String[] cmds = new String[commandCount];
+        String[] cmds = new String[values.length * 2];
         int index = 0;
 
         for (AppCommandType value : values) {
