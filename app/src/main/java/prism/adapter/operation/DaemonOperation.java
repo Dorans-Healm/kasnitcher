@@ -10,6 +10,7 @@ import prism.configuration.context.AppContext;
 import prism.configuration.context.DaemonContext;
 import prism.domain.model.Command;
 import prism.utils.ArrayUtils;
+import prism.utils.FileUtils;
 
 import java.util.Objects;
 
@@ -70,8 +71,7 @@ public class DaemonOperation extends AppStartup {
     }
 
     private CacheAdapter getCacheAdapter(String[] subCommands) {
-        CacheAdapter cacheAdapter = (CacheAdapter)
-                this.appContext.getClass(CacheAdapter.class);
+        CacheAdapter cacheAdapter = new CacheAdapter();
 
         for (int i = 0; i < subCommands.length; i++) {
             String command = subCommands[i];
@@ -98,30 +98,99 @@ public class DaemonOperation extends AppStartup {
     }
 
     private StorageAdapter getStorageAdapter(String[] subCommands) {
-        StorageAdapter storageAdapter = (StorageAdapter)
-                this.appContext.getClass(StorageAdapter.class);
+        StorageAdapter storageAdapter = new StorageAdapter();
 
-        for (String command : subCommands) {
+        for (int i = 0; i < subCommands.length; i++) {
+            String command = subCommands[i];
+
+            AppSubCommandType subCommand = AppSubCommandType.getByCommand(command);
+            if (Objects.isNull(subCommand)) {
+                throw new IllegalArgumentException(
+                        "%s is not a valid Sub command.".formatted(command));
+            }
+
+            if (ArrayUtils.contains(DIRECTORY.getSubCommands(), subCommand)) {
+                if (!DIRECTORY.isNullable()) {
+                    String dir = subCommands[i++];
+
+                    Boolean isValidDir = FileUtils.isValidDirectory(dir);
+                    if (!isValidDir) {
+                        throw new IllegalArgumentException("%s is not a valid directory.".formatted(dir));
+                    }
+
+                    storageAdapter.setDirectory(dir);
+                }
+            }
+
+            if (ArrayUtils.contains(FILE.getSubCommands(), subCommand)) {
+                if (!FILE.isNullable()) {
+                    storageAdapter.setFile(subCommands[i++]);
+                }
+            }
         }
 
         return storageAdapter;
     }
 
     private WriterAdapter getWriterAdapter(String[] subCommands) {
-        WriterAdapter writerAdapter = (WriterAdapter)
-                this.appContext.getClass(WriterAdapter.class);
+        WriterAdapter writerAdapter = new WriterAdapter();
 
-        for (String command : subCommands) {
+        for (int i = 0; i < subCommands.length; i++) {
+            String command = subCommands[i];
+
+            AppSubCommandType subCommand = AppSubCommandType.getByCommand(command);
+            if (Objects.isNull(subCommand)) {
+                throw new IllegalArgumentException(
+                        "%s is not a valid Sub command.".formatted(command));
+            }
+
+            if (ArrayUtils.contains(DIRECTORY.getSubCommands(), subCommand)) {
+                if (!DIRECTORY.isNullable()) {
+                    String dir = subCommands[i++];
+
+                    Boolean isValidDir = FileUtils.isValidDirectory(dir);
+                    if (!isValidDir) {
+                        throw new IllegalArgumentException("%s is not a valid directory.".formatted(dir));
+                    }
+
+                    writerAdapter.setDirectory(dir);
+                }
+            }
+
+            if (ArrayUtils.contains(FILE.getSubCommands(), subCommand)) {
+                if (!FILE.isNullable()) {
+                    writerAdapter.setFile(subCommands[i++]);
+                }
+            }
         }
 
         return writerAdapter;
     }
 
     private ListenerAdapter getListenerAdapter(String[] subCommands) {
-        ListenerAdapter listenerAdapter = (ListenerAdapter)
-                this.appContext.getClass(ListenerAdapter.class);
+        ListenerAdapter listenerAdapter = new ListenerAdapter();
 
-        for (String command : subCommands) {
+        for (int i = 0; i < subCommands.length; i++) {
+            String command = subCommands[i];
+
+            AppSubCommandType subCommand = AppSubCommandType.getByCommand(command);
+            if (Objects.isNull(subCommand)) {
+                throw new IllegalArgumentException(
+                        "%s is not a valid Sub command.".formatted(command));
+            }
+
+            if (ArrayUtils.contains(DIRECTORY.getSubCommands(), subCommand)) {
+                if (!DIRECTORY.isNullable()) {
+                    String dir = subCommands[i++];
+
+                    Boolean isValidDir = FileUtils.isValidDirectory(dir);
+                    if (!isValidDir) {
+                        throw new IllegalArgumentException("%s is not a valid directory.".formatted(dir));
+                    }
+
+                    listenerAdapter.setDirectory(dir);
+                }
+            }
         }
 
         return listenerAdapter;

@@ -1,9 +1,11 @@
 package prism.configuration.context;
 
-import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
 import prism.configuration.apdater.WriterAdapter;
 
-@Builder
+@Setter
+@Getter
 public class ExecutionerContext {
 
     private WriterAdapter writingConfiguration;
