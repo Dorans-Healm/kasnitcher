@@ -92,9 +92,16 @@ public class ProcedureAssertion {
                 }
 
                 crrCommand.add(arg);
-                if (!isAnyCommandType(args[i + 1])) {
-                    crrCommand.add(args[i++]);
+                if (isAnyCommandType(args[i + 1])) {
+                    if (subCmdArg.isNullable()) {
+                        continue;
+                    }
+
+                    throw new IllegalStateException(
+                            "Sub command %s, used without a value.".formatted(arg));
                 }
+
+                crrCommand.add(args[i++]);
 
                 continue;
             }
@@ -153,9 +160,16 @@ public class ProcedureAssertion {
                 }
 
                 crrCommand.add(arg);
-                if (!isAnyCommandType(args[i + 1])) {
-                    crrCommand.add(args[i++]);
+                if (isAnyCommandType(args[i + 1])) {
+                    if (subCmdArg.isNullable()) {
+                        continue;
+                    }
+
+                    throw new IllegalStateException(
+                            "Sub command %s, used without a value.".formatted(arg));
                 }
+
+                crrCommand.add(args[i++]);
 
                 continue;
             }

@@ -41,4 +41,8 @@ public final class AppContext {
     public Object getClass(Class<?> clazz) {
         return appClasses.get(clazz);
     }
+
+    public Object setClass(Object obj) {
+        return appClasses.put(obj.getClass(), obj);
+    }
 }

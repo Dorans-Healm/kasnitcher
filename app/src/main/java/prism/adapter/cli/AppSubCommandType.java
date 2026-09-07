@@ -9,18 +9,21 @@ import java.util.Objects;
 
 public enum AppSubCommandType {
 
-    DIRECTORY(new String[]{"-d", "--directory"}),
+    DIRECTORY(new String[]{"-d", "--directory"}, false),
 
-    FILE(new String[]{"-f", "--file"}),
+    FILE(new String[]{"-f", "--file"}, false),
 
-    AMOUNT(new String[]{"-a", "--amount"}),
+    AMOUNT(new String[]{"-a", "--amount"}, false),
 
-    TYPE(new String[]{"-t", "--type"})
+    TYPE(new String[]{"-t", "--type"}, false)
 
     ;
 
     @Getter
     private final String[] subCommands;
+
+    @Getter
+    private final boolean nullable;
 
     private static final String[] enumMap;
 
@@ -38,7 +41,7 @@ public enum AppSubCommandType {
         }
     }
 
-    AppSubCommandType(String[] subCommands) {
+    AppSubCommandType(String[] subCommands, boolean nullable) {
         if (Objects.isNull(subCommands)) {
             throw new IllegalArgumentException(
                     "ubCommands is null");
@@ -55,6 +58,7 @@ public enum AppSubCommandType {
         }
 
         this.subCommands = subCommands;
+        this.nullable = nullable;
     }
 
     public static @Nullable AppSubCommandType getByCommand(String command) {

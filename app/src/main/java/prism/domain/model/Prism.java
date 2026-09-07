@@ -9,7 +9,7 @@ public class Prism {
     /**
      * File custom "prism spectrum" extension.
      */
-    public static final String EXTENTION = "spec";
+    public static final String EXTENTION = ".spec";
 
     /**
      * Grayscale (Lux)
