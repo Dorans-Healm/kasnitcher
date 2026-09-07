@@ -117,7 +117,8 @@ public class ProcedureAssertion {
                                 "Sub command %s, used without a value.".formatted(arg));
                     }
 
-                    crrCommand.add(args[i++]);
+                    crrCommand.add(args[i + 1]);
+                    i++;
                 }
 
                 continue;

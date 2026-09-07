@@ -44,7 +44,8 @@ public class ExecutionerContext implements ServiceContextConfiguration {
 
             if (ArrayUtils.contains(DIRECTORY.getSubCommands(), command)) {
                 if (!DIRECTORY.isNullable()) {
-                    String dir = subCommands[i++];
+                    String dir = subCommands[i + 1];
+                    i++;
 
                     Boolean isValidDir = FileUtils.isValidDirectory(dir);
                     if (!isValidDir) {
@@ -57,7 +58,22 @@ public class ExecutionerContext implements ServiceContextConfiguration {
 
             if (ArrayUtils.contains(FILE.getSubCommands(), command)) {
                 if (!FILE.isNullable()) {
-                    writerAdapter.setFile(subCommands[i++]);
+                    writerAdapter.setFile(subCommands[i + 1]);
+                    i++;
+                }
+            }
+
+            if (ArrayUtils.contains(TYPE.getSubCommands(), command)) {
+                if (!TYPE.isNullable()) {
+                    String type  = subCommands[i + 1];
+
+                    if (!WriterAdapter.RGB.equals(type) && !WriterAdapter.HEX.equals(type)) {
+                        throw new IllegalArgumentException(("%s is not a " +
+                                "valid type for color writing.").formatted(type));
+                    }
+
+                    writerAdapter.setType(type);
+                    i++;
                 }
             }
         }
