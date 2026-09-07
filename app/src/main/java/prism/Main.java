@@ -8,7 +8,7 @@ import prism.adapter.cli.procedure.ProcedureAssertion;
 import prism.domain.exception.CommandNotFoundException;
 import prism.domain.exception.DaemonDownOnCommandException;
 import prism.domain.exception.OrphanSubCommandTypeException;
-import prism.domain.model.Command;
+import prism.adapter.cli.input.Command;
 import prism.infrastructure.daemon.SocketServer;
 
 import java.util.Objects;

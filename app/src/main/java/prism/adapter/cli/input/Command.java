@@ -1,4 +1,4 @@
-package prism.domain.model;
+package prism.adapter.cli.input;
 
 import lombok.Getter;
 import lombok.Setter;

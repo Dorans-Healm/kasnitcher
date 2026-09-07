@@ -59,13 +59,13 @@ public class SocketServer implements AutoCloseable {
         try {
             return this.serverSocketChannel.accept();
         } catch (AsynchronousCloseException e) {
-            if (Objects.equals(SocketStatusType.GRACEFULL_INTERRUPTION, socketStatusType)) {
+            if (Objects.equals(SocketStatusType.GRACEFUL_INTERRUPTION, socketStatusType)) {
                 this.interrupt();
                 return null;
             }
 
             throw new SocketInterruptionException(
-                    "Interrupted socket communication", SocketStatusType.FORCEFULL_INTERRUPTION);
+                    "Interrupted socket communication", SocketStatusType.FORCEFUL_INTERRUPTION);
         } catch (IOException e) {
             throw new RuntimeException("Socket acceptance error.");
         }

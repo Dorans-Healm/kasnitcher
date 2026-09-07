@@ -1,4 +1,4 @@
-package prism.configuration.apdater;
+package prism.configuration.adapter;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -8,7 +8,7 @@ import prism.domain.model.Prism;
 @Setter
 public class WriterAdapter {
 
-    private String file = "palette" + Prism.EXTENTION;
+    private String file = "palette" + Prism.EXTENSION;
 
     private String directory = "~/.cache/prism/";
 }

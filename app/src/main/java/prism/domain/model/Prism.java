@@ -1,7 +1,7 @@
 package prism.domain.model;
 
 import lombok.Builder;
-import prism.infrastructure.entity.ColorScale;
+import prism.domain.vo.ColorScaleVo;
 
 @Builder
 public class Prism {
@@ -9,30 +9,30 @@ public class Prism {
     /**
      * File custom "prism spectrum" extension.
      */
-    public static final String EXTENTION = ".spec";
+    public static final String EXTENSION = ".spec";
 
     /**
      * Grayscale (Lux)
      */
-    private ColorScale lux;
+    private ColorScaleVo lux;
 
     /**
      * Dominant color shade (core)
      */
-    private ColorScale core;
+    private ColorScaleVo core;
 
     /**
      * Secondary supporting (Wave)
      */
-    private ColorScale wave;
+    private ColorScaleVo wave;
 
     /**
      * Bright accent contrast (Flare)
      */
-    private ColorScale flare;
+    private ColorScaleVo flare;
 
     /**
      * Secondary accent sharpening (Spark)
      */
-    private ColorScale spark;
+    private ColorScaleVo spark;
 }

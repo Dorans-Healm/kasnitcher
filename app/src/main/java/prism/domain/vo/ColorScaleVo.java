@@ -1,9 +1,9 @@
-package prism.infrastructure.entity;
+package prism.domain.vo;
 
 import lombok.Builder;
 
 @Builder
-public class ColorScale {
+public class ColorScaleVo {
 
     private String shade100;
     private String shade200;
@@ -36,7 +36,7 @@ public class ColorScale {
         String[] formatted = new String[shades.length];
 
         for (int i = 0; i < shades.length; i++) {
-            shades[i] = "-%s".formatted(shades[i]);
+            formatted[i] = "-%s".formatted(shades[i]);
         }
 
         return formatted;

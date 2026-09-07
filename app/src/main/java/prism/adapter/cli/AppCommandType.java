@@ -64,18 +64,18 @@ public enum AppCommandType {
     @Getter
     private final Class<?> service;
 
-    private static final String[] enumMap;
+    private static final Object[] enumMap;
 
     static {
         AppCommandType[] values = values();
 
-        enumMap = new String[values.length * 2 * 2];
+        enumMap = new Object[values.length * 2 * 2];
         int index = 0;
 
         for (AppCommandType type : values) {
             for (String command : type.commands) {
                 enumMap[index++] = command;
-                enumMap[index++] = type.name();
+                enumMap[index++] = type;
             }
         }
     }
@@ -88,7 +88,7 @@ public enum AppCommandType {
     ) {
         if (Objects.isNull(commands)) {
             throw new IllegalArgumentException(
-                    "ubCommands is null");
+                    "subCommands is null");
         }
 
         if (commands.length <= 0) {

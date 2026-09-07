@@ -25,18 +25,18 @@ public enum AppSubCommandType {
     @Getter
     private final boolean nullable;
 
-    private static final String[] enumMap;
+    private static final Object[] enumMap;
 
     static {
         AppSubCommandType[] values = values();
 
-        enumMap = new String[values.length * 2 * 2];
+        enumMap = new Object[values.length * 2 * 2];
         int index = 0;
 
         for (AppSubCommandType type : values) {
             for (String command : type.subCommands) {
                 enumMap[index++] = command;
-                enumMap[index++] = type.name();
+                enumMap[index++] = type;
             }
         }
     }
@@ -44,7 +44,7 @@ public enum AppSubCommandType {
     AppSubCommandType(String[] subCommands, boolean nullable) {
         if (Objects.isNull(subCommands)) {
             throw new IllegalArgumentException(
-                    "ubCommands is null");
+                    "subCommands is null");
         }
 
         if (subCommands.length <= 0) {
