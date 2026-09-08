@@ -14,21 +14,17 @@ public class ColorUtils {
         return (r << 8) | (g << 4) | b;
     }
 
-    public static int[] bucketToRgb(int bucket) {
-        int r = (bucket >> 8) & 0xF;
-        int g = (bucket >> 4) & 0xF;
-        int b = bucket & 0xF;
+    public static String bucketToRgb(int bucket) {
+        int r = ((bucket >> 8) & 0xF) * 17;
+        int g = ((bucket >> 4) & 0xF) * 17;
+        int b = (bucket & 0xF) * 17;
 
-        return new int[]{
-                r * 16,
-                g * 16,
-                b * 16
-        };
+        return "rgb(%d, %d, %d)".formatted(r, g, b);
     }
 
     public static String bucketToHex(int bucket) {
-        int r = ((bucket >> 8) & 0xF) * 16;
-        int g = ((bucket >> 4) & 0xF) * 16;
+        int r = ((bucket >> 8) & 0xF) * 17;
+        int g = ((bucket >> 4) & 0xF) * 17;
         int b = (bucket & 0xF) * 16;
 
         return String.format("#%02X%02X%02X", r, g, b);
