@@ -1,6 +1,6 @@
 package prism.adapter.operation;
 
-import prism.configuration.context.ExecutionerContext;
+import prism.configuration.context.ExecutionerContextAbstract;
 import prism.adapter.cli.input.Command;
 
 public class ExecutionerOperation {
@@ -21,8 +21,8 @@ public class ExecutionerOperation {
     }
 
     private void startSingleExecution() {
-        ExecutionerContext context =
-                new ExecutionerContext();
+        ExecutionerContextAbstract context =
+                new ExecutionerContextAbstract();
 
         context.updateConfiguration(this.commands);
     }

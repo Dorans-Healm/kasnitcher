@@ -2,7 +2,7 @@ package prism.adapter.operation;
 
 import prism.configuration.AppStartup;
 import prism.configuration.context.AppContext;
-import prism.configuration.context.DaemonContext;
+import prism.configuration.context.DaemonContextAbstract;
 import prism.adapter.cli.input.Command;
 
 public class DaemonOperation extends AppStartup {
@@ -26,8 +26,8 @@ public class DaemonOperation extends AppStartup {
     }
 
     private void startDaemon() {
-        DaemonContext context = (DaemonContext)
-                this.appContext.getClass(DaemonContext.class);
+        DaemonContextAbstract context = (DaemonContextAbstract)
+                this.appContext.getClass(DaemonContextAbstract.class);
 
         context.updateConfiguration(this.commands);
 

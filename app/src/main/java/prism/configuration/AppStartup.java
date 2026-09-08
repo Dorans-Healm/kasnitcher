@@ -7,7 +7,7 @@ import prism.application.port.ColorWriter;
 import prism.application.port.ImageReader;
 import prism.application.port.WallpaperListener;
 import prism.configuration.context.AppContext;
-import prism.configuration.context.DaemonContext;
+import prism.configuration.context.DaemonContextAbstract;
 import prism.infrastructure.daemon.SocketServer;
 import prism.application.service.CacheService;
 import prism.application.service.StorageService;
@@ -43,7 +43,7 @@ public abstract class AppStartup {
                 new CacheService(),
 
                 // configuration.context
-                new DaemonContext(),
+                new DaemonContextAbstract(),
 
                 // infrastructure.daemon
                 new SocketServer(),
