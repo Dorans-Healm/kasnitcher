@@ -1,15 +1,47 @@
 package prism.application.port;
 
-
 public class ColorWriter {
 
     private static final double[] LIGHTER_AMOUNTS = {
-            0.80, 0.60, 0.40, 0.20
+            0.20, 0.40, 0.60, 0.80
     };
 
     private static final double[] DARKER_AMOUNTS = {
             0.20, 0.40, 0.60, 0.75, 0.85
     };
+
+    private static final int CENTER_INDEX = 4;
+    private static final double STEP = 0.01;
+
+    private enum Shade {
+        LIGHTER(new int[]{3, 2, 1, 0}, LIGHTER_AMOUNTS) {
+            @Override
+            int adjustChannel(int value, double amount) {
+                return (int) Math.round(
+                        value + (15 - value) * amount
+                );
+            }
+        },
+
+        DARKER(new int[]{5, 6, 7, 8, 9}, DARKER_AMOUNTS) {
+            @Override
+            int adjustChannel(int value, double amount) {
+                return (int) Math.round(
+                        value * (1.0 - amount)
+                );
+            }
+        };
+
+        final int[] order;
+        final double[] amounts;
+
+        Shade(int[] order, double[] amounts) {
+            this.order = order;
+            this.amounts = amounts;
+        }
+
+        abstract int adjustChannel(int value, double amount);
+    }
 
     public int[] calculateSpectrum(int bucket) {
         int r = (bucket >> 8) & 0xF;
@@ -18,105 +50,124 @@ public class ColorWriter {
 
         int[] result = new int[10];
 
-        result[4] = bucket & 0xFFF;
+        result[CENTER_INDEX] = bucket & 0xFFF;
 
-        calculateLighter(result, r, g, b);
-        calculateDarker(result, r, g, b);
+        calculateShades(result, r, g, b, Shade.LIGHTER);
+        calculateShades(result, r, g, b, Shade.DARKER);
 
         return result;
     }
 
-    private void calculateLighter(int[] result, int r, int g, int b) {
-        for (int i = 0; i < LIGHTER_AMOUNTS.length; i++) {
-            double amount = LIGHTER_AMOUNTS[i];
-
-            result[i] = createLighterBucket(r, g, b, amount);
-
-            if (i > 0 && result[i] == result[i - 1]) {
-                amount = findUniqueLighterAmount(r, g, b, amount, result[i - 1]);
-                result[i] = createLighterBucket(r, g, b, amount);
-            }
-        }
-
-        if (result[3] == result[4]) {
-            double amount = LIGHTER_AMOUNTS[3];
-            while (amount < 1.0) {
-                amount += 0.01;
-                result[3] = createLighterBucket(r, g, b, amount);
-                if (result[3] != result[4]) break;
-            }
-        }
-    }
-
-    private void calculateDarker(int[] result, int r, int g, int b) {
-        for (int i = 0; i < DARKER_AMOUNTS.length; i++) {
-            double amount = DARKER_AMOUNTS[i];
-            int index = i + 5;
-
-            result[index] = createDarkerBucket(r, g, b, amount);
-
-            if (result[index] == result[index - 1]) {
-                amount = findUniqueDarkerAmount(r, g, b, amount, result[index - 1]);
-                result[index] = createDarkerBucket(r, g, b, amount);
-            }
-        }
-    }
-
-    private double findUniqueLighterAmount(
-            int r, int g, int b, double amount, int previousBucket
+    private void calculateShades(
+            int[] result,
+            int r,
+            int g,
+            int b,
+            Shade shade
     ) {
-        double step = 0.01;
+        double[] amounts = shade.amounts;
+        int[] order = shade.order;
 
-        while (amount > 0.0) {
-            amount -= step;
+        double previousAmount = 0.0;
 
-            int bucket = createLighterBucket(r, g, b, amount);
+        for (int k = 0; k < amounts.length; k++) {
+            int index = order[k];
 
-            if (bucket != previousBucket) {
+            double amount = Math.max(amounts[k], previousAmount);
+
+            double maxAmount = k < amounts.length - 1
+                    ? amounts[k + 1]
+                    : 1.0;
+
+            result[index] = createBucket(r, g, b, amount, shade);
+
+            if (isDuplicate(result, result[index], index, shade)) {
+                amount = findUniqueAmount(
+                        result,
+                        index,
+                        r, g, b,
+                        amount,
+                        previousAmount,
+                        maxAmount,
+                        shade
+                );
+
+                result[index] = createBucket(r, g, b, amount, shade);
+            }
+
+            previousAmount = amount;
+        }
+    }
+
+    private double findUniqueAmount(
+            int[] result,
+            int currentIndex,
+            int r,
+            int g,
+            int b,
+            double startAmount,
+            double minAmount,
+            double maxAmount,
+            Shade shade
+    ) {
+        int startStep = (int) Math.round(startAmount / STEP) + 1;
+        int minStep = (int) Math.round(minAmount / STEP) + 1;
+        int maxStep = (int) Math.round(maxAmount / STEP);
+
+        startStep = Math.max(startStep, minStep);
+
+        for (int step = startStep; step <= maxStep; step++) {
+            double amount = step * STEP;
+
+            int bucket = createBucket(
+                    r, g, b, amount, shade
+            );
+
+            if (!isDuplicate(result, bucket, currentIndex, shade)) {
                 return amount;
             }
         }
 
-        return amount;
+        return startAmount;
     }
 
-    private double findUniqueDarkerAmount(
-            int r, int g, int b, double amount, int previousBucket
+    private boolean isDuplicate(
+            int[] result,
+            int bucket,
+            int currentIndex,
+            Shade shade
     ) {
-        double step = 0.01;
+        int fromIndex;
+        int toIndex;
 
-        while (amount < 1.0) {
-            amount += step;
+        if (shade == Shade.DARKER) {
+            fromIndex = CENTER_INDEX;
+            toIndex = currentIndex - 1;
+        } else {
+            fromIndex = currentIndex + 1;
+            toIndex = CENTER_INDEX;
+        }
 
-            int bucket = createDarkerBucket(r, g, b, amount);
-
-            if (bucket != previousBucket) {
-                return amount;
+        for (int i = fromIndex; i <= toIndex; i++) {
+            if (result[i] == bucket) {
+                return true;
             }
         }
 
-        return amount;
+        return false;
     }
 
-    private int createLighterBucket(int r, int g, int b, double amount) {
-        int newR = lighten(r, amount);
-        int newG = lighten(g, amount);
-        int newB = lighten(b, amount);
+    private int createBucket(
+            int r,
+            int g,
+            int b,
+            double amount,
+            Shade shade
+    ) {
+        int newR = shade.adjustChannel(r, amount);
+        int newG = shade.adjustChannel(g, amount);
+        int newB = shade.adjustChannel(b, amount);
+
         return (newR << 8) | (newG << 4) | newB;
-    }
-
-    private int createDarkerBucket(int r, int g, int b, double amount) {
-        int newR = darken(r, amount);
-        int newG = darken(g, amount);
-        int newB = darken(b, amount);
-        return (newR << 8) | (newG << 4) | newB;
-    }
-
-    private static int lighten(int value, double amount) {
-        return (int) Math.round(value + (15 - value) * amount);
-    }
-
-    private static int darken(int value, double amount) {
-        return (int) Math.round(value * (1.0 - amount));
     }
 }
