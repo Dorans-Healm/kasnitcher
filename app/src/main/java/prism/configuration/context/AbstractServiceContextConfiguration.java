@@ -23,11 +23,7 @@ public abstract class AbstractServiceContextConfiguration {
         for (int i = 0; i < subCommands.length; i++) {
             String command = subCommands[i];
 
-            AppSubCommandType subCommand = AppSubCommandType.getByCommand(command);
-            if (Objects.isNull(subCommand)) {
-                throw new IllegalArgumentException(
-                        "%s is not a valid Sub command.".formatted(command));
-            }
+            this.assertValidSubCommand(command);
 
             if (ArrayUtils.contains(DIRECTORY.getSubCommands(), command)) {
                 if (!DIRECTORY.isNullable()) {
@@ -74,20 +70,18 @@ public abstract class AbstractServiceContextConfiguration {
         for (int i = 0; i < subCommands.length; i++) {
             String command = subCommands[i];
 
-            AppSubCommandType subCommand = AppSubCommandType.getByCommand(command);
-            if (Objects.isNull(subCommand)) {
-                throw new IllegalArgumentException(
-                        "%s is not a valid Sub command.".formatted(command));
-            }
+            this.assertValidSubCommand(command);
 
             if (ArrayUtils.contains(AMOUNT.getSubCommands(), command)) {
                 if (!AMOUNT.isNullable()) {
+                    String amount = subCommands[i + 1];
+
                     try {
-                        cacheAdapter.setAmount(Integer.parseInt(subCommands[i + 1]));
+                        cacheAdapter.setAmount(Integer.parseInt(amount));
                         i++;
                     } catch (NumberFormatException e) {
                         throw new IllegalArgumentException(
-                                "%s is not a valid Amount.".formatted(command));
+                                "%s is not a valid amount.".formatted(amount));
                     }
                 }
             }
@@ -102,11 +96,7 @@ public abstract class AbstractServiceContextConfiguration {
         for (int i = 0; i < subCommands.length; i++) {
             String command = subCommands[i];
 
-            AppSubCommandType subCommand = AppSubCommandType.getByCommand(command);
-            if (Objects.isNull(subCommand)) {
-                throw new IllegalArgumentException(
-                        "%s is not a valid Sub command.".formatted(command));
-            }
+            this.assertValidSubCommand(command);
 
             if (ArrayUtils.contains(DIRECTORY.getSubCommands(), command)) {
                 if (!DIRECTORY.isNullable()) {
@@ -139,11 +129,7 @@ public abstract class AbstractServiceContextConfiguration {
         for (int i = 0; i < subCommands.length; i++) {
             String command = subCommands[i];
 
-            AppSubCommandType subCommand = AppSubCommandType.getByCommand(command);
-            if (Objects.isNull(subCommand)) {
-                throw new IllegalArgumentException(
-                        "%s is not a valid Sub command.".formatted(command));
-            }
+            this.assertValidSubCommand(command);
 
             if (ArrayUtils.contains(DIRECTORY.getSubCommands(), command)) {
                 if (!DIRECTORY.isNullable()) {
@@ -161,5 +147,13 @@ public abstract class AbstractServiceContextConfiguration {
         }
 
         return listenerAdapter;
+    }
+
+    private void assertValidSubCommand(String subCommandStr) {
+        AppSubCommandType subCommand = AppSubCommandType.getByCommand(subCommandStr);
+        if (Objects.isNull(subCommand)) {
+            throw new IllegalArgumentException(
+                    "%s is not a valid Sub command.".formatted(subCommandStr));
+        }
     }
 }

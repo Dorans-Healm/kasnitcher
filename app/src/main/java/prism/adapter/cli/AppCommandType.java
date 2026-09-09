@@ -39,7 +39,7 @@ public enum AppCommandType {
      */
     WRITE(new String[]{"-w", "--write"},
             POLYMATH,
-            new AppSubCommandType[]{DIRECTORY, FILE},
+            new AppSubCommandType[]{DIRECTORY, FILE, TYPE},
             WriteService.class),
 
     /**
