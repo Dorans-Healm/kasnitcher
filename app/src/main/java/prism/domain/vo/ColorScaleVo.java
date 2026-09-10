@@ -1,8 +1,11 @@
 package prism.domain.vo;
 
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 
 @Builder
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class ColorScaleVo {
 
     private String shade100;
@@ -15,6 +18,10 @@ public class ColorScaleVo {
     private String shade800;
     private String shade900;
     private String shade1000;
+
+    public static ColorScaleVo fromBuckets(int[] shades) {
+        return new ColorScaleVo();
+    }
 
     public String[] getShades() {
         return new String[]{

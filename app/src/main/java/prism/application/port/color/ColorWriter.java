@@ -1,4 +1,4 @@
-package prism.application.port;
+package prism.application.port.color;
 
 public class ColorWriter {
 

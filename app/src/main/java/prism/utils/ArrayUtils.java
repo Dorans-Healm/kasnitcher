@@ -44,4 +44,54 @@ public class ArrayUtils {
 
         return false;
     }
+
+    public static Object[] remove(@Nullable Object[] array, Object value) {
+        if (Objects.isNull(array) || array.length == 0) {
+            throw new IllegalArgumentException(
+                    "Array for item removal can not be empty");
+        }
+
+        Object[] itemRemovedArray = new Object[array.length - 1];
+
+        int newIndex = 0;
+
+        for (Object o : array) {
+            if (!Objects.equals(o, value)) {
+                itemRemovedArray[newIndex] = o;
+                newIndex++;
+            }
+        }
+
+        return itemRemovedArray;
+    }
+
+    public static Object[][] remove(@Nullable Object[][] array, Object key) {
+        if (Objects.isNull(array) || array.length == 0) {
+            throw new IllegalArgumentException(
+                    "Array for item removal can not be empty");
+        }
+
+        int index = -1;
+
+        for (int i = 0; i < array.length; i++) {
+            if (Objects.equals(array[i][0], key)) {
+                index = i;
+                break;
+            }
+        }
+
+        if (index == -1) {
+            return array;
+        }
+
+        Object[][] result = new Object[array.length - 1][];
+
+        for (int i = 0, j = 0; i < array.length; i++) {
+            if (i != index) {
+                result[j++] = array[i];
+            }
+        }
+
+        return result;
+    }
 }

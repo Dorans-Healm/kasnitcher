@@ -3,9 +3,10 @@ package prism.configuration;
 import lombok.Getter;
 import prism.adapter.cli.procedure.ProcedureCaller;
 import prism.application.port.ColorCache;
-import prism.application.port.ColorWriter;
+import prism.application.port.color.ColorWriter;
 import prism.application.port.ImageReader;
 import prism.application.port.WallpaperListener;
+import prism.application.port.color.ContrastFinder;
 import prism.configuration.context.AppContext;
 import prism.configuration.context.DaemonContextAbstract;
 import prism.infrastructure.daemon.SocketServer;
@@ -27,11 +28,11 @@ public abstract class AppStartup {
 
     private void startup() {
         this.appContext = AppContext.initialize(
-                // adapter.cli.procedure
-                new ProcedureCaller(),
+                // application.port.color
+                new ColorCache(),
+                new ContrastFinder(),
 
                 // application.port
-                new ColorCache(),
                 new WallpaperListener(),
                 new ColorWriter(),
                 new ImageReader(),

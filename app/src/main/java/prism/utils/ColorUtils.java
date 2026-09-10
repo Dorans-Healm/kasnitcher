@@ -31,4 +31,37 @@ public class ColorUtils {
 
         return "#%02X%02X%02X".formatted(r, g, b);
     }
+
+    public static int[] getBrightest(int[][] buckets) {
+        int[] brightest = buckets[0];
+        double brightestLuminance = ColorUtils.luminance(brightest[0]);
+
+        for (int[] pair : buckets) {
+            double currentLuminance = ColorUtils.luminance(pair[0]);
+            if (currentLuminance > brightestLuminance) {
+                brightestLuminance = currentLuminance;
+                brightest = pair;
+            }
+        }
+
+        return brightest;
+    }
+
+    public static double luminance(int bucket) {
+        int r = ((bucket >> 8) & 0xF) * 17;
+        int g = ((bucket >> 4) & 0xF) * 17;
+        int b = (bucket & 0xF) * 17;
+
+        double rl = linearize(r / 255.0);
+        double gl = linearize(g / 255.0);
+        double bl = linearize(b / 255.0);
+
+        return 0.2126 * rl + 0.7152 * gl + 0.0722 * bl;
+    }
+
+    public static double linearize(double c) {
+        return c <= 0.03928
+                ? c / 12.92
+                : Math.pow((c + 0.055) / 1.055, 2.4);
+    }
 }
