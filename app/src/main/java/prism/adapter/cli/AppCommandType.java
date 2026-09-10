@@ -112,7 +112,7 @@ public enum AppCommandType {
             return null;
         }
 
-        Object obj = ArrayUtils.get(command, enumMap);
+        Object obj = ArrayUtils.mapGet(command, enumMap);
         if (Objects.nonNull(obj) && !(obj instanceof AppCommandType)) {
             throw new IllegalArgumentException(
                     "Invalid sub command inserted into the enum map: " + command);

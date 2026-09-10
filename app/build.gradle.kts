@@ -18,9 +18,6 @@ dependencies {
     // ▛▘▛▌▌▌▛▘▛▘█▌
     // ▄▌▙▌▙▌▌ ▙▖▙▖
 
-    // Code validation
-    implementation("javax.validation:validation-api:2.0.1.Final")
-
     // Lombok
     compileOnly("org.projectlombok:lombok:1.18.46")
     annotationProcessor("org.projectlombok:lombok:1.18.46")

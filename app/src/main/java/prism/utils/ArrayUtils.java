@@ -8,7 +8,12 @@ import java.util.Objects;
 
 public class ArrayUtils {
 
-    public static Object[] add(Object[] array, Object value) {
+    public static @NonNull Object[] add(@NonNull Object[] array, @NonNull Object value) {
+        if (Objects.isNull(array) || array.length == 0) {
+            throw new IllegalArgumentException(
+                    "Array to add item can not be empty");
+        }
+
         Object[] copy =
                 Arrays.copyOf(array, array.length + 1);
 
@@ -17,7 +22,25 @@ public class ArrayUtils {
         return copy;
     }
 
-    public static @Nullable Object get(Object key, @NonNull Object[] map) {
+    public static @Nullable Object get(@NonNull Object key, @NonNull Object[] map) {
+        if (Objects.isNull(map)) {
+            return null;
+        }
+
+        for (Object o : map) {
+            if (o.equals(key)) {
+                return o;
+            }
+        }
+
+        return null;
+    }
+
+    public static @Nullable Object mapGet(@NonNull Object key, @NonNull Object[] map) {
+        if (Objects.isNull(map) || map.length == 0) {
+            return null;
+        }
+
         for (int i = 0; i < map.length; i += 2) {
             if (map[i].equals(key)) {
                 return map[i + 1];
@@ -45,7 +68,7 @@ public class ArrayUtils {
         return false;
     }
 
-    public static Object[] remove(@Nullable Object[] array, Object value) {
+    public static @NonNull Object[] remove(@NonNull Object[] array, @Nullable Object value) {
         if (Objects.isNull(array) || array.length == 0) {
             throw new IllegalArgumentException(
                     "Array for item removal can not be empty");
@@ -65,7 +88,7 @@ public class ArrayUtils {
         return itemRemovedArray;
     }
 
-    public static Object[][] remove(@Nullable Object[][] array, Object key) {
+    public static Object[][] remove(@NonNull Object[][] array, @Nullable Object key) {
         if (Objects.isNull(array) || array.length == 0) {
             throw new IllegalArgumentException(
                     "Array for item removal can not be empty");
