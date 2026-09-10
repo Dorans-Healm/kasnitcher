@@ -8,6 +8,14 @@ import java.util.Objects;
 
 public class ArrayUtils {
 
+    /**
+     * Creates a new array with the given value appended at the end.
+     *
+     * @param array the source array to append to; must not be {@code null} or empty
+     * @param value the value to append
+     * @return a new array containing all elements of {@code array} followed by {@code value}
+     * @throws IllegalArgumentException if {@code array} is {@code null} or empty
+     */
     public static @NonNull Object[] add(@NonNull Object[] array, @NonNull Object value) {
         if (Objects.isNull(array) || array.length == 0) {
             throw new IllegalArgumentException(
@@ -22,6 +30,14 @@ public class ArrayUtils {
         return copy;
     }
 
+    /**
+     * Searches the array for an element equal to the given key using linear search.
+     *
+     * @param key the object to search for
+     * @param map the array to search in
+     * @return the first element equal to {@code key}, or {@code null} if not found
+     *         or if {@code map} is {@code null}
+     */
     public static @Nullable Object get(@NonNull Object key, @NonNull Object[] map) {
         if (Objects.isNull(map)) {
             return null;
@@ -36,6 +52,17 @@ public class ArrayUtils {
         return null;
     }
 
+    /**
+     * Looks up a value in a flat array treated as key-value pairs.
+     * <p>
+     * The array is expected to contain alternating keys and values
+     * (i.e. {@code [key0, value0, key1, value1, ...]}).
+     *
+     * @param key the key to look up
+     * @param map the flat key-value array to search in
+     * @return the value associated with {@code key}, or {@code null} if the key is not
+     *         found or {@code map} is {@code null} or empty
+     */
     public static @Nullable Object mapGet(@NonNull Object key, @NonNull Object[] map) {
         if (Objects.isNull(map) || map.length == 0) {
             return null;
@@ -50,6 +77,13 @@ public class ArrayUtils {
         return null;
     }
 
+    /**
+     * Checks whether the given array contains an element equal to the specified value.
+     *
+     * @param array the array to search; may be {@code null} or empty
+     * @param value the value to search for; may be {@code null}
+     * @return {@code true} if the array contains the value, {@code false} otherwise
+     */
     public static @NonNull Boolean contains(@Nullable Object[] array, @Nullable Object value) {
         if (Objects.isNull(array) || array.length == 0) {
             return false;
@@ -68,6 +102,14 @@ public class ArrayUtils {
         return false;
     }
 
+    /**
+     * Creates a new array with the first occurrence of the specified value removed.
+     *
+     * @param array the source array; must not be {@code null} or empty
+     * @param value the value to remove; may be {@code null}
+     * @return a new array with the matching element removed
+     * @throws IllegalArgumentException if {@code array} is {@code null} or empty
+     */
     public static @NonNull Object[] remove(@NonNull Object[] array, @Nullable Object value) {
         if (Objects.isNull(array) || array.length == 0) {
             throw new IllegalArgumentException(
@@ -88,6 +130,17 @@ public class ArrayUtils {
         return itemRemovedArray;
     }
 
+    /**
+     * Removes the first row whose first element matches the given key from a 2D array.
+     * <p>
+     * Each row is expected to have its key at index {@code 0}. If no row matches,
+     * the original array is returned unchanged.
+     *
+     * @param array the 2D source array; must not be {@code null} or empty
+     * @param key   the key to match against each row's first element; may be {@code null}
+     * @return a new 2D array without the matching row, or the original array if no match is found
+     * @throws IllegalArgumentException if {@code array} is {@code null} or empty
+     */
     public static Object[][] remove(@NonNull Object[][] array, @Nullable Object key) {
         if (Objects.isNull(array) || array.length == 0) {
             throw new IllegalArgumentException(
