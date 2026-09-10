@@ -18,7 +18,7 @@ public class Command {
     }
 
     public void add(String subCommand) {
-        this.subCommands = (String[])
-                ArrayUtils.add(this.subCommands, subCommand);
+        this.subCommands = ArrayUtils
+                .add(this.subCommands, subCommand);
     }
 }

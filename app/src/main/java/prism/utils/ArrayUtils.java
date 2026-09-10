@@ -20,13 +20,13 @@ public class ArrayUtils {
      * @return a new array containing all elements of {@code array} followed by {@code value}
      * @throws IllegalArgumentException if {@code array} is {@code null} or empty
      */
-    public static @NonNull Object[] add(@NonNull Object[] array, @NonNull Object value) {
+    public static <O> @NonNull O[] add(@NonNull O[] array, @NonNull O value) {
         if (Objects.isNull(array) || array.length == 0) {
             throw new IllegalArgumentException(
                     "Array to add item can not be empty");
         }
 
-        Object[] copy =
+        O[] copy =
                 Arrays.copyOf(array, array.length + 1);
 
         copy[copy.length - 1] = value;
@@ -42,12 +42,12 @@ public class ArrayUtils {
      * @return the first element equal to {@code key}, or {@code null} if not found
      *         or if {@code map} is {@code null}
      */
-    public static @Nullable Object get(@NonNull Object key, @NonNull Object[] map) {
+    public static <O> @Nullable O get(@NonNull O key, @NonNull O[] map) {
         if (Objects.isNull(map)) {
             return null;
         }
 
-        for (Object o : map) {
+        for (O o : map) {
             if (o.equals(key)) {
                 return o;
             }
@@ -67,7 +67,7 @@ public class ArrayUtils {
      * @return the value associated with {@code key}, or {@code null} if the key is not
      *         found or {@code map} is {@code null} or empty
      */
-    public static @Nullable Object mapGet(@NonNull Object key, @NonNull Object[] map) {
+    public static <O> @Nullable O mapGet(@NonNull O key, @NonNull O[] map) {
         if (Objects.isNull(map) || map.length == 0) {
             return null;
         }
@@ -114,17 +114,18 @@ public class ArrayUtils {
      * @return a new array with the matching element removed
      * @throws IllegalArgumentException if {@code array} is {@code null} or empty
      */
-    public static @NonNull Object[] remove(@NonNull Object[] array, @Nullable Object value) {
+    @SuppressWarnings("unchecked")
+    public static <O> @NonNull O[] remove(@NonNull O[] array, @Nullable O value) {
         if (Objects.isNull(array) || array.length == 0) {
             throw new IllegalArgumentException(
                     "Array for item removal can not be empty");
         }
 
-        Object[] itemRemovedArray = new Object[array.length - 1];
+        O[] itemRemovedArray = (O[]) new Object[array.length - 1];
 
         int newIndex = 0;
 
-        for (Object o : array) {
+        for (O o : array) {
             if (!Objects.equals(o, value)) {
                 itemRemovedArray[newIndex] = o;
                 newIndex++;
@@ -145,7 +146,8 @@ public class ArrayUtils {
      * @return a new 2D array without the matching row, or the original array if no match is found
      * @throws IllegalArgumentException if {@code array} is {@code null} or empty
      */
-    public static Object[][] remove(@NonNull Object[][] array, @Nullable Object key) {
+    @SuppressWarnings("unchecked")
+    public static <O> O[][] remove(@NonNull O[][] array, @Nullable O key) {
         if (Objects.isNull(array) || array.length == 0) {
             throw new IllegalArgumentException(
                     "Array for item removal can not be empty");
@@ -164,7 +166,7 @@ public class ArrayUtils {
             return array;
         }
 
-        Object[][] result = new Object[array.length - 1][];
+        O[][] result = (O[][]) new Object[array.length - 1][];
 
         for (int i = 0, j = 0; i < array.length; i++) {
             if (i != index) {

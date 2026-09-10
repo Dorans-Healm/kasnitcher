@@ -81,15 +81,15 @@ public class WriteService {
 
         int[] coreArr = this.getMostUsedFrom(buckets);
         ColorScaleVo core = ColorScaleVo.fromBuckets(coreArr);
-        buckets = (int[][]) ArrayUtils.remove(buckets, coreArr);
+        buckets = ArrayUtils.remove(buckets, coreArr);
 
         int[] flareArr = ColorUtils.getBrightest(buckets);
         ColorScaleVo flare = ColorScaleVo.fromBuckets(flareArr);
-        buckets = (int[][]) ArrayUtils.remove(buckets, flareArr);
+        buckets = ArrayUtils.remove(buckets, flareArr);
 
         int[] waveArr = this.getMostUsedFrom(buckets);
         ColorScaleVo wave = ColorScaleVo.fromBuckets(waveArr);
-        buckets = (int[][]) ArrayUtils.remove(buckets, waveArr);
+        buckets = ArrayUtils.remove(buckets, waveArr);
 
         return Prism.builder()
                 .lux(ColorScaleVo.fromBuckets(graySpectrum))

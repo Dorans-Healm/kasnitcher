@@ -23,7 +23,7 @@ public class ProcedureCaller {
 
         for (String arg : args) {
             for (String single : expandCombinedCommand(arg)) {
-                expandedArgs = (String[]) ArrayUtils.add(expandedArgs, single);
+                expandedArgs = ArrayUtils.add(expandedArgs, single);
             }
         }
 
@@ -49,8 +49,8 @@ public class ProcedureCaller {
                 return new String[]{arg};
             }
 
-            seen = (AppCommandType[]) ArrayUtils.add(seen, type);
-            expanded = (String[]) ArrayUtils.add(expanded, single);
+            seen = ArrayUtils.add(seen, type);
+            expanded = ArrayUtils.add(expanded, single);
         }
 
         return expanded;
@@ -118,9 +118,8 @@ public class ProcedureCaller {
                 }
 
                 if (Objects.nonNull(crrCommand.getCommand())) {
-                    commandsArray = (Command[])
-                            ArrayUtils.add(commandsArray, crrCommand);
-
+                    commandsArray = ArrayUtils
+                            .add(commandsArray, crrCommand);
                     crrCommand = new Command();
                 }
 
@@ -173,7 +172,7 @@ public class ProcedureCaller {
         }
 
         if (Objects.nonNull(crrCommand.getCommand())) {
-            commandsArray = (Command[]) ArrayUtils.add(commandsArray, crrCommand);
+            commandsArray = ArrayUtils.add(commandsArray, crrCommand);
         }
 
         return commandsArray;
