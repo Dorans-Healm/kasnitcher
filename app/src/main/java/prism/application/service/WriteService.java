@@ -10,10 +10,22 @@ import prism.utils.ArrayUtils;
 import prism.utils.ColorUtils;
 
 import java.util.Arrays;
+import java.util.function.Supplier;
 
 public class WriteService {
 
     private static final int TOTAL_SPECTRUMS = 4;
+
+    private final Supplier<ColorWriter> colorWriter;
+
+    private final Supplier<ContrastFinder> contrastFinder;
+
+    public WriteService() {
+        this.contrastFinder = AppContext
+                .getClassLazy(ContrastFinder.class);
+        this.colorWriter = AppContext
+                .getClassLazy(ColorWriter.class);
+    }
 
     public int[] getMostUsedColors(int[][] colors, int amount) {
         int resultSize = Math.min(amount, colors.length);
@@ -61,17 +73,10 @@ public class WriteService {
     public Prism getPrism(int[][] buckets) {
         buckets = this.getMostUsedIn(buckets, TOTAL_SPECTRUMS);
 
-        ContrastFinder contrastFinder = (ContrastFinder)
-                AppContext.instance().getClass(ContrastFinder.class);
-        ColorWriter colorWriter = (ColorWriter)
-                AppContext.instance().getClass(ColorWriter.class);
-
-        int grayShade = contrastFinder
+        int grayShade = this.contrastFinder.get()
                 .findBestByAverage(this.toBucketArray(buckets));
-        int[] graySpectrum = colorWriter
+        int[] graySpectrum = this.colorWriter.get()
                 .calculateSpectrum(grayShade);
-
-        ColorScaleVo lux = ColorScaleVo.fromBuckets(graySpectrum);
 
         int[] coreArr = this.getMostUsedFrom(buckets);
         ColorScaleVo core = ColorScaleVo.fromBuckets(coreArr);
@@ -85,14 +90,12 @@ public class WriteService {
         ColorScaleVo wave = ColorScaleVo.fromBuckets(waveArr);
         buckets = (int[][]) ArrayUtils.remove(buckets, waveArr);
 
-        ColorScaleVo spark = ColorScaleVo.fromBuckets(buckets[0]);
-
         return Prism.builder()
-                .lux(lux)
+                .lux(ColorScaleVo.fromBuckets(graySpectrum))
                 .core(core)
-                .flare(flare)
                 .wave(wave)
-                .spark(spark)
+                .flare(flare)
+                .spark(ColorScaleVo.fromBuckets(buckets[0]))
                 .build();
     }
 

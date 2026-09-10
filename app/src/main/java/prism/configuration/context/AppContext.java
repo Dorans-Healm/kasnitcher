@@ -4,6 +4,7 @@ package prism.configuration.context;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Supplier;
 
 public final class AppContext {
 
@@ -17,8 +18,6 @@ public final class AppContext {
         for (Object obj : objs) {
             appClasses.put(obj.getClass(), obj);
         }
-
-        instance = this;
     }
 
     public static synchronized AppContext initialize(Object... objs) {
@@ -38,8 +37,33 @@ public final class AppContext {
         return instance;
     }
 
-    public Object getClass(Class<?> clazz) {
-        return appClasses.get(clazz);
+    public <O> O getClass(Class<O> clazz) {
+        O obj = clazz.cast(appClasses.get(clazz));
+
+        if (Objects.isNull(obj)) {
+            throw new IllegalStateException(
+                    "Class not registered in context: %s".formatted(clazz.getName()));
+        }
+
+        return obj;
+    }
+
+    public static <O> Supplier<O> getClassLazy(Class<O> clazz) {
+        return () -> {
+            if (Objects.isNull(appClasses)) {
+                throw new IllegalStateException(
+                        "App context has not been initialized");
+            }
+
+            O obj = clazz.cast(appClasses.get(clazz));
+
+            if (Objects.isNull(obj)) {
+                throw new IllegalStateException(
+                        "Class not registered in context: %s".formatted(clazz.getName()));
+            }
+
+            return obj;
+        };
     }
 
     public Object setClass(Object obj) {

@@ -6,7 +6,6 @@ import lombok.Builder;
 import prism.utils.ColorUtils;
 
 @Builder
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class ColorScaleVo {
 
     private String shade100;
