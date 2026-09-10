@@ -6,6 +6,10 @@ import org.jspecify.annotations.Nullable;
 import java.util.Arrays;
 import java.util.Objects;
 
+/**
+ * Utility methods for common {@link Object} array operations such as
+ * adding, removing, searching, etc.
+ */
 public class ArrayUtils {
 
     /**
