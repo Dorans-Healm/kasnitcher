@@ -64,4 +64,16 @@ public class ColorUtils {
                 ? c / 12.92
                 : Math.pow((c + 0.055) / 1.055, 2.4);
     }
+
+    public static void sort(int[] array) {
+        for (int i = 0; i < array.length - 1; i++) {
+            for (int j = i + 1; j < array.length; j++) {
+                if (luminance(array[i]) < luminance(array[j])) {
+                    int temp = array[i];
+                    array[i] = array[j];
+                    array[j] = temp;
+                }
+            }
+        }
+    }
 }

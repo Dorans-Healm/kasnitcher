@@ -3,6 +3,7 @@ package prism.domain.vo;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import prism.utils.ColorUtils;
 
 @Builder
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
@@ -20,7 +21,20 @@ public class ColorScaleVo {
     private String shade1000;
 
     public static ColorScaleVo fromBuckets(int[] shades) {
-        return new ColorScaleVo();
+        ColorUtils.sort(shades);
+
+        return ColorScaleVo.builder()
+                .shade100(ColorUtils.bucketToHex(shades[0]))
+                .shade200(ColorUtils.bucketToHex(shades[1]))
+                .shade300(ColorUtils.bucketToHex(shades[2]))
+                .shade400(ColorUtils.bucketToHex(shades[3]))
+                .shade500(ColorUtils.bucketToHex(shades[4]))
+                .shade600(ColorUtils.bucketToHex(shades[5]))
+                .shade700(ColorUtils.bucketToHex(shades[6]))
+                .shade800(ColorUtils.bucketToHex(shades[8]))
+                .shade900(ColorUtils.bucketToHex(shades[9]))
+                .shade1000(ColorUtils.bucketToHex(shades[10]))
+                .build();
     }
 
     public String[] getShades() {

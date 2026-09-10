@@ -106,10 +106,15 @@ public class WriteService {
     }
 
     private int[] getMostUsedFrom(int[][] buckets) {
-        int[][] sorted = buckets.clone();
-        Arrays.sort(sorted, (a, b) -> b[1] - a[1]);
+        int[] mostUsed = buckets[0];
 
-        return sorted[0];
+        for (int i = 1; i < buckets.length; i++) {
+            if (buckets[i][1] > mostUsed[1]) {
+                mostUsed = buckets[i];
+            }
+        }
+
+        return mostUsed;
     }
 
     private int[] toBucketArray(int[][] buckets) {
