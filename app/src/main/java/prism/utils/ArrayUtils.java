@@ -147,7 +147,7 @@ public class ArrayUtils {
      * @throws IllegalArgumentException if {@code array} is {@code null} or empty
      */
     @SuppressWarnings("unchecked")
-    public static <O> O[][] remove(@NonNull O[][] array, @Nullable O key) {
+    public static <O> @NonNull O[][] remove(@NonNull O[][] array, @Nullable O key) {
         if (Objects.isNull(array) || array.length == 0) {
             throw new IllegalArgumentException(
                     "Array for item removal can not be empty");

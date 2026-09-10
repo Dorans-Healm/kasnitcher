@@ -19,7 +19,7 @@ public class ColorScaleVo {
     private String shade900;
     private String shade1000;
 
-    public static ColorScaleVo fromBuckets(int[] shades) {
+    public static ColorScaleVo fromBuckets(Integer[] shades) {
         ColorUtils.sort(shades);
 
         return ColorScaleVo.builder()
