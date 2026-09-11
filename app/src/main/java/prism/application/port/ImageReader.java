@@ -9,16 +9,13 @@ import java.io.IOException;
 
 public class ImageReader {
 
-    private static final int MAX_DIMENSION = 1000;
-    private static final int COLOR_BUCKETS = 4096;
+    private static final Integer COLOR_BUCKETS = 4096;
 
     public int[][] readColors(String path) throws IOException {
-        FileImageReader fileReader = (FileImageReader)
-                AppContext.instance().getClass(FileImageReader.class);
+        FileImageReader fileReader = AppContext
+                .instance().getClass(FileImageReader.class);
 
-        BufferedImage image =
-                fileReader.readSample(path, MAX_DIMENSION);
-
+        BufferedImage image = fileReader.readSample(path);
         int[] occurrences = new int[COLOR_BUCKETS];
 
         for (int y = 0; y < image.getHeight(); y++) {
