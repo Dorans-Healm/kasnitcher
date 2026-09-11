@@ -1,6 +1,7 @@
 package prism.domain.vo;
 
 import lombok.Builder;
+import org.jspecify.annotations.NonNull;
 import prism.utils.ColorUtils;
 
 /**
@@ -36,7 +37,7 @@ public class ColorScaleVo {
      * @param shades an array of at least 11 quantized 12-bit color buckets
      * @return a new {@code ColorScaleVo} populated with hex color values
      */
-    public static ColorScaleVo fromBuckets(Integer[] shades) {
+    public static @NonNull ColorScaleVo fromBuckets(@NonNull Integer[] shades) {
         ColorUtils.sort(shades);
 
         return ColorScaleVo.builder()
@@ -58,7 +59,7 @@ public class ColorScaleVo {
      *
      * @return an array of hex color strings from {@code shade100} to {@code shade1000}
      */
-    public String[] getShades() {
+    public @NonNull String[] getShades() {
         return new String[]{
                 shade100,
                 shade200,
@@ -81,7 +82,7 @@ public class ColorScaleVo {
      *
      * @return an array of semicolon-prefixed hex color strings
      */
-    public String[] getFormattedShades() {
+    public @NonNull String[] getFormattedShades() {
         String[] shades = this.getShades();
         String[] formatted = new String[shades.length];
 
