@@ -8,6 +8,12 @@ import prism.configuration.adapter.ListenerAdapter;
 import prism.configuration.adapter.StorageAdapter;
 import prism.configuration.adapter.WriterAdapter;
 
+/**
+ * Configuration context for the long-running background daemon process.
+ * <p>
+ * Holds the parsed adapter settings required by the daemon to perform
+ * caching, storage, writing, and listening operations.
+ */
 @Getter
 @Setter
 public class DaemonContextAbstract extends AbstractServiceContextConfiguration {
@@ -20,6 +26,13 @@ public class DaemonContextAbstract extends AbstractServiceContextConfiguration {
 
     private CacheAdapter cacheAdapter;
 
+    /**
+     * Updates the daemon's internal adapter configurations based on the
+     * provided CLI commands.
+     *
+     * @param commands an array of parsed {@link Command}s from the CLI
+     * @throws IllegalArgumentException if an unsupported command is encountered
+     */
     public void updateConfiguration(Command[] commands) {
         for (Command command : commands) {
             switch (command.getCommand()) {

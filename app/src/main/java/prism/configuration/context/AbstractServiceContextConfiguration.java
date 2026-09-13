@@ -13,10 +13,30 @@ import java.util.Objects;
 
 import static prism.adapter.cli.AppSubCommandType.*;
 
+/**
+ * Base class for configuration contexts that translate CLI commands into configuration
+ * adapters.
+ * <p>
+ * Provides common parsing logic for converting raw CLI sub-commands into specific adapter
+ * instances (Writer, Cache, Storage, Listener). Subclasses decide which adapters to expose
+ * and manage.
+ */
 public abstract class AbstractServiceContextConfiguration {
 
+    /**
+     * Updates the context state by parsing and applying the provided CLI commands.
+     *
+     * @param commands the parsed commands to apply
+     */
     public abstract void updateConfiguration(Command[] commands);
 
+    /**
+     * Parses sub-commands to construct a {@link WriterAdapter}.
+     *
+     * @param subCommands an array of raw sub-commands
+     * @return a populated {@link WriterAdapter}
+     * @throws IllegalArgumentException if an invalid sub-command or argument is provided
+     */
     protected WriterAdapter getWriterAdapter(String[] subCommands) {
         WriterAdapter writerAdapter = new WriterAdapter();
 
@@ -48,7 +68,7 @@ public abstract class AbstractServiceContextConfiguration {
 
             if (ArrayUtils.contains(TYPE.getSubCommands(), command)) {
                 if (!TYPE.isNullable()) {
-                    String type  = subCommands[i + 1];
+                    String type = subCommands[i + 1];
 
                     if (!WriterAdapter.RGB.equals(type) && !WriterAdapter.HEX.equals(type)) {
                         throw new IllegalArgumentException(("%s is not a " +
@@ -64,6 +84,13 @@ public abstract class AbstractServiceContextConfiguration {
         return writerAdapter;
     }
 
+    /**
+     * Parses sub-commands to construct a {@link CacheAdapter}.
+     *
+     * @param subCommands an array of raw sub-commands
+     * @return a populated {@link CacheAdapter}
+     * @throws IllegalArgumentException if an invalid amount or sub-command is provided
+     */
     protected CacheAdapter getCacheAdapter(String[] subCommands) {
         CacheAdapter cacheAdapter = new CacheAdapter();
 
@@ -90,6 +117,13 @@ public abstract class AbstractServiceContextConfiguration {
         return cacheAdapter;
     }
 
+    /**
+     * Parses sub-commands to construct a {@link StorageAdapter}.
+     *
+     * @param subCommands an array of raw sub-commands
+     * @return a populated {@link StorageAdapter}
+     * @throws IllegalArgumentException if an invalid directory or sub-command is provided
+     */
     protected StorageAdapter getStorageAdapter(String[] subCommands) {
         StorageAdapter storageAdapter = new StorageAdapter();
 
@@ -123,6 +157,13 @@ public abstract class AbstractServiceContextConfiguration {
         return storageAdapter;
     }
 
+    /**
+     * Parses sub-commands to construct a {@link ListenerAdapter}.
+     *
+     * @param subCommands an array of raw sub-commands
+     * @return a populated {@link ListenerAdapter}
+     * @throws IllegalArgumentException if an invalid directory or sub-command is provided
+     */
     protected ListenerAdapter getListenerAdapter(String[] subCommands) {
         ListenerAdapter listenerAdapter = new ListenerAdapter();
 
@@ -149,6 +190,12 @@ public abstract class AbstractServiceContextConfiguration {
         return listenerAdapter;
     }
 
+    /**
+     * Validates if a subCommand is actually a subCommand, or else, throws.
+     *
+     * @param subCommandStr String containing the supposed subCommand
+     * @throws IllegalArgumentException If command is not valid
+     */
     private void assertValidSubCommand(String subCommandStr) {
         AppSubCommandType subCommand = AppSubCommandType.getByCommand(subCommandStr);
         if (Objects.isNull(subCommand)) {
