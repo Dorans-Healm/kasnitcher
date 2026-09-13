@@ -17,8 +17,18 @@ import prism.application.service.WriteService;
 import prism.infrastructure.filesystem.FileColorWriter;
 import prism.infrastructure.filesystem.FileImageReader;
 
+/**
+ * Abstract bootstrap class that wires all application components and initializes the
+ * {@link AppContext} singleton.
+ * <p>
+ * Concrete subclasses inherit a fully constructed {@link AppContext} available via
+ * {@link #getAppContext()} as soon as the constructor completes.
+ */
 public abstract class AppStartup {
 
+    /**
+     * The application context holding all registered component instances.
+     */
     @Getter
     private AppContext appContext;
 
@@ -26,6 +36,13 @@ public abstract class AppStartup {
         this.startup();
     }
 
+    /**
+     * Bootstraps the application by instantiating core components and registering them into
+     * the global {@link AppContext}.
+     * <p>
+     * This method is automatically called during the construction of {@code AppStartup}
+     * subclasses.
+     */
     private void startup() {
         this.appContext = AppContext.initialize(
                 // application.port.color
