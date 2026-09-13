@@ -5,9 +5,9 @@ import prism.domain.vo.ColorScaleVo;
 
 /**
  * Domain model representing a color palette (spectrum) extracted from an image.
- *
- * <p>A Prism is composed of five {@link ColorScaleVo} roles, each capturing a
- * different tonal purpose within the palette:
+ * <p>
+ * A Prism is composed of five {@link ColorScaleVo} roles, each capturing a different tonal
+ * purpose within the palette:
  * <ul>
  *   <li><b>Lux</b> – grayscale tones</li>
  *   <li><b>Core</b> – dominant color shade</li>

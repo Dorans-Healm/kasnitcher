@@ -2,9 +2,9 @@ package prism.infrastructure.daemon;
 
 /**
  * Represents the lifecycle states of a daemon socket server.
- *
- * <p>The server transitions through these states from startup to shutdown,
- * allowing consumers to distinguish between normal operation and different shutdown modes.
+ * <p>
+ * The server transitions through these states from startup to shutdown, allowing consumers
+ * to distinguish between normal operation and different shutdown modes.
  */
 public enum SocketStatusType {
 
