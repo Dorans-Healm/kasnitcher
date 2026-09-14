@@ -12,7 +12,6 @@ import prism.utils.ArrayUtils;
 import prism.utils.FileUtils;
 
 import java.util.Objects;
-import java.util.function.Supplier;
 
 import static prism.adapter.cli.AppSubCommandType.*;
 
