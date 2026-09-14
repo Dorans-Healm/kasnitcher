@@ -12,14 +12,32 @@ import prism.utils.ColorUtils;
 import java.util.Arrays;
 import java.util.function.Supplier;
 
+/**
+ * Application service responsible for extracting prominent color palettes and assembling
+ * the full {@link Prism} spectrum from quantized image buckets.
+ */
 public class WriteService {
 
+    /**
+     * The number of top core colors to extract from the image buckets for Prism
+     * generation.
+     */
     private static final int TOTAL_SPECTRUMS = 4;
 
+    /**
+     * Lazy supplier for the color writing service, resolving from the AppContext.
+     */
     private final Supplier<ColorWriter> colorWriter;
 
+    /**
+     * Lazy supplier for the contrast finding service, resolving from the AppContext.
+     */
     private final Supplier<ContrastFinder> contrastFinder;
 
+    /**
+     * Constructs a new {@code WriteService}, initializing its dependencies lazily via the
+     * global {@link AppContext}.
+     */
     public WriteService() {
         this.contrastFinder = AppContext
                 .getClassLazy(ContrastFinder.class);
@@ -27,31 +45,18 @@ public class WriteService {
                 .getClassLazy(ColorWriter.class);
     }
 
-    public int[] getMostUsedColors(int[][] colors, int amount) {
-        int resultSize = Math.min(amount, colors.length);
+    /**
+     * Formats an array of quantized color buckets into string representations.
+     *
+     * @param colors an array of 12-bit color buckets
+     * @param type   the formatting type, either {@link WriterAdapter#HEX} or
+     *               {@link WriterAdapter#RGB}
+     * @return an array of formatted color strings
+     * @throws IllegalArgumentException if an unsupported type is provided
+     */
+    public String[] formatColors(Integer[] colors, String type) {
+        ColorUtils.sort(colors);
 
-        int[] result = new int[resultSize];
-
-        for (int i = 0; i < resultSize; i++) {
-            int mostUsedIndex = i;
-
-            for (int j = i + 1; j < colors.length; j++) {
-                if (colors[j][1] > colors[mostUsedIndex][1]) {
-                    mostUsedIndex = j;
-                }
-            }
-
-            int[] temp = colors[i];
-            colors[i] = colors[mostUsedIndex];
-            colors[mostUsedIndex] = temp;
-
-            result[i] = colors[i][0];
-        }
-
-        return result;
-    }
-
-    public String[] formatColors(int[] colors, String type) {
         if (!WriterAdapter.HEX.equalsIgnoreCase(type) && !WriterAdapter.RGB.equalsIgnoreCase(type)) {
             throw new IllegalArgumentException(
                     "Invalid color type: %s. Expected hex or rgb.".formatted(type));
@@ -70,24 +75,32 @@ public class WriteService {
         return result;
     }
 
-    // TODO - this is wrong, .remove is calling the wrong method, need to pass all methods to Objects instead of primitives
-    public Prism getPrism(int[][] buckets) {
+    /**
+     * Assembles a complete {@link Prism} spectrum from the given color buckets.
+     * <p>
+     * Iteratively extracts the gray tone, core shade, brightest flare, and supporting wave
+     * colors, removing each from the available buckets as it goes.
+     *
+     * @param buckets a 2D array of {@code [bucket, count]} pairs
+     * @return a fully populated {@link Prism} instance
+     */
+    public Prism getPrism(Integer[][] buckets) {
         buckets = this.getMostUsedIn(buckets, TOTAL_SPECTRUMS);
 
-        int grayShade = this.contrastFinder.get()
+        Integer grayShade = this.contrastFinder.get()
                 .findBestByAverage(this.toBucketArray(buckets));
-        int[] graySpectrum = this.colorWriter.get()
+        Integer[] graySpectrum = this.colorWriter.get()
                 .calculateSpectrum(grayShade);
 
-        int[] coreArr = this.getMostUsedFrom(buckets);
+        Integer[] coreArr = this.getMostUsedFrom(buckets);
         ColorScaleVo core = ColorScaleVo.fromBuckets(coreArr);
         buckets = ArrayUtils.remove(buckets, coreArr);
 
-        int[] flareArr = ColorUtils.getBrightest(buckets);
+        Integer[] flareArr = ColorUtils.getBrightest(buckets);
         ColorScaleVo flare = ColorScaleVo.fromBuckets(flareArr);
         buckets = ArrayUtils.remove(buckets, flareArr);
 
-        int[] waveArr = this.getMostUsedFrom(buckets);
+        Integer[] waveArr = this.getMostUsedFrom(buckets);
         ColorScaleVo wave = ColorScaleVo.fromBuckets(waveArr);
         buckets = ArrayUtils.remove(buckets, waveArr);
 
@@ -100,17 +113,31 @@ public class WriteService {
                 .build();
     }
 
+    /**
+     * Extracts the top N most frequent color buckets by completely sorting a clone of the
+     * input array.
+     *
+     * @param buckets a 2D array of {@code [bucket, count]} pairs
+     * @param amount  the maximum number of elements to return
+     * @return a new 2D array containing the top {@code amount} most used buckets
+     */
     @SuppressWarnings("SameParameterValue")
-    private int[][] getMostUsedIn(int[][] buckets, int amount) {
-        int[][] sorted = buckets.clone();
+    private Integer[][] getMostUsedIn(Integer[][] buckets, Integer amount) {
+        Integer[][] sorted = buckets.clone();
         Arrays.sort(sorted, (a, b) -> b[1] - a[1]);
 
         int count = Math.min(amount, sorted.length);
         return Arrays.copyOfRange(sorted, 0, count);
     }
 
-    private int[] getMostUsedFrom(int[][] buckets) {
-        int[] mostUsed = buckets[0];
+    /**
+     * Finds and returns the single most frequent bucket-count pair from the given array.
+     *
+     * @param buckets a 2D array of {@code [bucket, count]} pairs
+     * @return the {@code [bucket, count]} pair with the highest frequency
+     */
+    private Integer[] getMostUsedFrom(Integer[][] buckets) {
+        Integer[] mostUsed = buckets[0];
 
         for (int i = 1; i < buckets.length; i++) {
             if (buckets[i][1] > mostUsed[1]) {
@@ -121,8 +148,14 @@ public class WriteService {
         return mostUsed;
     }
 
-    private int[] toBucketArray(int[][] buckets) {
-        int[] result = new int[buckets.length];
+    /**
+     * Converts a 2D array of bucket-count pairs into a 1D array of just the bucket values.
+     *
+     * @param buckets a 2D array of {@code [bucket, count]} pairs
+     * @return a 1D array containing only the bucket integer values
+     */
+    private Integer[] toBucketArray(Integer[][] buckets) {
+        Integer[] result = new Integer[buckets.length];
 
         for (int i = 0; i < buckets.length; i++) {
             result[i] = buckets[i][0];

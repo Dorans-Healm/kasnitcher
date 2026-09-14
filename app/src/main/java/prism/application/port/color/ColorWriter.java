@@ -2,53 +2,53 @@ package prism.application.port.color;
 
 public class ColorWriter {
 
-    private static final double[] LIGHTER_AMOUNTS = {
+    private static final Double[] LIGHTER_AMOUNTS = {
             0.20, 0.40, 0.60, 0.80
     };
 
-    private static final double[] DARKER_AMOUNTS = {
+    private static final Double[] DARKER_AMOUNTS = {
             0.20, 0.40, 0.60, 0.75, 0.85
     };
 
-    private static final int CENTER_INDEX = 4;
-    private static final double STEP = 0.01;
+    private static final Integer CENTER_INDEX = 4;
+    private static final Double STEP = 0.01;
 
     private enum Shade {
-        LIGHTER(new int[]{3, 2, 1, 0}, LIGHTER_AMOUNTS) {
+        LIGHTER(new Integer[]{3, 2, 1, 0}, LIGHTER_AMOUNTS) {
             @Override
-            int adjustChannel(int value, double amount) {
+            Integer adjustChannel(Integer value, Double amount) {
                 return (int) Math.round(
                         value + (15 - value) * amount
                 );
             }
         },
 
-        DARKER(new int[]{5, 6, 7, 8, 9}, DARKER_AMOUNTS) {
+        DARKER(new Integer[]{5, 6, 7, 8, 9}, DARKER_AMOUNTS) {
             @Override
-            int adjustChannel(int value, double amount) {
+            Integer adjustChannel(Integer value, Double amount) {
                 return (int) Math.round(
                         value * (1.0 - amount)
                 );
             }
         };
 
-        final int[] order;
-        final double[] amounts;
+        final Integer[] order;
+        final Double[] amounts;
 
-        Shade(int[] order, double[] amounts) {
+        Shade(Integer[] order, Double[] amounts) {
             this.order = order;
             this.amounts = amounts;
         }
 
-        abstract int adjustChannel(int value, double amount);
+        abstract Integer adjustChannel(Integer value, Double amount);
     }
 
-    public int[] calculateSpectrum(int bucket) {
+    public Integer[] calculateSpectrum(Integer bucket) {
         int r = (bucket >> 8) & 0xF;
         int g = (bucket >> 4) & 0xF;
         int b = bucket & 0xF;
 
-        int[] result = new int[10];
+        Integer[] result = new Integer[10];
 
         result[CENTER_INDEX] = bucket & 0xFFF;
 
@@ -59,14 +59,14 @@ public class ColorWriter {
     }
 
     private void calculateShades(
-            int[] result,
-            int r,
-            int g,
-            int b,
+            Integer[] result,
+            Integer r,
+            Integer g,
+            Integer b,
             Shade shade
     ) {
-        double[] amounts = shade.amounts;
-        int[] order = shade.order;
+        Double[] amounts = shade.amounts;
+        Integer[] order = shade.order;
 
         double previousAmount = 0.0;
 
@@ -100,14 +100,14 @@ public class ColorWriter {
     }
 
     private double findUniqueAmount(
-            int[] result,
-            int currentIndex,
-            int r,
-            int g,
-            int b,
-            double startAmount,
-            double minAmount,
-            double maxAmount,
+            Integer[] result,
+            Integer currentIndex,
+            Integer r,
+            Integer g,
+            Integer b,
+            Double startAmount,
+            Double minAmount,
+            Double maxAmount,
             Shade shade
     ) {
         int startStep = (int) Math.round(startAmount / STEP) + 1;
@@ -131,10 +131,10 @@ public class ColorWriter {
         return startAmount;
     }
 
-    private boolean isDuplicate(
-            int[] result,
-            int bucket,
-            int currentIndex,
+    private Boolean isDuplicate(
+            Integer[] result,
+            Integer bucket,
+            Integer currentIndex,
             Shade shade
     ) {
         int fromIndex;
@@ -149,7 +149,7 @@ public class ColorWriter {
         }
 
         for (int i = fromIndex; i <= toIndex; i++) {
-            if (result[i] == bucket) {
+            if (result[i].equals(bucket)) {
                 return true;
             }
         }
@@ -157,11 +157,11 @@ public class ColorWriter {
         return false;
     }
 
-    private int createBucket(
-            int r,
-            int g,
-            int b,
-            double amount,
+    private Integer createBucket(
+            Integer r,
+            Integer g,
+            Integer b,
+            Double amount,
             Shade shade
     ) {
         int newR = shade.adjustChannel(r, amount);
