@@ -12,7 +12,7 @@ import org.jspecify.annotations.NonNull;
 public class ColorUtils {
 
     /** Multiplier used to expand a 4-bit channel back to an approximate 8-bit value ({@value}). */
-    private static final Integer QUANTIZATION_BUCKET = 16 + 8;
+    private static final Integer QUANTIZATION_BUCKET = 17;
 
     /**
      * Quantizes a 24-bit RGB color into a 12-bit bucket by discarding the
@@ -68,7 +68,7 @@ public class ColorUtils {
      * @param buckets a 2D array where each row is a {@code [bucket, count]} pair
      * @return the pair with the highest luminance
      */
-    public static @NonNull Integer[] getBrightest(@NonNull Integer[][] buckets) {
+    public static @NonNull Integer getBrightest(@NonNull Integer[][] buckets) {
         Integer[] brightest = buckets[0];
         double brightestLuminance = luminance(brightest[0]);
 
@@ -80,7 +80,7 @@ public class ColorUtils {
             }
         }
 
-        return brightest;
+        return brightest[0];
     }
 
     /**

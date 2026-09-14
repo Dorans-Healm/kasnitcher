@@ -9,67 +9,67 @@ package prism.application.port.color;
 public class ContrastFinder {
 
     /**
-     * Finds the gray value (0–255) that maximizes the <em>average</em> contrast ratio
+     * Finds the contrat value (0–255) that maximizes the <em>average</em> contrast ratio
      * against all provided color buckets.
      *
      * @param buckets an array of 12-bit quantized color buckets
-     * @return the gray value (0–255) with the highest average contrast
+     * @return the color value (0–255) with the highest average contrast
      */
     public Integer findBestByAverage(Integer[] buckets) {
         Double[] luminances = this.getLuminances(buckets);
 
-        int bestGray = 0;
+        int bestContrast = 0;
         double bestAvgContrast = -1;
 
-        for (int gray = 0; gray <= 255; gray++) {
-            double grayLuminance = this.relativeLuminance(gray, gray, gray);
+        for (int contrast = 0; contrast <= 255; contrast++) {
+            double contrastLuminance = this.relativeLuminance(contrast, contrast, contrast);
 
             double totalContrast = 0;
             for (double luminance : luminances) {
-                totalContrast += this.contrastRatio(grayLuminance, luminance);
+                totalContrast += this.contrastRatio(contrastLuminance, luminance);
             }
             double avgContrast = totalContrast / luminances.length;
 
             if (avgContrast > bestAvgContrast) {
                 bestAvgContrast = avgContrast;
-                bestGray = gray;
+                bestContrast = contrast;
             }
         }
 
-        return bestGray;
+        return bestContrast;
     }
 
     /**
-     * Finds the gray value (0–255) that maximizes the <em>worst-case</em> contrast ratio
+     * Finds the contrast value (0–255) that maximizes the <em>worst-case</em> contrast ratio
      * against the least contrasting color in the set.
      *
      * @param buckets an array of 12-bit quantized color buckets
-     * @return the gray value (0–255) with the best worst-case contrast
+     * @return the contrast value (0–255) with the best worst-case contrast
      */
     public int findBestByWorst(Integer[] buckets) {
         Double[] luminances = this.getLuminances(buckets);
 
-        int bestGray = 0;
+        int bestContrast = 0;
         double bestWorstContrast = -1;
 
-        for (int gray = 0; gray <= 255; gray++) {
-            double grayLuminance = relativeLuminance(gray, gray, gray);
+        for (int contrast = 0; contrast <= 255; contrast++) {
+            double contrastLuminance = relativeLuminance(contrast, contrast, contrast);
 
             double worstContrast = Double.MAX_VALUE;
             for (Double luminance : luminances) {
                 worstContrast = Math.min(
                         worstContrast,
-                        contrastRatio(grayLuminance, luminance)
+                        contrastRatio(contrastLuminance, luminance)
                 );
             }
 
             if (worstContrast > bestWorstContrast) {
                 bestWorstContrast = worstContrast;
-                bestGray = gray;
+                bestContrast = contrast;
             }
         }
 
-        return bestGray;
+        return bestContrast;
     }
 
     /**

@@ -21,7 +21,7 @@ public class ArrayUtils {
      * @throws IllegalArgumentException if {@code array} is {@code null} or empty
      */
     public static <O> @NonNull O[] add(@NonNull O[] array, @NonNull O value) {
-        if (Objects.isNull(array) || array.length == 0) {
+        if (Objects.isNull(array)) {
             throw new IllegalArgumentException(
                     "Array to add item can not be empty");
         }
@@ -106,6 +106,10 @@ public class ArrayUtils {
         return false;
     }
 
+    public static @NonNull Boolean isEmpty(@Nullable Object[] array) {
+        return array == null || array.length == 0;
+    }
+
     /**
      * Creates a new array with the first occurrence of the specified value removed.
      *
@@ -147,7 +151,7 @@ public class ArrayUtils {
      * @throws IllegalArgumentException if {@code array} is {@code null} or empty
      */
     @SuppressWarnings("unchecked")
-    public static <O> @NonNull O[][] remove(@NonNull O[][] array, @Nullable O[] key) {
+    public static <O> @NonNull O[][] remove(@NonNull O[][] array, @Nullable O key) {
         if (Objects.isNull(array) || array.length == 0) {
             throw new IllegalArgumentException(
                     "Array for item removal can not be empty");

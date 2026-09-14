@@ -3,10 +3,12 @@ package prism.application.port;
 import org.jspecify.annotations.NonNull;
 import prism.configuration.context.AppContext;
 import prism.infrastructure.filesystem.FileImageReader;
+import prism.utils.ArrayUtils;
 import prism.utils.ColorUtils;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.Arrays;
 
 /**
  * Port responsible for reading an image from the filesystem and extracting
@@ -30,7 +32,9 @@ public class ImageReader {
                 .instance().getClass(FileImageReader.class);
 
         BufferedImage image = fileReader.readSample(path);
+
         Integer[] occurrences = new Integer[COLOR_BUCKETS];
+        Arrays.fill(occurrences, 0);
 
         for (int y = 0; y < image.getHeight(); y++) {
             for (int x = 0; x < image.getWidth(); x++) {
@@ -53,6 +57,11 @@ public class ImageReader {
      * @return a 2D array of {@code [bucket, count]} pairs
      */
     private @NonNull Integer[][] toColorCountPairs(@NonNull Integer[] occurrences) {
+        if (ArrayUtils.isEmpty(occurrences)) {
+            throw new IllegalArgumentException(
+                    "occurrences array can not be empty");
+        }
+
         int count = 0;
         for (int occurrence : occurrences) {
             if (occurrence > 0) {

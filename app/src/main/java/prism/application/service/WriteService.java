@@ -94,7 +94,7 @@ public class WriteService {
     /**
      * Assembles a complete {@link Prism} spectrum from the given color buckets.
      * <p>
-     * Iteratively extracts the gray tone, core shade, brightest flare, and supporting wave
+     * Iteratively extracts the contrast tone, core shade, brightest flare, and supporting wave
      * colors, removing each from the available buckets as it goes.
      *
      * @param buckets a 2D array of {@code [bucket, count]} pairs
@@ -108,46 +108,47 @@ public class WriteService {
 
         // Lux
         prismBuilder.lux(ColorScaleVo.fromColorArray(
-                this.formatColors(this.getGrayShade(buckets))));
+                this.formatColors(this.getLuxShade(buckets))));
 
         // Core
-        Integer[] coreArr = this.getMostUsedFrom(buckets);
+        Integer coreArr = this.getMostUsedFrom(buckets);
         buckets = ArrayUtils.remove(buckets, coreArr);
 
-        prismBuilder.core(ColorScaleVo
-                .fromColorArray(this.formatColors(coreArr)));
+        prismBuilder.core(ColorScaleVo.fromColorArray(
+                this.formatColors(this.colorWriter.get().calculateSpectrum(coreArr))));
 
         // Flare
-        Integer[] flareArr = ColorUtils.getBrightest(buckets);
+        Integer flareArr = ColorUtils.getBrightest(buckets);
         buckets = ArrayUtils.remove(buckets, flareArr);
 
-        prismBuilder.flare(ColorScaleVo
-                .fromColorArray(this.formatColors(flareArr)));
+        prismBuilder.flare(ColorScaleVo.fromColorArray(
+                this.formatColors(this.colorWriter.get().calculateSpectrum(flareArr))));
 
-        Integer[] waveArr = this.getMostUsedFrom(buckets);
+        Integer waveArr = this.getMostUsedFrom(buckets);
         buckets = ArrayUtils.remove(buckets, waveArr);
 
-        prismBuilder.wave(ColorScaleVo
-                .fromColorArray(this.formatColors(waveArr)));
+        prismBuilder.wave(ColorScaleVo.fromColorArray(
+                this.formatColors(this.colorWriter.get().calculateSpectrum(waveArr))));
 
         // Spark
-        prismBuilder.spark(ColorScaleVo
-                .fromColorArray(this.formatColors(buckets[0])));
+        prismBuilder.spark(ColorScaleVo.fromColorArray(
+                this.formatColors(this.colorWriter.get().calculateSpectrum(buckets[0][0]))));
 
         return prismBuilder.build();
     }
 
     /**
-     * Extracts the best fitting gray shade spectrum from the given buckets.
+     * Extracts the best fitting color shade spectrum from the given buckets for lux prism
+     * color.
      *
      * @param buckets a 2D array of {@code [bucket, count]} pairs
      * @return an array of bucket values representing the calculated gray spectrum
      */
-    public @NonNull Integer[] getGrayShade(@NonNull Integer[][] buckets) {
+    public @NonNull Integer[] getLuxShade(@NonNull Integer[][] buckets) {
         Integer grayShade = this.contrastFinder.get()
                 .findBestByAverage(this.toBucketArray(buckets));
         return this.colorWriter.get()
-                .calculateSpectrum(grayShade);
+                .calculateSpectrum(ColorUtils.quantizeColor(grayShade));
     }
 
     /**
@@ -208,7 +209,7 @@ public class WriteService {
      * @param buckets a 2D array of {@code [bucket, count]} pairs
      * @return the {@code [bucket, count]} pair with the highest frequency
      */
-    private @NonNull Integer[] getMostUsedFrom(@NonNull Integer[][] buckets) {
+    private @NonNull Integer getMostUsedFrom(@NonNull Integer[][] buckets) {
         Integer[] mostUsed = buckets[0];
 
         for (int i = 1; i < buckets.length; i++) {
@@ -217,7 +218,7 @@ public class WriteService {
             }
         }
 
-        return mostUsed;
+        return mostUsed[0];
     }
 
     /**
