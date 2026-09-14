@@ -17,13 +17,13 @@ import prism.configuration.adapter.WriterAdapter;
  */
 @Getter
 @Setter
-public class DaemonContextAbstract extends AbstractServiceContextConfiguration {
+public class DaemonContext extends AbstractServiceContextConfiguration {
 
-    private WriterAdapter writingConfiguration;
+    private WriterAdapter writerAdapter;
 
-    private ListenerAdapter listenerConfiguration;
+    private ListenerAdapter listenerAdapter;
 
-    private StorageAdapter storageConfiguration;
+    private StorageAdapter storageAdapter;
 
     private CacheAdapter cacheAdapter;
 
@@ -40,13 +40,13 @@ public class DaemonContextAbstract extends AbstractServiceContextConfiguration {
                 case CACHE -> this.setCacheAdapter(
                         super.getCacheAdapter(command.getSubCommands()));
 
-                case STORE -> this.setStorageConfiguration(
+                case STORE -> this.setStorageAdapter(
                         super.getStorageAdapter(command.getSubCommands()));
 
-                case WRITE -> this.setWritingConfiguration(
+                case WRITE -> this.setWriterAdapter(
                         super.getWriterAdapter(command.getSubCommands()));
 
-                case LISTEN -> this.setListenerConfiguration(
+                case LISTEN -> this.setListenerAdapter(
                         super.getListenerAdapter(command.getSubCommands()));
 
                 case null, default -> throw new IllegalArgumentException(

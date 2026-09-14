@@ -1,14 +1,15 @@
 package prism.configuration;
 
 import lombok.Getter;
-import prism.adapter.cli.procedure.ProcedureCaller;
+import org.jspecify.annotations.NonNull;
 import prism.application.port.ColorCache;
 import prism.application.port.color.ColorWriter;
 import prism.application.port.ImageReader;
 import prism.application.port.WallpaperListener;
 import prism.application.port.color.ContrastFinder;
+import prism.configuration.context.AbstractServiceContextConfiguration;
 import prism.configuration.context.AppContext;
-import prism.configuration.context.DaemonContextAbstract;
+import prism.configuration.context.DaemonContext;
 import prism.infrastructure.daemon.SocketServer;
 import prism.application.service.CacheService;
 import prism.application.service.StorageService;
@@ -16,6 +17,8 @@ import prism.application.service.ListeningService;
 import prism.application.service.WriteService;
 import prism.infrastructure.filesystem.FileColorWriter;
 import prism.infrastructure.filesystem.FileImageReader;
+
+import java.util.function.Supplier;
 
 /**
  * Abstract bootstrap class that wires all application components and initializes the
@@ -32,8 +35,10 @@ public abstract class AppStartup {
     @Getter
     private AppContext appContext;
 
-    public AppStartup() {
-        this.startup();
+    public AppStartup(
+            @NonNull Supplier<? extends AbstractServiceContextConfiguration> appExecutionContext
+    ) {
+        this.startup(appExecutionContext);
     }
 
     /**
@@ -43,7 +48,9 @@ public abstract class AppStartup {
      * This method is automatically called during the construction of {@code AppStartup}
      * subclasses.
      */
-    private void startup() {
+    private void startup(
+            @NonNull Supplier<? extends AbstractServiceContextConfiguration> appExecutionContext
+    ) {
         this.appContext = AppContext.initialize(
                 // application.port.color
                 new ColorCache(),
@@ -55,13 +62,13 @@ public abstract class AppStartup {
                 new ImageReader(),
 
                 // application.service
-                new WriteService(),
+                new WriteService(appExecutionContext),
                 new StorageService(),
                 new ListeningService(),
                 new CacheService(),
 
                 // configuration.context
-                new DaemonContextAbstract(),
+                new DaemonContext(),
 
                 // infrastructure.daemon
                 new SocketServer(),

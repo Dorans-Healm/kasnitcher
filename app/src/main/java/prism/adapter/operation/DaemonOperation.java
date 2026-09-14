@@ -1,9 +1,12 @@
 package prism.adapter.operation;
 
 import prism.configuration.AppStartup;
+import prism.configuration.context.AbstractServiceContextConfiguration;
 import prism.configuration.context.AppContext;
-import prism.configuration.context.DaemonContextAbstract;
+import prism.configuration.context.DaemonContext;
 import prism.adapter.cli.input.Command;
+
+import java.util.function.Supplier;
 
 public class DaemonOperation extends AppStartup {
 
@@ -11,12 +14,14 @@ public class DaemonOperation extends AppStartup {
 
     private final AppContext appContext;
 
-    private DaemonOperation() {
-        this.commands = new Command[]{};
-        this.appContext = null;
-    }
-
     private DaemonOperation(Command[] commands) {
+        Supplier<? extends AbstractServiceContextConfiguration>
+                daemonContext = AppContext.getClassLazy(DaemonContext.class);
+
+        super(
+                daemonContext
+        );
+
         this.commands = commands;
         this.appContext = super.getAppContext();
     }
@@ -26,8 +31,8 @@ public class DaemonOperation extends AppStartup {
     }
 
     private void startDaemon() {
-        DaemonContextAbstract context = (DaemonContextAbstract)
-                this.appContext.getClass(DaemonContextAbstract.class);
+        DaemonContext context =
+                this.appContext.getClass(DaemonContext.class);
 
         context.updateConfiguration(this.commands);
 

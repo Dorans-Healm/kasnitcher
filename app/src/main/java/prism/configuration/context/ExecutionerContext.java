@@ -14,7 +14,7 @@ import prism.configuration.adapter.WriterAdapter;
  */
 @Setter
 @Getter
-public class ExecutionerContextAbstract extends AbstractServiceContextConfiguration {
+public class ExecutionerContext extends AbstractServiceContextConfiguration {
 
     private WriterAdapter writingConfiguration;
 

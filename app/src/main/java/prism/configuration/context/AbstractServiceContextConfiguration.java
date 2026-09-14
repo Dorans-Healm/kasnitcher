@@ -1,6 +1,7 @@
 package prism.configuration.context;
 
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import prism.adapter.cli.AppSubCommandType;
 import prism.adapter.cli.input.Command;
 import prism.configuration.adapter.CacheAdapter;
@@ -11,6 +12,7 @@ import prism.utils.ArrayUtils;
 import prism.utils.FileUtils;
 
 import java.util.Objects;
+import java.util.function.Supplier;
 
 import static prism.adapter.cli.AppSubCommandType.*;
 
@@ -30,6 +32,10 @@ public abstract class AbstractServiceContextConfiguration {
      * @param commands the parsed commands to apply
      */
     public abstract void updateConfiguration(Command[] commands);
+
+    public @Nullable WriterAdapter getWriterAdapter() {
+        return null;
+    }
 
     /**
      * Parses sub-commands to construct a {@link WriterAdapter}.
@@ -85,6 +91,10 @@ public abstract class AbstractServiceContextConfiguration {
         return writerAdapter;
     }
 
+    public @Nullable CacheAdapter getCacheAdapter() {
+        return null;
+    }
+
     /**
      * Parses sub-commands to construct a {@link CacheAdapter}.
      *
@@ -116,6 +126,10 @@ public abstract class AbstractServiceContextConfiguration {
         }
 
         return cacheAdapter;
+    }
+
+    protected @Nullable StorageAdapter getStorageAdapter() {
+        return null;
     }
 
     /**
@@ -156,6 +170,10 @@ public abstract class AbstractServiceContextConfiguration {
         }
 
         return storageAdapter;
+    }
+
+    public @Nullable ListenerAdapter getListenerAdapter() {
+        return null;
     }
 
     /**

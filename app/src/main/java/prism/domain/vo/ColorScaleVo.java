@@ -2,7 +2,6 @@ package prism.domain.vo;
 
 import lombok.Builder;
 import org.jspecify.annotations.NonNull;
-import prism.utils.ColorUtils;
 
 /**
  * Value object representing a 10-step color scale ranging from lightest ({@code shade100})
@@ -37,20 +36,18 @@ public class ColorScaleVo {
      * @param shades an array of at least 11 quantized 12-bit color buckets
      * @return a new {@code ColorScaleVo} populated with hex color values
      */
-    public static @NonNull ColorScaleVo fromBuckets(@NonNull Integer[] shades) {
-        ColorUtils.sort(shades);
-
+    public static @NonNull ColorScaleVo fromColorArray(@NonNull String[] shades) {
         return ColorScaleVo.builder()
-                .shade100(ColorUtils.bucketToHex(shades[0]))
-                .shade200(ColorUtils.bucketToHex(shades[1]))
-                .shade300(ColorUtils.bucketToHex(shades[2]))
-                .shade400(ColorUtils.bucketToHex(shades[3]))
-                .shade500(ColorUtils.bucketToHex(shades[4]))
-                .shade600(ColorUtils.bucketToHex(shades[5]))
-                .shade700(ColorUtils.bucketToHex(shades[6]))
-                .shade800(ColorUtils.bucketToHex(shades[8]))
-                .shade900(ColorUtils.bucketToHex(shades[9]))
-                .shade1000(ColorUtils.bucketToHex(shades[10]))
+                .shade100((shades[0]))
+                .shade200((shades[1]))
+                .shade300((shades[2]))
+                .shade400((shades[3]))
+                .shade500((shades[4]))
+                .shade600((shades[5]))
+                .shade700((shades[6]))
+                .shade800((shades[8]))
+                .shade900((shades[9]))
+                .shade1000(shades[10])
                 .build();
     }
 

@@ -1,5 +1,6 @@
 package prism.application.port;
 
+import org.jspecify.annotations.NonNull;
 import prism.configuration.context.AppContext;
 import prism.infrastructure.filesystem.FileImageReader;
 import prism.utils.ColorUtils;
@@ -11,12 +12,12 @@ public class ImageReader {
 
     private static final Integer COLOR_BUCKETS = 4096;
 
-    public int[][] readColors(String path) throws IOException {
+    public @NonNull Integer[][] readColors(@NonNull String path) throws IOException {
         FileImageReader fileReader = AppContext
                 .instance().getClass(FileImageReader.class);
 
         BufferedImage image = fileReader.readSample(path);
-        int[] occurrences = new int[COLOR_BUCKETS];
+        Integer[] occurrences = new Integer[COLOR_BUCKETS];
 
         for (int y = 0; y < image.getHeight(); y++) {
             for (int x = 0; x < image.getWidth(); x++) {
@@ -31,7 +32,7 @@ public class ImageReader {
         return toColorCountPairs(occurrences);
     }
 
-    private int[][] toColorCountPairs(int[] occurrences) {
+    private @NonNull Integer[][] toColorCountPairs(@NonNull Integer[] occurrences) {
         int count = 0;
         for (int occurrence : occurrences) {
             if (occurrence > 0) {
@@ -39,7 +40,7 @@ public class ImageReader {
             }
         }
 
-        int[][] result = new int[count][2];
+        Integer[][] result = new Integer[count][2];
         int index = 0;
 
         for (int bucket = 0; bucket < occurrences.length; bucket++) {

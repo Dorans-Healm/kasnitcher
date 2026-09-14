@@ -1,22 +1,30 @@
 package prism.application.service;
 
+import lombok.extern.java.Log;
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+import prism.application.port.ImageReader;
 import prism.application.port.color.ColorWriter;
 import prism.application.port.color.ContrastFinder;
 import prism.configuration.adapter.WriterAdapter;
+import prism.configuration.context.AbstractServiceContextConfiguration;
 import prism.configuration.context.AppContext;
 import prism.domain.model.Prism;
 import prism.domain.vo.ColorScaleVo;
 import prism.utils.ArrayUtils;
 import prism.utils.ColorUtils;
 
+import java.io.IOException;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.function.Supplier;
+import java.util.logging.Level;
 
 /**
  * Application service responsible for extracting prominent color palettes and assembling
  * the full {@link Prism} spectrum from quantized image buckets.
  */
+@Log
 public class WriteService {
 
     /**
@@ -24,6 +32,8 @@ public class WriteService {
      * generation.
      */
     private static final int TOTAL_SPECTRUMS = 4;
+
+    private final Supplier<? extends AbstractServiceContextConfiguration> appExecutionContext;
 
     /**
      * Lazy supplier for the color writing service, resolving from the AppContext.
@@ -35,27 +45,104 @@ public class WriteService {
      */
     private final Supplier<ContrastFinder> contrastFinder;
 
+
+    private final Supplier<ImageReader> imageReader;
+
     /**
      * Constructs a new {@code WriteService}, initializing its dependencies lazily via the
      * global {@link AppContext}.
      */
-    public WriteService() {
+    public WriteService(Supplier<? extends AbstractServiceContextConfiguration> appExecutionContext) {
+        this.appExecutionContext = appExecutionContext;
+
         this.contrastFinder = AppContext
                 .getClassLazy(ContrastFinder.class);
         this.colorWriter = AppContext
                 .getClassLazy(ColorWriter.class);
+        this.imageReader = AppContext
+                .getClassLazy(ImageReader.class);
+    }
+
+    public @Nullable Integer[][] processImage(String pathToImage) {
+        try {
+            return this.imageReader
+                    .get().readColors(pathToImage);
+        } catch (IOException e) {
+            log.log(Level.SEVERE, ("Error reading image " +
+                    "file from path %s").formatted(pathToImage), e);
+
+            return null;
+        }
+    }
+
+    /**
+     * Assembles a complete {@link Prism} spectrum from the given color buckets.
+     * <p>
+     * Iteratively extracts the gray tone, core shade, brightest flare, and supporting wave
+     * colors, removing each from the available buckets as it goes.
+     *
+     * @param buckets a 2D array of {@code [bucket, count]} pairs
+     * @return a fully populated {@link Prism} instance
+     */
+    public @NonNull Prism getPrism(@NonNull Integer[][] buckets) {
+        buckets = this.getMostUsedIn(
+                buckets, TOTAL_SPECTRUMS);
+
+        Prism.PrismBuilder prismBuilder = Prism.builder();
+
+        // Lux
+        prismBuilder.lux(ColorScaleVo.fromColorArray(
+                this.formatColors(this.getGrayShade(buckets))));
+
+        // Core
+        Integer[] coreArr = this.getMostUsedFrom(buckets);
+        buckets = ArrayUtils.remove(buckets, coreArr);
+
+        prismBuilder.core(ColorScaleVo
+                .fromColorArray(this.formatColors(coreArr)));
+
+        // Flare
+        Integer[] flareArr = ColorUtils.getBrightest(buckets);
+        buckets = ArrayUtils.remove(buckets, flareArr);
+
+        prismBuilder.flare(ColorScaleVo
+                .fromColorArray(this.formatColors(flareArr)));
+
+        Integer[] waveArr = this.getMostUsedFrom(buckets);
+        buckets = ArrayUtils.remove(buckets, waveArr);
+
+        prismBuilder.wave(ColorScaleVo
+                .fromColorArray(this.formatColors(waveArr)));
+
+        // Spark
+        prismBuilder.spark(ColorScaleVo
+                .fromColorArray(this.formatColors(buckets[0])));
+
+        return prismBuilder.build();
+    }
+
+    public @NonNull Integer[] getGrayShade(@NonNull Integer[][] buckets) {
+        Integer grayShade = this.contrastFinder.get()
+                .findBestByAverage(this.toBucketArray(buckets));
+        return this.colorWriter.get()
+                .calculateSpectrum(grayShade);
     }
 
     /**
      * Formats an array of quantized color buckets into string representations.
      *
      * @param colors an array of 12-bit color buckets
-     * @param type   the formatting type, either {@link WriterAdapter#HEX} or
-     *               {@link WriterAdapter#RGB}
      * @return an array of formatted color strings
      * @throws IllegalArgumentException if an unsupported type is provided
      */
-    public @NonNull String[] formatColors(@NonNull Integer[] colors, @NonNull String type) {
+    public @NonNull String[] formatColors(@NonNull Integer[] colors) {
+        WriterAdapter adapter = this.appExecutionContext.get().getWriterAdapter();
+
+        String type = WriterAdapter.RGB;
+        if (Objects.nonNull(adapter)) {
+            type = adapter.getType();
+        }
+
         ColorUtils.sort(colors);
 
         if (!WriterAdapter.HEX.equalsIgnoreCase(type) && !WriterAdapter.RGB.equalsIgnoreCase(type)) {
@@ -74,44 +161,6 @@ public class WriteService {
         }
 
         return result;
-    }
-
-    /**
-     * Assembles a complete {@link Prism} spectrum from the given color buckets.
-     * <p>
-     * Iteratively extracts the gray tone, core shade, brightest flare, and supporting wave
-     * colors, removing each from the available buckets as it goes.
-     *
-     * @param buckets a 2D array of {@code [bucket, count]} pairs
-     * @return a fully populated {@link Prism} instance
-     */
-    public @NonNull Prism getPrism(@NonNull Integer[][] buckets) {
-        buckets = this.getMostUsedIn(buckets, TOTAL_SPECTRUMS);
-
-        Integer grayShade = this.contrastFinder.get()
-                .findBestByAverage(this.toBucketArray(buckets));
-        Integer[] graySpectrum = this.colorWriter.get()
-                .calculateSpectrum(grayShade);
-
-        Integer[] coreArr = this.getMostUsedFrom(buckets);
-        ColorScaleVo core = ColorScaleVo.fromBuckets(coreArr);
-        buckets = ArrayUtils.remove(buckets, coreArr);
-
-        Integer[] flareArr = ColorUtils.getBrightest(buckets);
-        ColorScaleVo flare = ColorScaleVo.fromBuckets(flareArr);
-        buckets = ArrayUtils.remove(buckets, flareArr);
-
-        Integer[] waveArr = this.getMostUsedFrom(buckets);
-        ColorScaleVo wave = ColorScaleVo.fromBuckets(waveArr);
-        buckets = ArrayUtils.remove(buckets, waveArr);
-
-        return Prism.builder()
-                .lux(ColorScaleVo.fromBuckets(graySpectrum))
-                .core(core)
-                .wave(wave)
-                .flare(flare)
-                .spark(ColorScaleVo.fromBuckets(buckets[0]))
-                .build();
     }
 
     /**
