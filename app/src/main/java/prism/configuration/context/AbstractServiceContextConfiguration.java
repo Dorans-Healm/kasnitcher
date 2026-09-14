@@ -33,6 +33,12 @@ public abstract class AbstractServiceContextConfiguration {
      */
     public abstract void updateConfiguration(Command[] commands);
 
+    /**
+     * Retrieves the {@link WriterAdapter} if supported by the context. Default
+     * implementation returns {@code null}.
+     *
+     * @return the writer adapter, or {@code null} if unsupported
+     */
     public @Nullable WriterAdapter getWriterAdapter() {
         return null;
     }
@@ -91,6 +97,12 @@ public abstract class AbstractServiceContextConfiguration {
         return writerAdapter;
     }
 
+    /**
+     * Retrieves the {@link CacheAdapter} if supported by the context. Default
+     * implementation returns {@code null}.
+     *
+     * @return the cache adapter, or {@code null} if unsupported
+     */
     public @Nullable CacheAdapter getCacheAdapter() {
         return null;
     }
@@ -128,6 +140,12 @@ public abstract class AbstractServiceContextConfiguration {
         return cacheAdapter;
     }
 
+    /**
+     * Retrieves the {@link StorageAdapter} if supported by the context. Default
+     * implementation returns {@code null}.
+     *
+     * @return the storage adapter, or {@code null} if unsupported
+     */
     protected @Nullable StorageAdapter getStorageAdapter() {
         return null;
     }
@@ -172,6 +190,12 @@ public abstract class AbstractServiceContextConfiguration {
         return storageAdapter;
     }
 
+    /**
+     * Retrieves the {@link ListenerAdapter} if supported by the context. Default
+     * implementation returns {@code null}.
+     *
+     * @return the listener adapter, or {@code null} if unsupported
+     */
     public @Nullable ListenerAdapter getListenerAdapter() {
         return null;
     }

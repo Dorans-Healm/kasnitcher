@@ -8,10 +8,23 @@ import prism.utils.ColorUtils;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
+/**
+ * Port responsible for reading an image from the filesystem and extracting
+ * its quantized color frequencies.
+ */
 public class ImageReader {
 
+    /** The number of possible 12-bit color buckets. */
     private static final Integer COLOR_BUCKETS = 4096;
 
+    /**
+     * Reads an image from the specified path, quantizes its pixels into 12-bit color buckets,
+     * and counts the frequency of each color.
+     *
+     * @param path the path to the image file
+     * @return a 2D array of {@code [bucket, count]} pairs for all colors present in the image
+     * @throws IOException if the file cannot be read or processed
+     */
     public @NonNull Integer[][] readColors(@NonNull String path) throws IOException {
         FileImageReader fileReader = AppContext
                 .instance().getClass(FileImageReader.class);
@@ -32,6 +45,13 @@ public class ImageReader {
         return toColorCountPairs(occurrences);
     }
 
+    /**
+     * Converts a flat array of occurrences (where the index is the bucket) into a
+     * dense 2D array of {@code [bucket, count]} pairs.
+     *
+     * @param occurrences the array containing the count for each possible 12-bit bucket
+     * @return a 2D array of {@code [bucket, count]} pairs
+     */
     private @NonNull Integer[][] toColorCountPairs(@NonNull Integer[] occurrences) {
         int count = 0;
         for (int occurrence : occurrences) {

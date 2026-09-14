@@ -33,6 +33,9 @@ public class WriteService {
      */
     private static final int TOTAL_SPECTRUMS = 4;
 
+    /**
+     * Lazy supplier for the application configuration context holding user preferences.
+     */
     private final Supplier<? extends AbstractServiceContextConfiguration> appExecutionContext;
 
     /**
@@ -45,14 +48,19 @@ public class WriteService {
      */
     private final Supplier<ContrastFinder> contrastFinder;
 
-
+    /**
+     * Lazy supplier for the image reading port, resolving from the AppContext.
+     */
     private final Supplier<ImageReader> imageReader;
 
     /**
      * Constructs a new {@code WriteService}, initializing its dependencies lazily via the
      * global {@link AppContext}.
+     *
+     * @param appExecutionContext a supplier providing the configuration context (e.g. from
+     *                            CLI arguments)
      */
-    public WriteService(Supplier<? extends AbstractServiceContextConfiguration> appExecutionContext) {
+    public WriteService(@NonNull Supplier<? extends AbstractServiceContextConfiguration> appExecutionContext) {
         this.appExecutionContext = appExecutionContext;
 
         this.contrastFinder = AppContext
@@ -63,7 +71,15 @@ public class WriteService {
                 .getClassLazy(ImageReader.class);
     }
 
-    public @Nullable Integer[][] processImage(String pathToImage) {
+    /**
+     * Reads and processes an image from the given file path, extracting its color
+     * frequencies.
+     *
+     * @param pathToImage the file path to the image
+     * @return a 2D array of {@code [bucket, count]} pairs, or {@code null} if an error
+     * occurs
+     */
+    public @Nullable Integer[][] processImage(@NonNull String pathToImage) {
         try {
             return this.imageReader
                     .get().readColors(pathToImage);
@@ -121,6 +137,12 @@ public class WriteService {
         return prismBuilder.build();
     }
 
+    /**
+     * Extracts the best fitting gray shade spectrum from the given buckets.
+     *
+     * @param buckets a 2D array of {@code [bucket, count]} pairs
+     * @return an array of bucket values representing the calculated gray spectrum
+     */
     public @NonNull Integer[] getGrayShade(@NonNull Integer[][] buckets) {
         Integer grayShade = this.contrastFinder.get()
                 .findBestByAverage(this.toBucketArray(buckets));

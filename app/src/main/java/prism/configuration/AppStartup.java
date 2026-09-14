@@ -35,6 +35,13 @@ public abstract class AppStartup {
     @Getter
     private AppContext appContext;
 
+    /**
+     * Constructs a new AppStartup and bootstraps the application using the provided
+     * execution context.
+     *
+     * @param appExecutionContext a supplier providing the configuration context (e.g.,
+     *                            daemon or executioner context)
+     */
     public AppStartup(
             @NonNull Supplier<? extends AbstractServiceContextConfiguration> appExecutionContext
     ) {
@@ -47,6 +54,8 @@ public abstract class AppStartup {
      * <p>
      * This method is automatically called during the construction of {@code AppStartup}
      * subclasses.
+     *
+     * @param appExecutionContext a supplier providing the configuration context
      */
     private void startup(
             @NonNull Supplier<? extends AbstractServiceContextConfiguration> appExecutionContext
