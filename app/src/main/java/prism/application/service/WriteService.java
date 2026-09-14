@@ -104,37 +104,52 @@ public class WriteService {
         buckets = this.getMostUsedIn(
                 buckets, TOTAL_SPECTRUMS);
 
-        Prism.PrismBuilder prismBuilder = Prism.builder();
-
         // Lux
-        prismBuilder.lux(ColorScaleVo.fromColorArray(
-                this.formatColors(this.getLuxShade(buckets))));
+        ColorScaleVo lux = toScale(this.getLuxShade(buckets));
 
-        // Core
-        Integer coreArr = this.getMostUsedFrom(buckets);
-        buckets = ArrayUtils.remove(buckets, coreArr);
-
-        prismBuilder.core(ColorScaleVo.fromColorArray(
-                this.formatColors(this.colorWriter.get().calculateSpectrum(coreArr))));
+        Integer core = this.getMostUsedFrom(buckets);
+        buckets = ArrayUtils.remove(buckets, core);
 
         // Flare
-        Integer flareArr = ColorUtils.getBrightest(buckets);
-        buckets = ArrayUtils.remove(buckets, flareArr);
+        Integer flare = ColorUtils.getBrightest(buckets);
+        buckets = ArrayUtils.remove(buckets, flare);
 
-        prismBuilder.flare(ColorScaleVo.fromColorArray(
-                this.formatColors(this.colorWriter.get().calculateSpectrum(flareArr))));
-
-        Integer waveArr = this.getMostUsedFrom(buckets);
-        buckets = ArrayUtils.remove(buckets, waveArr);
-
-        prismBuilder.wave(ColorScaleVo.fromColorArray(
-                this.formatColors(this.colorWriter.get().calculateSpectrum(waveArr))));
+        // Wave
+        Integer wave = this.getMostUsedFrom(buckets);
+        buckets = ArrayUtils.remove(buckets, wave);
 
         // Spark
-        prismBuilder.spark(ColorScaleVo.fromColorArray(
-                this.formatColors(this.colorWriter.get().calculateSpectrum(buckets[0][0]))));
+        Integer spark = buckets[0][0];
 
-        return prismBuilder.build();
+        return Prism.builder()
+                .lux(lux)
+                .core(toScale(core))
+                .flare(toScale(flare))
+                .wave(toScale(wave))
+                .spark(toScale(spark))
+                .build();
+    }
+
+    /**
+     * Converts a single 12-bit color bucket into a fully formatted {@link ColorScaleVo}
+     * by generating a 10-step spectrum and formatting each shade.
+     *
+     * @param bucket a 12-bit quantized color bucket
+     * @return a populated {@link ColorScaleVo}
+     */
+    private @NonNull ColorScaleVo toScale(@NonNull Integer bucket) {
+        Integer[] spectrum = this.colorWriter.get().calculateSpectrum(bucket);
+        return toScale(spectrum);
+    }
+
+    /**
+     * Converts a pre-computed spectrum array into a fully formatted {@link ColorScaleVo}.
+     *
+     * @param spectrum an array of 10 bucket values representing the color spectrum
+     * @return a populated {@link ColorScaleVo}
+     */
+    private @NonNull ColorScaleVo toScale(@NonNull Integer[] spectrum) {
+        return ColorScaleVo.fromColorArray(this.formatColors(spectrum));
     }
 
     /**
