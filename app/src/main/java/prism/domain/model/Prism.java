@@ -1,6 +1,7 @@
 package prism.domain.model;
 
 import lombok.Builder;
+import org.jspecify.annotations.NonNull;
 import prism.domain.vo.ColorScaleVo;
 
 /**
@@ -29,25 +30,25 @@ public class Prism {
     /**
      * Grayscale (Lux)
      */
-    private ColorScaleVo lux;
+    private @NonNull ColorScaleVo lux;
 
     /**
      * Dominant color shade (core)
      */
-    private ColorScaleVo core;
+    private @NonNull ColorScaleVo core;
 
     /**
      * Secondary supporting (Wave)
      */
-    private ColorScaleVo wave;
+    private @NonNull ColorScaleVo wave;
 
     /**
      * Bright accent contrast (Flare)
      */
-    private ColorScaleVo flare;
+    private @NonNull ColorScaleVo flare;
 
     /**
      * Secondary accent sharpening (Spark)
      */
-    private ColorScaleVo spark;
+    private @NonNull ColorScaleVo spark;
 }

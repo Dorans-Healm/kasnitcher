@@ -1,6 +1,8 @@
 package prism.configuration.context;
 
 
+import org.jspecify.annotations.NonNull;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -18,7 +20,7 @@ public final class AppContext {
 
     private static Map<Class<?>, Object> appClasses;
 
-    private AppContext(Object... objs) {
+    private AppContext(@NonNull Object... objs) {
         appClasses = new HashMap<>();
 
         for (Object obj : objs) {
@@ -33,7 +35,7 @@ public final class AppContext {
      * @return the initialized context singleton
      * @throws IllegalStateException if the context is already initialized
      */
-    public static synchronized AppContext initialize(Object... objs) {
+    public static synchronized @NonNull AppContext initialize(@NonNull Object... objs) {
         if (Objects.nonNull(instance)) {
             throw new IllegalStateException("App context already initialized");
         }
@@ -48,7 +50,7 @@ public final class AppContext {
      * @return the context singleton
      * @throws IllegalStateException if the context has not been initialized
      */
-    public static AppContext instance() {
+    public static @NonNull AppContext instance() {
         if (instance == null) {
             throw new IllegalStateException("App context has not been initialized");
         }
@@ -64,7 +66,7 @@ public final class AppContext {
      * @return the registered component instance
      * @throws IllegalStateException if the component is not registered
      */
-    public <O> O getClass(Class<O> clazz) {
+    public <O> @NonNull O getClass(@NonNull Class<O> clazz) {
         O obj = clazz.cast(appClasses.get(clazz));
 
         if (Objects.isNull(obj)) {
@@ -82,7 +84,7 @@ public final class AppContext {
      * @param <O>   the expected type of the component
      * @return a supplier that will retrieve the component upon invocation
      */
-    public static <O> Supplier<O> getClassLazy(Class<O> clazz) {
+    public static <O> @NonNull Supplier<O> getClassLazy(@NonNull Class<O> clazz) {
         return () -> {
             if (Objects.isNull(appClasses)) {
                 throw new IllegalStateException(
@@ -104,9 +106,8 @@ public final class AppContext {
      * Registers a new component instance into the context dynamically.
      *
      * @param obj the component to register
-     * @return the previous instance associated with the component's class, or {@code null}
      */
-    public Object setClass(Object obj) {
-        return appClasses.put(obj.getClass(), obj);
+    public void setClass(@NonNull Object obj) {
+        appClasses.put(obj.getClass(), obj);
     }
 }

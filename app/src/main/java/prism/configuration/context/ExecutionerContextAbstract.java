@@ -2,6 +2,7 @@ package prism.configuration.context;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.jspecify.annotations.NonNull;
 import prism.adapter.cli.input.Command;
 import prism.configuration.adapter.WriterAdapter;
 
@@ -24,7 +25,7 @@ public class ExecutionerContextAbstract extends AbstractServiceContextConfigurat
      * @param commands an array of parsed {@link Command}s from the CLI
      * @throws IllegalArgumentException if an unsupported command is encountered
      */
-    public void updateConfiguration(Command[] commands) {
+    public void updateConfiguration(@NonNull Command[] commands) {
         for (Command command : commands) {
             switch (command.getCommand()) {
                 case WRITE -> this.setWritingConfiguration(

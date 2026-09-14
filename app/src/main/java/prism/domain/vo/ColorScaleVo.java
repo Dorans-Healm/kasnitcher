@@ -17,16 +17,16 @@ import prism.utils.ColorUtils;
 @Builder
 public class ColorScaleVo {
 
-    private String shade100;
-    private String shade200;
-    private String shade300;
-    private String shade400;
-    private String shade500;
-    private String shade600;
-    private String shade700;
-    private String shade800;
-    private String shade900;
-    private String shade1000;
+    private @NonNull String shade100;
+    private @NonNull String shade200;
+    private @NonNull String shade300;
+    private @NonNull String shade400;
+    private @NonNull String shade500;
+    private @NonNull String shade600;
+    private @NonNull String shade700;
+    private @NonNull String shade800;
+    private @NonNull String shade900;
+    private @NonNull String shade1000;
 
     /**
      * Creates a {@code ColorScaleVo} from an array of quantized color buckets.

@@ -1,5 +1,6 @@
 package prism.application.service;
 
+import org.jspecify.annotations.NonNull;
 import prism.application.port.color.ColorWriter;
 import prism.application.port.color.ContrastFinder;
 import prism.configuration.adapter.WriterAdapter;
@@ -54,7 +55,7 @@ public class WriteService {
      * @return an array of formatted color strings
      * @throws IllegalArgumentException if an unsupported type is provided
      */
-    public String[] formatColors(Integer[] colors, String type) {
+    public @NonNull String[] formatColors(@NonNull Integer[] colors, @NonNull String type) {
         ColorUtils.sort(colors);
 
         if (!WriterAdapter.HEX.equalsIgnoreCase(type) && !WriterAdapter.RGB.equalsIgnoreCase(type)) {
@@ -84,7 +85,7 @@ public class WriteService {
      * @param buckets a 2D array of {@code [bucket, count]} pairs
      * @return a fully populated {@link Prism} instance
      */
-    public Prism getPrism(Integer[][] buckets) {
+    public @NonNull Prism getPrism(@NonNull Integer[][] buckets) {
         buckets = this.getMostUsedIn(buckets, TOTAL_SPECTRUMS);
 
         Integer grayShade = this.contrastFinder.get()
@@ -122,7 +123,7 @@ public class WriteService {
      * @return a new 2D array containing the top {@code amount} most used buckets
      */
     @SuppressWarnings("SameParameterValue")
-    private Integer[][] getMostUsedIn(Integer[][] buckets, Integer amount) {
+    private @NonNull Integer[][] getMostUsedIn(@NonNull Integer[][] buckets, @NonNull Integer amount) {
         Integer[][] sorted = buckets.clone();
         Arrays.sort(sorted, (a, b) -> b[1] - a[1]);
 
@@ -136,7 +137,7 @@ public class WriteService {
      * @param buckets a 2D array of {@code [bucket, count]} pairs
      * @return the {@code [bucket, count]} pair with the highest frequency
      */
-    private Integer[] getMostUsedFrom(Integer[][] buckets) {
+    private @NonNull Integer[] getMostUsedFrom(@NonNull Integer[][] buckets) {
         Integer[] mostUsed = buckets[0];
 
         for (int i = 1; i < buckets.length; i++) {
@@ -154,7 +155,7 @@ public class WriteService {
      * @param buckets a 2D array of {@code [bucket, count]} pairs
      * @return a 1D array containing only the bucket integer values
      */
-    private Integer[] toBucketArray(Integer[][] buckets) {
+    private @NonNull Integer[] toBucketArray(@NonNull Integer[][] buckets) {
         Integer[] result = new Integer[buckets.length];
 
         for (int i = 0; i < buckets.length; i++) {

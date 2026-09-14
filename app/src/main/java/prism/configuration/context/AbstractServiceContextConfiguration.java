@@ -1,5 +1,6 @@
 package prism.configuration.context;
 
+import org.jspecify.annotations.NonNull;
 import prism.adapter.cli.AppSubCommandType;
 import prism.adapter.cli.input.Command;
 import prism.configuration.adapter.CacheAdapter;
@@ -37,7 +38,7 @@ public abstract class AbstractServiceContextConfiguration {
      * @return a populated {@link WriterAdapter}
      * @throws IllegalArgumentException if an invalid sub-command or argument is provided
      */
-    protected WriterAdapter getWriterAdapter(String[] subCommands) {
+    protected @NonNull WriterAdapter getWriterAdapter(@NonNull String[] subCommands) {
         WriterAdapter writerAdapter = new WriterAdapter();
 
         for (int i = 0; i < subCommands.length; i++) {
@@ -91,7 +92,7 @@ public abstract class AbstractServiceContextConfiguration {
      * @return a populated {@link CacheAdapter}
      * @throws IllegalArgumentException if an invalid amount or sub-command is provided
      */
-    protected CacheAdapter getCacheAdapter(String[] subCommands) {
+    protected @NonNull CacheAdapter getCacheAdapter(@NonNull String[] subCommands) {
         CacheAdapter cacheAdapter = new CacheAdapter();
 
         for (int i = 0; i < subCommands.length; i++) {
@@ -124,7 +125,7 @@ public abstract class AbstractServiceContextConfiguration {
      * @return a populated {@link StorageAdapter}
      * @throws IllegalArgumentException if an invalid directory or sub-command is provided
      */
-    protected StorageAdapter getStorageAdapter(String[] subCommands) {
+    protected @NonNull StorageAdapter getStorageAdapter(@NonNull String[] subCommands) {
         StorageAdapter storageAdapter = new StorageAdapter();
 
         for (int i = 0; i < subCommands.length; i++) {
@@ -164,7 +165,7 @@ public abstract class AbstractServiceContextConfiguration {
      * @return a populated {@link ListenerAdapter}
      * @throws IllegalArgumentException if an invalid directory or sub-command is provided
      */
-    protected ListenerAdapter getListenerAdapter(String[] subCommands) {
+    protected @NonNull ListenerAdapter getListenerAdapter(@NonNull String[] subCommands) {
         ListenerAdapter listenerAdapter = new ListenerAdapter();
 
         for (int i = 0; i < subCommands.length; i++) {
@@ -196,7 +197,7 @@ public abstract class AbstractServiceContextConfiguration {
      * @param subCommandStr String containing the supposed subCommand
      * @throws IllegalArgumentException If command is not valid
      */
-    private void assertValidSubCommand(String subCommandStr) {
+    private void assertValidSubCommand(@NonNull String subCommandStr) {
         AppSubCommandType subCommand = AppSubCommandType.getByCommand(subCommandStr);
         if (Objects.isNull(subCommand)) {
             throw new IllegalArgumentException(
