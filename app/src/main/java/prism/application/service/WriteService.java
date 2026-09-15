@@ -104,21 +104,22 @@ public class WriteService {
         buckets = this.getMostUsedIn(
                 buckets, TOTAL_SPECTRUMS);
 
-        // Lux
+        // Best contrast between all the colors
         ColorScaleVo lux = toScale(this.getLuxShade(buckets));
 
+        // Most used color between the 4
         Integer core = this.getMostUsedFrom(buckets);
         buckets = ArrayUtils.remove(buckets, core);
 
-        // Flare
+        // Brightest color between the 3 remaining colors
         Integer flare = ColorUtils.getBrightest(buckets);
         buckets = ArrayUtils.remove(buckets, flare);
 
-        // Wave
+        // Most used color between the 2 remaining colors
         Integer wave = this.getMostUsedFrom(buckets);
         buckets = ArrayUtils.remove(buckets, wave);
 
-        // Spark
+        // Leaving left over color to support
         Integer spark = buckets[0][0];
 
         return Prism.builder()
