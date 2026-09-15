@@ -1,4 +1,4 @@
-package prism.application.port;
+package prism.application.component;
 
 import org.jspecify.annotations.NonNull;
 import prism.configuration.context.AppContext;

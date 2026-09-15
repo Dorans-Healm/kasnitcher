@@ -1,4 +1,4 @@
-package prism.application.port.color;
+package prism.application.component.color;
 
 import org.jspecify.annotations.NonNull;
 
@@ -85,7 +85,7 @@ public class ColorWriter {
      * @return an array of 10 bucket values representing the spectrum from lightest to
      * darkest
      */
-    public @NonNull Integer[] calculateSpectrum(Integer bucket) {
+    public @NonNull Integer[] calculateSpectrum(@NonNull Integer bucket) {
         Integer r = (bucket >> 8) & 0xF;
         Integer g = (bucket >> 4) & 0xF;
         Integer b = bucket & 0xF;

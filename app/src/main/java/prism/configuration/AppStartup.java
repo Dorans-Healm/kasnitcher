@@ -2,11 +2,11 @@ package prism.configuration;
 
 import lombok.Getter;
 import org.jspecify.annotations.NonNull;
-import prism.application.port.ColorCache;
-import prism.application.port.color.ColorWriter;
-import prism.application.port.ImageReader;
-import prism.application.port.WallpaperListener;
-import prism.application.port.color.ContrastFinder;
+import prism.application.component.ColorCache;
+import prism.application.component.color.ColorWriter;
+import prism.application.component.ImageReader;
+import prism.application.component.WallpaperListener;
+import prism.application.component.color.ContrastFinder;
 import prism.configuration.context.AbstractServiceContextConfiguration;
 import prism.configuration.context.AppContext;
 import prism.configuration.context.DaemonContext;

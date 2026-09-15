@@ -1,4 +1,6 @@
-package prism.application.port.color;
+package prism.application.component.color;
+
+import org.jspecify.annotations.NonNull;
 
 /**
  * Port responsible for finding a color spectrum that provides the best contrast against a
@@ -15,7 +17,7 @@ public class ContrastFinder {
      * @param buckets an array of 12-bit quantized color buckets
      * @return the color value (0–255) with the highest average contrast
      */
-    public Integer findBestByAverage(Integer[] buckets) {
+    public @NonNull Integer findBestByAverage(@NonNull Integer[] buckets) {
         Double[] luminances = this.getLuminances(buckets);
 
         int bestContrast = 0;
@@ -46,7 +48,7 @@ public class ContrastFinder {
      * @param buckets an array of 12-bit quantized color buckets
      * @return the contrast value (0–255) with the best worst-case contrast
      */
-    public int findBestByWorst(Integer[] buckets) {
+    public @NonNull Integer findBestByWorst(@NonNull Integer[] buckets) {
         Double[] luminances = this.getLuminances(buckets);
 
         int bestContrast = 0;
@@ -78,7 +80,7 @@ public class ContrastFinder {
      * @param buckets an array of 12-bit quantized color buckets
      * @return an array of relative luminance values (0.0–1.0)
      */
-    public Double[] getLuminances(Integer[] buckets) {
+    public @NonNull Double[] getLuminances(@NonNull Integer[] buckets) {
         Double[] luminances = new Double[buckets.length];
 
         for (int i = 0; i < buckets.length; i++) {
@@ -100,7 +102,7 @@ public class ContrastFinder {
      * @param b the blue channel value (0–255)
      * @return the relative luminance (0.0–1.0)
      */
-    private Double relativeLuminance(Integer r, Integer g, Integer b) {
+    private @NonNull Double relativeLuminance(@NonNull Integer r, @NonNull Integer g, @NonNull Integer b) {
         double rl = linearize(r / 255.0);
         double gl = linearize(g / 255.0);
         double bl = linearize(b / 255.0);
@@ -114,7 +116,7 @@ public class ContrastFinder {
      * @param c the gamma-corrected channel value (0.0–1.0)
      * @return the linearized value
      */
-    private Double linearize(Double c) {
+    private @NonNull Double linearize(@NonNull Double c) {
         return c <= 0.03928
                 ? c / 12.92
                 : Math.pow((c + 0.055) / 1.055, 2.4);
@@ -127,7 +129,7 @@ public class ContrastFinder {
      * @param l2 the second luminance value
      * @return the contrast ratio (1.0–21.0)
      */
-    private Double contrastRatio(Double l1, Double l2) {
+    private @NonNull Double contrastRatio(@NonNull Double l1, @NonNull Double l2) {
         double lighter = Math.max(l1, l2);
         double darker = Math.min(l1, l2);
 
