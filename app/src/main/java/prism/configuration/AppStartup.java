@@ -62,7 +62,7 @@ public abstract class AppStartup {
     ) {
         this.appContext = AppContext.initialize(
                 // application.port.color
-                new ColorCache(),
+                new ColorCache(appExecutionContext),
                 new ContrastFinder(),
 
                 // application.port
