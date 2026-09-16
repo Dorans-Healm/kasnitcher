@@ -2,7 +2,9 @@ package prism.configuration.context;
 
 
 import org.jspecify.annotations.NonNull;
+import prism.configuration.annotations.PostConstruct;
 
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -41,7 +43,31 @@ public final class AppContext {
         }
 
         instance = new AppContext(objs);
+        callPostConstruct();
+
         return instance;
+    }
+
+    private static void callPostConstruct() {
+        for (Object inst : appClasses.values()) {
+            Method[] methods = inst.getClass().getDeclaredMethods();
+
+            for (Method method : methods) {
+                if (method.isAnnotationPresent(PostConstruct.class)) {
+                    continue;
+                }
+
+                try {
+                    method.setAccessible(true);
+                    method.invoke(inst);
+                } catch (Exception e) {
+                    throw new RuntimeException("App context could not " +
+                            "be initialized while applying post processing methods.", e);
+                }
+
+                break;
+            }
+        }
     }
 
     /**
