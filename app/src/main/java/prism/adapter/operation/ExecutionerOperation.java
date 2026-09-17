@@ -47,5 +47,7 @@ public class ExecutionerOperation {
                 new ExecutionerContext();
 
         context.updateConfiguration(this.commands);
+
+
     }
 }

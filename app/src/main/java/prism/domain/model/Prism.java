@@ -51,4 +51,52 @@ public class Prism {
      * Secondary accent sharpening (Spark)
      */
     private @NonNull ColorScaleVo spark;
+
+
+    public String getId() {
+        return this.getLuxId() +
+                "-" +
+                this.getCoreId() +
+                "-" +
+                this.getWaveId() +
+                "-" +
+                this.getFlareId() +
+                "-" +
+                this.getSparkId();
+    }
+
+    private String getLuxId() {
+        return this.getShades(
+                this.lux.getShades());
+    }
+
+    private String getCoreId() {
+        return this.getShades(
+                this.core.getShades());
+    }
+
+    private String getWaveId() {
+        return this.getShades(
+                this.wave.getShades());
+    }
+
+    private String getFlareId() {
+        return this.getShades(
+                this.flare.getShades());
+    }
+
+    private String getSparkId() {
+        return this.getShades(
+                this.spark.getShades());
+    }
+
+    private String getShades(String[] shades) {
+        StringBuilder builder = new StringBuilder();
+
+        for (String shade : shades) {
+            builder.append(shade.charAt(shade.length() - 2));
+        }
+
+        return builder.toString();
+    }
 }

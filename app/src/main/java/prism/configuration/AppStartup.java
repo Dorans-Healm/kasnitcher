@@ -84,7 +84,7 @@ public abstract class AppStartup {
 
                 // infrastructure.filesystem
                 new FileImageReader(),
-                new FileColorWriter()
+                new FileColorWriter(appExecutionContext)
         );
     }
 }

@@ -19,6 +19,7 @@ import prism.configuration.adapter.WriterAdapter;
 @Setter
 public class DaemonContext extends AbstractServiceContextConfiguration {
 
+    // TODO - need to see which of them i will make obligatory to be kept alive (the same to single-exec config).
     private WriterAdapter writerAdapter;
 
     private ListenerAdapter listenerAdapter;
