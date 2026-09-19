@@ -70,14 +70,13 @@ public class FileDataWriter {
                 writer.newLine();
 
                 writer.write(prism.getFormatted());
-            } finally {
-                // TODO - shouldnt be here
-                Files.deleteIfExists(temp);
             }
 
             Files.move(path, temp,
                     StandardCopyOption.ATOMIC_MOVE,
                     StandardCopyOption.REPLACE_EXISTING);
+
+            Files.deleteIfExists(temp);
         } catch (Exception e) {
             throw new RuntimeException("Error while validating active configuration", e);
         }
