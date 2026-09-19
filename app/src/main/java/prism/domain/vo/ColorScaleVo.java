@@ -81,7 +81,7 @@ public class ColorScaleVo {
         String[] formatted = new String[shades.length];
 
         for (int i = 0; i < shades.length; i++) {
-            formatted[i] = ";%s".formatted(shades[i]);
+            formatted[i] = "::%s".formatted(shades[i]);
         }
 
         return formatted;

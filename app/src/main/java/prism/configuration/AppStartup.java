@@ -15,7 +15,7 @@ import prism.application.service.CacheService;
 import prism.application.service.StorageService;
 import prism.application.service.ListeningService;
 import prism.application.service.WriteService;
-import prism.infrastructure.filesystem.FileColorWriter;
+import prism.infrastructure.filesystem.FileDataWriter;
 import prism.infrastructure.filesystem.FileImageReader;
 
 import java.util.function.Supplier;
@@ -84,7 +84,7 @@ public abstract class AppStartup {
 
                 // infrastructure.filesystem
                 new FileImageReader(),
-                new FileColorWriter(appExecutionContext)
+                new FileDataWriter(appExecutionContext)
         );
     }
 }

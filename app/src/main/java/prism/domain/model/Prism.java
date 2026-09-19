@@ -52,9 +52,49 @@ public class Prism {
      */
     private @NonNull ColorScaleVo spark;
 
+    public String getFormatted() {
+        StringBuilder builder = new StringBuilder();
+
+        builder.append(this.appendType(
+                builder, "lux", this.lux.getFormattedShades()));
+
+        builder.append(System.lineSeparator());
+
+        builder.append(this.appendType(
+                builder, "core", this.core.getFormattedShades()));
+
+        builder.append(System.lineSeparator());
+
+        builder.append(this.appendType(
+                builder, "wave", this.wave.getFormattedShades()));
+
+        builder.append(System.lineSeparator());
+
+        builder.append(this.appendType(
+                builder, "flare", this.flare.getFormattedShades()));
+
+        builder.append(System.lineSeparator());
+
+        builder.append(this.appendType(
+                builder, "spark", this.spark.getFormattedShades()));
+
+        return builder.toString();
+    }
+
+    private StringBuilder appendType(StringBuilder builder, String type, String[] colors) {
+        for (String color : colors) {
+            builder.append(type)
+                    .append(color)
+                    .append(System.lineSeparator());
+        }
+
+        builder.append(System.lineSeparator());
+
+        return builder;
+    }
 
     public String getId() {
-        return this.getLuxId() +
+        return "ID: " + this.getLuxId() +
                 "-" +
                 this.getCoreId() +
                 "-" +
