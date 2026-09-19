@@ -1,7 +1,15 @@
 package prism.adapter.operation;
 
+import lombok.extern.java.Log;
+import prism.application.service.WriteService;
+import prism.configuration.adapter.ArgumentAdapter;
 import prism.configuration.context.ExecutionerContext;
 import prism.adapter.cli.input.Command;
+import prism.domain.exception.ArgumentNotFoundException;
+import prism.domain.model.Prism;
+import prism.infrastructure.filesystem.FileDataWriter;
+
+import java.util.logging.Level;
 
 /**
  * Operation that serves as the entry point for a on-off client execution.
@@ -9,6 +17,7 @@ import prism.adapter.cli.input.Command;
  * This initializes an {@link ExecutionerContext} to hold configuration needed for sending a
  * single request to the background daemon.
  */
+@Log
 public class ExecutionerOperation {
 
     private final Command[] commands;
@@ -46,8 +55,37 @@ public class ExecutionerOperation {
         ExecutionerContext context =
                 new ExecutionerContext();
 
-        context.updateConfiguration(this.commands);
+        try {
+            context.updateConfiguration(this.commands);
 
+            WriteService writeService =
+                    new WriteService(() -> context);
 
+            String filePath = this.getArgumentFile(context);
+
+            Integer[][] imageColors =
+                    writeService.processImage(filePath);
+
+            Prism color = writeService
+                    .getPrism(imageColors);
+
+            FileDataWriter writer =
+                    new FileDataWriter(() -> context);
+
+            writer.writeSpectrum(color);
+        } catch (Exception e) {
+            log.log(Level.SEVERE, e.getMessage());
+        }
+    }
+
+    private String getArgumentFile(ExecutionerContext executionerContext) {
+        ArgumentAdapter argumentAdapter =
+                executionerContext.getArgumentAdapter();
+
+        if (argumentAdapter == null) {
+            throw new ArgumentNotFoundException("No file argument found");
+        }
+
+        return argumentAdapter.getFile();
     }
 }

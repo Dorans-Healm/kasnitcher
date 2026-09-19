@@ -1,13 +1,11 @@
 package prism.configuration.context;
 
+import jdk.dynalink.NoSuchDynamicMethodException;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import prism.adapter.cli.AppSubCommandType;
 import prism.adapter.cli.input.Command;
-import prism.configuration.adapter.CacheAdapter;
-import prism.configuration.adapter.ListenerAdapter;
-import prism.configuration.adapter.StorageAdapter;
-import prism.configuration.adapter.WriterAdapter;
+import prism.configuration.adapter.*;
 import prism.utils.ArrayUtils;
 import prism.utils.FileUtils;
 
@@ -49,13 +47,20 @@ public abstract class AbstractServiceContextConfiguration {
      * @return a populated {@link WriterAdapter}
      * @throws IllegalArgumentException if an invalid sub-command or argument is provided
      */
-    protected @NonNull WriterAdapter getWriterAdapter(@NonNull String[] subCommands) {
-        WriterAdapter writerAdapter = new WriterAdapter();
+    protected @NonNull WriterAdapter getWriterAdapter(@Nullable WriterAdapter adapter, @NonNull String[] subCommands) {
+        WriterAdapter writerAdapter = adapter == null
+                ? new WriterAdapter()
+                : adapter;
 
         for (int i = 0; i < subCommands.length; i++) {
             String command = subCommands[i];
 
             this.assertValidSubCommand(command);
+
+            if (isReset(command)) {
+                writerAdapter = new WriterAdapter();
+                continue;
+            }
 
             if (ArrayUtils.contains(DIRECTORY.getSubCommands(), command)) {
                 if (!DIRECTORY.isNullable()) {
@@ -68,6 +73,7 @@ public abstract class AbstractServiceContextConfiguration {
                     }
 
                     writerAdapter.setDirectory(dir);
+                    continue;
                 }
             }
 
@@ -75,6 +81,7 @@ public abstract class AbstractServiceContextConfiguration {
                 if (!FILE.isNullable()) {
                     writerAdapter.setFile(subCommands[i + 1]);
                     i++;
+                    continue;
                 }
             }
 
@@ -113,13 +120,24 @@ public abstract class AbstractServiceContextConfiguration {
      * @return a populated {@link CacheAdapter}
      * @throws IllegalArgumentException if an invalid amount or sub-command is provided
      */
-    protected @NonNull CacheAdapter getCacheAdapter(@NonNull String[] subCommands) {
-        CacheAdapter cacheAdapter = new CacheAdapter();
+    protected @Nullable CacheAdapter getCacheAdapter(@Nullable CacheAdapter adapter, @NonNull String[] subCommands) {
+        CacheAdapter cacheAdapter = adapter == null
+                ? new CacheAdapter()
+                : adapter;
 
         for (int i = 0; i < subCommands.length; i++) {
             String command = subCommands[i];
 
             this.assertValidSubCommand(command);
+
+            if (isInterruption(command)) {
+                return null;
+            }
+
+            if (isReset(command)) {
+                cacheAdapter = new CacheAdapter();
+                continue;
+            }
 
             if (ArrayUtils.contains(AMOUNT.getSubCommands(), command)) {
                 if (!AMOUNT.isNullable()) {
@@ -156,13 +174,25 @@ public abstract class AbstractServiceContextConfiguration {
      * @return a populated {@link StorageAdapter}
      * @throws IllegalArgumentException if an invalid directory or sub-command is provided
      */
-    protected @NonNull StorageAdapter getStorageAdapter(@NonNull String[] subCommands) {
-        StorageAdapter storageAdapter = new StorageAdapter();
+    protected @Nullable StorageAdapter getStorageAdapter(@Nullable StorageAdapter adapter, @NonNull String[] subCommands) {
+        StorageAdapter storageAdapter = adapter == null
+                ? new StorageAdapter()
+                : adapter;
 
         for (int i = 0; i < subCommands.length; i++) {
+
             String command = subCommands[i];
 
             this.assertValidSubCommand(command);
+
+            if (isInterruption(command)) {
+                return null;
+            }
+
+            if (isReset(command)) {
+                storageAdapter = new StorageAdapter();
+                continue;
+            }
 
             if (ArrayUtils.contains(DIRECTORY.getSubCommands(), command)) {
                 if (!DIRECTORY.isNullable()) {
@@ -175,6 +205,7 @@ public abstract class AbstractServiceContextConfiguration {
                     }
 
                     storageAdapter.setDirectory(dir);
+                    continue;
                 }
             }
 
@@ -206,13 +237,24 @@ public abstract class AbstractServiceContextConfiguration {
      * @return a populated {@link ListenerAdapter}
      * @throws IllegalArgumentException if an invalid directory or sub-command is provided
      */
-    protected @NonNull ListenerAdapter getListenerAdapter(@NonNull String[] subCommands) {
-        ListenerAdapter listenerAdapter = new ListenerAdapter();
+    protected @Nullable ListenerAdapter getListenerAdapter(@Nullable ListenerAdapter adapter, @NonNull String[] subCommands) {
+        ListenerAdapter listenerAdapter = adapter == null
+                ? new ListenerAdapter()
+                : adapter;
 
         for (int i = 0; i < subCommands.length; i++) {
             String command = subCommands[i];
 
             this.assertValidSubCommand(command);
+
+            if (isInterruption(command)) {
+                return null;
+            }
+
+            if (isReset(command)) {
+                listenerAdapter = new ListenerAdapter();
+                continue;
+            }
 
             if (ArrayUtils.contains(DIRECTORY.getSubCommands(), command)) {
                 if (!DIRECTORY.isNullable()) {
@@ -232,6 +274,30 @@ public abstract class AbstractServiceContextConfiguration {
         return listenerAdapter;
     }
 
+    public @Nullable ArgumentAdapter getArgumentAdapter() {
+        throw new NoSuchDynamicMethodException("Argument adapter " +
+                "method should be created for each individual execution context.");
+    }
+
+    protected @NonNull ArgumentAdapter getArgumentAdapter(@NonNull String[] subCommands) {
+        ArgumentAdapter argumentAdapter = new ArgumentAdapter();
+
+        for (int i = 0; i < subCommands.length; i++) {
+            String command = subCommands[i];
+
+            this.assertValidSubCommand(command);
+
+            if (ArrayUtils.contains(FILE.getSubCommands(), command)) {
+                if (!FILE.isNullable()) {
+                    argumentAdapter.setFile(subCommands[i + 1]);
+                    i++;
+                }
+            }
+        }
+
+        return argumentAdapter;
+    }
+
     /**
      * Validates if a subCommand is actually a subCommand, or else, throws.
      *
@@ -244,5 +310,13 @@ public abstract class AbstractServiceContextConfiguration {
             throw new IllegalArgumentException(
                     "%s is not a valid Sub command.".formatted(subCommandStr));
         }
+    }
+
+    private boolean isInterruption(String subCommand) {
+        return ArrayUtils.contains(INTERRUPT.getSubCommands(), subCommand);
+    }
+
+    private boolean isReset(String subCommand) {
+        return ArrayUtils.contains(RESET.getSubCommands(), subCommand);
     }
 }

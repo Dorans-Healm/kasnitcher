@@ -21,7 +21,7 @@ public enum AppCommandType {
      */
     LISTEN(new String[]{"-l", "--listen"},
             DAEMON,
-            new AppSubCommandType[]{DIRECTORY},
+            new AppSubCommandType[]{DIRECTORY, INTERRUPT, RESET},
             ListeningService.class),
 
     /**
@@ -30,7 +30,7 @@ public enum AppCommandType {
      */
     STORE(new String[]{"-s", "--store"},
             DAEMON,
-            new AppSubCommandType[]{DIRECTORY, FILE},
+            new AppSubCommandType[]{DIRECTORY, FILE, INTERRUPT, RESET},
             StorageService.class),
 
     /**
@@ -39,7 +39,7 @@ public enum AppCommandType {
      */
     WRITE(new String[]{"-w", "--write"},
             POLYMATH,
-            new AppSubCommandType[]{DIRECTORY, FILE, TYPE},
+            new AppSubCommandType[]{DIRECTORY, FILE, TYPE, RESET},
             WriteService.class),
 
     /**
@@ -47,7 +47,15 @@ public enum AppCommandType {
      */
     CACHE(new String[]{"-c", "--cache"},
             DAEMON,
-            new AppSubCommandType[]{AMOUNT},
+            new AppSubCommandType[]{AMOUNT, INTERRUPT, RESET},
+            CacheService.class),
+
+    /**
+     * Should the system (daemon or executioner) use some argument on execution?
+     */
+    ARGUMENT(new String[]{"-a", "--argument"},
+            POLYMATH,
+            new AppSubCommandType[]{FILE},
             CacheService.class),
 
     ;

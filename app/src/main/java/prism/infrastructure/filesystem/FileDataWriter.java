@@ -71,6 +71,7 @@ public class FileDataWriter {
 
                 writer.write(prism.getFormatted());
             } finally {
+                // TODO - shouldnt be here
                 Files.deleteIfExists(temp);
             }
 

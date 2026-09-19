@@ -15,7 +15,11 @@ public enum AppSubCommandType {
 
     AMOUNT(new String[]{"-a", "--amount"}, false),
 
-    TYPE(new String[]{"-t", "--type"}, false)
+    TYPE(new String[]{"-t", "--type"}, false),
+
+    INTERRUPT(new String[]{"interrupt"}, true),
+
+    RESET(new String[]{"reset"}, true),
 
     ;
 
