@@ -267,6 +267,14 @@ public abstract class AbstractServiceContextConfiguration {
                     }
 
                     listenerAdapter.setDirectory(dir);
+                    continue;
+                }
+            }
+
+            if (ArrayUtils.contains(FILE.getSubCommands(), command)) {
+                if (!FILE.isNullable()) {
+                    listenerAdapter.setFile(subCommands[i + 1]);
+                    i++;
                 }
             }
         }

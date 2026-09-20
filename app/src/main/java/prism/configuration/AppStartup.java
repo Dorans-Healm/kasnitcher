@@ -5,7 +5,7 @@ import org.jspecify.annotations.NonNull;
 import prism.application.component.ColorCache;
 import prism.application.component.color.ColorWriter;
 import prism.application.component.ImageReader;
-import prism.application.component.WallpaperListener;
+import prism.application.component.SocketSubscriber;
 import prism.application.component.color.ContrastFinder;
 import prism.configuration.context.AbstractServiceContextConfiguration;
 import prism.configuration.context.AppContext;
@@ -66,7 +66,7 @@ public abstract class AppStartup {
                 new ContrastFinder(),
 
                 // application.port
-                new WallpaperListener(),
+                new SocketSubscriber(appExecutionContext),
                 new ColorWriter(),
                 new ImageReader(),
 

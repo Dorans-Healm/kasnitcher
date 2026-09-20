@@ -21,7 +21,7 @@ public enum AppCommandType {
      */
     LISTEN(new String[]{"-l", "--listen"},
             DAEMON,
-            new AppSubCommandType[]{DIRECTORY, INTERRUPT, RESET},
+            new AppSubCommandType[]{DIRECTORY, FILE, INTERRUPT, RESET},
             ListeningService.class),
 
     /**

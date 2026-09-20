@@ -31,9 +31,7 @@ public class ColorCache {
     @Getter
     private boolean started;
 
-    public ColorCache(
-            @NonNull Supplier<? extends AbstractServiceContextConfiguration> appExecutionContext) {
-
+    public ColorCache(@NonNull Supplier<? extends AbstractServiceContextConfiguration> appExecutionContext) {
         this.appExecutionContext = appExecutionContext;
         this.scheduler = Executors.newSingleThreadScheduledExecutor(
                 Thread.ofVirtual().factory()
