@@ -3,7 +3,9 @@ package prism.application.component;
 import org.jspecify.annotations.NonNull;
 import prism.configuration.adapter.ListenerAdapter;
 import prism.configuration.context.AbstractServiceContextConfiguration;
+import prism.domain.model.Listened;
 import prism.utils.FileUtils;
+import tools.jackson.databind.ObjectMapper;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -13,6 +15,7 @@ import java.net.UnixDomainSocketAddress;
 import java.nio.channels.Channels;
 import java.nio.channels.SocketChannel;
 import java.nio.charset.StandardCharsets;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class SocketSubscriber implements AutoCloseable {
@@ -21,8 +24,12 @@ public class SocketSubscriber implements AutoCloseable {
 
     private SocketChannel socketChannel;
 
+    ObjectMapper mapper;
+
     public SocketSubscriber(@NonNull Supplier<? extends AbstractServiceContextConfiguration> appExecutionContext) {
         this.appExecutionContext = appExecutionContext;
+
+        this.mapper = new ObjectMapper();
     }
 
     @Override
@@ -65,7 +72,7 @@ public class SocketSubscriber implements AutoCloseable {
         }
     }
 
-    public void listen() {
+    public void listen(Consumer<String> consumer) {
         try {
             BufferedReader reader = new BufferedReader(
                     new InputStreamReader(
@@ -75,7 +82,16 @@ public class SocketSubscriber implements AutoCloseable {
             String message;
 
             while ((message = reader.readLine()) != null) {
+                Listened listened = this.mapper
+                        .readValue(message, Listened.class);
 
+                String ext = listened.extractFirstImageFileExt();
+                if (ext.isBlank()) {
+                    continue;
+                }
+
+                consumer.accept(
+                        listened.extractCmdFile(ext));
             }
         } catch (IOException e) {
             System.err.println("Connection dropped or error reading: " + e.getMessage());

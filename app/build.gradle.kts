@@ -12,15 +12,20 @@ repositories {
 }
 
 dependencies {
-    // This dependency is used by the application.
-    implementation(libs.guava)
 
     // ▛▘▛▌▌▌▛▘▛▘█▌
     // ▄▌▙▌▙▌▌ ▙▖▙▖
 
+    // Code utilities
+    implementation(libs.guava)
+
     // Lombok
     compileOnly("org.projectlombok:lombok:1.18.46")
     annotationProcessor("org.projectlombok:lombok:1.18.46")
+
+    // Jackson Json Parser
+    implementation("tools.jackson.core:jackson-core:3.2.3")
+    implementation("tools.jackson.core:jackson-databind:3.2.3")
 
     // ▗     ▗ ▘
     // ▜▘█▌▛▘▜▘▌▛▌▛▌
