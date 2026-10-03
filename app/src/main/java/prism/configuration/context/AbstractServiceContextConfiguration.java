@@ -163,7 +163,7 @@ public abstract class AbstractServiceContextConfiguration {
      *
      * @return the storage adapter, or {@code null} if unsupported
      */
-    protected @Nullable StorageAdapter getStorageAdapter() {
+    public @Nullable StorageAdapter getStorageAdapter() {
         return null;
     }
 

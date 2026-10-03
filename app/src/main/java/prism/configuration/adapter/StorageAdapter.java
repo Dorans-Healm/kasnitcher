@@ -11,6 +11,8 @@ import prism.domain.model.Prism;
 @Setter
 public class StorageAdapter {
 
+    public static final String STORAGE_PATH = "~/.cache/prism/storage.json";
+
     /**
      * The specific file name to use for storage operations.
      */

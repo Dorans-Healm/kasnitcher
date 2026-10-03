@@ -1,5 +1,6 @@
 package prism.application.component;
 
+import lombok.extern.java.Log;
 import org.jspecify.annotations.NonNull;
 import prism.configuration.adapter.ListenerAdapter;
 import prism.configuration.context.AbstractServiceContextConfiguration;
@@ -17,7 +18,9 @@ import java.nio.channels.SocketChannel;
 import java.nio.charset.StandardCharsets;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+import java.util.logging.Level;
 
+@Log
 public class SocketSubscriber implements AutoCloseable {
 
     private final Supplier<? extends AbstractServiceContextConfiguration> appExecutionContext;
@@ -94,7 +97,8 @@ public class SocketSubscriber implements AutoCloseable {
                         listened.extractCmdFile(ext));
             }
         } catch (IOException e) {
-            System.err.println("Connection dropped or error reading: " + e.getMessage());
+            log.log(Level.SEVERE,
+                    "Connection dropped or error reading: " + e.getMessage());
         }
     }
 }

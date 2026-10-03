@@ -68,4 +68,19 @@ public class FileUtils {
 
         return dirNoBar + "/" + fileNoBar;
     }
+
+    public static void assertFileAndDirExistence(Path filePath) {
+        try {
+            if (!Files.isDirectory(filePath.getParent())) {
+                Files.createDirectory(filePath.getParent());
+            }
+
+            if (!Files.exists(filePath)) {
+                Files.createFile(filePath);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Error while " +
+                    "asserting file and directory existence", e);
+        }
+    }
 }
