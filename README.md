@@ -1,5 +1,5 @@
 > [!WARNING]
-The CLI tool is still in development, breaking changes and unexpected behaviors are expected.
+Prism CLI tool is in active development, breaking changes and unexpected behaviors are expected. This README is a preliminary overview of the tool's core functionality and will be modified shortly after alfa and beta testing.
 
 ---
 
