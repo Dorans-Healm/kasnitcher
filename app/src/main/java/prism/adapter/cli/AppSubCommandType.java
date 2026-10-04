@@ -80,14 +80,18 @@ public enum AppSubCommandType {
     }
 
     public static @NonNull String[] getCommandsByArray(AppSubCommandType[] subCommands) {
-        String[] commands = new String[subCommands.length * 2];
+        int totalSize = 0;
+        for (AppSubCommandType type : subCommands) {
+            totalSize += type.subCommands.length;
+        }
+
+        String[] commands = new String[totalSize];
         int index = 0;
 
         for (AppSubCommandType type : subCommands) {
-            String[] subCmds = type.subCommands;
-
-            commands[index++] = subCmds[0];
-            commands[index++] = subCmds[1];
+            for (String subCmd : type.subCommands) {
+                commands[index++] = subCmd;
+            }
         }
 
         return commands;
