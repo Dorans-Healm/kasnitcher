@@ -11,6 +11,7 @@ import prism.domain.exception.OrphanSubCommandTypeException;
 import prism.adapter.cli.input.Command;
 import prism.infrastructure.daemon.SocketServer;
 
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.logging.Level;
 
@@ -34,8 +35,8 @@ public class Main {
             ProcedureCaller.assertCall(cmd);
 
             if (START_CMD.equalsIgnoreCase(cmd)) {
-                Command[] commands =
-                        ProcedureCaller.assertAndGetExecutionerCall(args);
+                Command[] commands = ProcedureCaller.assertAndGetDaemonCall(
+                        Arrays.copyOfRange(args, 1, args.length));
 
                 log.info("Daemon mode " +
                         "identified. Starting the process.");

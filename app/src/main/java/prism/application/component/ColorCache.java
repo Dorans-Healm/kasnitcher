@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.extern.java.Log;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
-import prism.configuration.annotations.PostConstruct;
 import prism.configuration.adapter.CacheAdapter;
 import prism.configuration.context.AbstractServiceContextConfiguration;
 import prism.domain.model.Prism;
@@ -20,7 +19,9 @@ import java.util.function.Supplier;
 @Log
 public class ColorCache {
 
-    private static final Integer WATCHER_WAIT_TIME = 5_000;
+    private static final int WATCHER_WAIT_TIME = 5_000;
+
+    private static final int TOTAL_PROPERTIES = 3;
 
     private final Supplier<? extends AbstractServiceContextConfiguration> appExecutionContext;
 
@@ -36,20 +37,45 @@ public class ColorCache {
         this.scheduler = Executors.newSingleThreadScheduledExecutor(
                 Thread.ofVirtual().factory()
         );
+        this.cache = new Object[this.getConfiguredAmount()][TOTAL_PROPERTIES];
     }
 
-    @PostConstruct
-    private void setup() {
+    /**
+     * Resizes the cache to the currently configured amount, keeping as many existing
+     * entries as fit. Needed because the configuration can change after the initial
+     * {@link CacheAdapter#AMOUNT}.
+     */
+    private void resizeIfNeeded() {
+        int amount = this.getConfiguredAmount();
+
+        if (this.cache.length == amount) {
+            return;
+        }
+
+        Object[][] resized = new Object[amount][TOTAL_PROPERTIES];
+
+        System.arraycopy(this.cache, 0,
+                resized, 0, Math.min(amount, this.cache.length));
+
+        this.cache = resized;
+    }
+
+    private int getConfiguredAmount() {
         CacheAdapter cacheAdapter =
                 this.appExecutionContext.get().getCacheAdapter();
 
-        Integer arrSize = CacheAdapter.AMOUNT;
+        Integer amount = CacheAdapter.AMOUNT;
 
         if (Objects.nonNull(cacheAdapter)) {
-            arrSize = cacheAdapter.getAmount();
+            amount = cacheAdapter.getAmount();
         }
 
-        this.cache = new Object[arrSize][3];
+        if (amount < 1) {
+            throw new IllegalArgumentException(
+                    "Cache amount must be at least 1, got %d".formatted(amount));
+        }
+
+        return amount;
     }
 
     public void watch() {
@@ -119,8 +145,9 @@ public class ColorCache {
             );
         }
 
-        int index = ArrayUtils.lastOccurrence(this.cache);
+        this.resizeIfNeeded();
 
+        int index = ArrayUtils.lastOccurrence(this.cache);
         if (index == -1) {
             index = this.lastUsed(this.cache);
         }

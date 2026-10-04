@@ -53,7 +53,7 @@ public final class AppContext {
             Method[] methods = inst.getClass().getDeclaredMethods();
 
             for (Method method : methods) {
-                if (method.isAnnotationPresent(PostConstruct.class)) {
+                if (!method.isAnnotationPresent(PostConstruct.class)) {
                     continue;
                 }
 

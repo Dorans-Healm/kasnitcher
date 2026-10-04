@@ -1,10 +1,16 @@
 package prism.domain.model;
 
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.jspecify.annotations.NonNull;
 import prism.infrastructure.filesystem.ActiveImageType;
 
+import java.util.Objects;
+
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class Listened {
@@ -13,21 +19,11 @@ public class Listened {
     private String command;
 
     public @NonNull String extractFirstImageFileExt() {
-        int dotIndex;
+        for (String token : this.getCommandTokens()) {
+            String ext = this.getExtension(token);
 
-        while ((dotIndex = this.command.indexOf(".")) != -1) {
-            int crrIndex = dotIndex + 1;
-
-            StringBuilder ext = new StringBuilder();
-            while (crrIndex < this.command.length()
-                    && this.command.charAt(crrIndex) != ' ') {
-                ext.append(this.command.charAt(crrIndex));
-            }
-
-            String extType = ext.toString();
-
-            if (ActiveImageType.has(extType)) {
-                return extType;
+            if (ActiveImageType.has(ext)) {
+                return ext;
             }
         }
 
@@ -35,23 +31,45 @@ public class Listened {
     }
 
     public @NonNull String extractCmdFile(@NonNull String ext) {
-        assert this.command != null;
-
-        if (this.command.isBlank() || ext.isBlank()) {
+        if (ext.isBlank()) {
             return "";
         }
 
-        int start = 0;
-        int end = ext.length();
-
-        for (int i = this.command.indexOf(ext) - 2; i >= 0; i--) {
-            start = i;
-
-            if (this.command.charAt(i) == ' ') {
-                break;
+        for (String token : this.getCommandTokens()) {
+            if (this.getExtension(token).equals(ext)) {
+                return token;
             }
         }
 
-        return this.command.substring(start, end);
+        return "";
+    }
+
+    /**
+     * Splits the listened command by whitespace, stripping surrounding quotes of each token.
+     *
+     * @return the command tokens, or an empty array if there is no command
+     */
+    private @NonNull String[] getCommandTokens() {
+        if (Objects.isNull(this.command) || this.command.isBlank()) {
+            return new String[]{};
+        }
+
+        String[] tokens = this.command.trim().split("\\s+");
+
+        for (int i = 0; i < tokens.length; i++) {
+            tokens[i] = tokens[i].replaceAll("^['\"]|['\"]$", "");
+        }
+
+        return tokens;
+    }
+
+    private @NonNull String getExtension(@NonNull String token) {
+        int dotIndex = token.lastIndexOf('.');
+
+        if (dotIndex == -1 || dotIndex == token.length() - 1) {
+            return "";
+        }
+
+        return token.substring(dotIndex + 1);
     }
 }
