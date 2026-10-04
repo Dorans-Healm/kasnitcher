@@ -1,5 +1,4 @@
-# > [!WARNING]
-
+> [!WARNING]
 The CLI tool is still in development, breaking changes and unexpected behaviors are expected.
 
 ---
