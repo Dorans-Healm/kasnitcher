@@ -74,7 +74,7 @@ public class ArrayUtils {
         }
 
         for (int i = 0; i < map.length; i += 2) {
-            if (map[i].equals(key)) {
+            if (Objects.equals(map[i], key)) {
                 return map[i + 1];
             }
         }

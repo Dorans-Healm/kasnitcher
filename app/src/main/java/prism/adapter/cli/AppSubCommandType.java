@@ -34,7 +34,12 @@ public enum AppSubCommandType {
     static {
         AppSubCommandType[] values = values();
 
-        enumMap = new Object[values.length * 2 * 2];
+        int totalAliases = 0;
+        for (AppSubCommandType type : values) {
+            totalAliases += type.subCommands.length;
+        }
+
+        enumMap = new Object[totalAliases * 2];
         int index = 0;
 
         for (AppSubCommandType type : values) {
