@@ -92,12 +92,12 @@ public abstract class AbstractServiceContextConfiguration {
                 if (!TYPE.isNullable()) {
                     String type = subCommands[i + 1];
 
-                    if (!WriterAdapter.RGB.equals(type) && !WriterAdapter.HEX.equals(type)) {
+                    if (!WriterAdapter.RGB.equalsIgnoreCase(type) && !WriterAdapter.HEX.equalsIgnoreCase(type)) {
                         throw new IllegalArgumentException(("%s is not a " +
                                 "valid type for color writing.").formatted(type));
                     }
 
-                    writerAdapter.setType(type);
+                    writerAdapter.setType(type.toLowerCase());
                     i++;
                 }
             }
