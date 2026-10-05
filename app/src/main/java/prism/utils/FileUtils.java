@@ -72,7 +72,7 @@ public class FileUtils {
     public static void assertFileAndDirExistence(Path filePath) {
         try {
             if (!Files.isDirectory(filePath.getParent())) {
-                Files.createDirectory(filePath.getParent());
+                Files.createDirectories(filePath.getParent());
             }
 
             if (!Files.exists(filePath)) {

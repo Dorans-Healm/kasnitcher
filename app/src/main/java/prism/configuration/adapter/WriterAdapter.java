@@ -30,7 +30,7 @@ public class WriterAdapter {
     /**
      * The default output directory for the palette file.
      */
-    private String directory = "~/.cache/prism/";
+    private String directory = System.getProperty("user.home") + "/.cache/prism/";
 
     /**
      * The color format type to use for writing (e.g. {@value #RGB} or {@value #HEX}).

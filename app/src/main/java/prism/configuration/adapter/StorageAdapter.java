@@ -11,7 +11,7 @@ import prism.domain.model.Prism;
 @Setter
 public class StorageAdapter {
 
-    public static final String STORAGE_PATH = "~/.cache/prism/storage.json";
+    public static final String STORAGE_PATH = System.getProperty("user.home") + "/.cache/prism/storage.json";
 
     /**
      * The specific file name to use for storage operations.
@@ -21,5 +21,5 @@ public class StorageAdapter {
     /**
      * The target directory for storage operations.
      */
-    private String directory = "~/.cache/prism/";
+    private String directory = System.getProperty("user.home") + "/.cache/prism/";
 }
