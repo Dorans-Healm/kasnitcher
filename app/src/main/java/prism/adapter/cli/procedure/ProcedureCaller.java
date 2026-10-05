@@ -4,6 +4,7 @@ package prism.adapter.cli.procedure;
 import prism.Main;
 import prism.adapter.cli.AppCommandType;
 import prism.adapter.cli.AppSubCommandType;
+import prism.adapter.operation.DaemonOperation;
 import prism.domain.exception.CommandNotFoundException;
 import prism.domain.exception.DaemonDownOnCommandException;
 import prism.domain.exception.OrphanSubCommandTypeException;
@@ -12,6 +13,7 @@ import prism.infrastructure.daemon.SocketServer;
 import prism.infrastructure.daemon.SocketStatusType;
 import prism.utils.ArrayUtils;
 
+import java.nio.file.Files;
 import java.util.Objects;
 
 public class ProcedureCaller {
@@ -61,8 +63,7 @@ public class ProcedureCaller {
             return;
         }
 
-        if (Objects.nonNull(SocketServer.getSocketStatusType())
-                && !SocketServer.getSocketStatusType().equals(SocketStatusType.READY)) {
+        if (!Files.exists(DaemonOperation.getSocketPath())) {
             String[] daemonCmds = AppCommandType.getDaemonCmds();
             if (ArrayUtils.contains(daemonCmds, arg)) {
                 throw new DaemonDownOnCommandException(("Daemon command %s, " +
