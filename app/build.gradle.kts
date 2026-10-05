@@ -17,7 +17,7 @@ dependencies {
     // ▄▌▙▌▙▌▌ ▙▖▙▖
 
     // Code utilities
-    implementation(libs.guava)
+    compileOnly(libs.jspecify)
 
     // Lombok
     compileOnly("org.projectlombok:lombok:1.18.46")
