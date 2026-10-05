@@ -53,16 +53,21 @@ public class Main {
 
             ExecutionerOperation.execute(commands);
         } catch (DaemonDownOnCommandException
-                 | CommandNotFoundException | OrphanSubCommandTypeException e) {
+                 | CommandNotFoundException
+                 | OrphanSubCommandTypeException
+                 | IllegalStateException
+                 | IllegalArgumentException e) {
 
             log.warning(e.getMessage());
 
         } catch (Exception e) {
-            if (Objects.nonNull(SocketServer.getSocketStatusType()))
+            if (Objects.nonNull(SocketServer.getSocketStatusType())) {
                 log.log(Level.SEVERE, ("System error, " +
                         "exiting program with: %s").formatted(e.getCause()), e);
-
-            log.severe(e.getMessage());
+            } else {
+                assert log != null;
+                log.log(Level.SEVERE, e.getMessage());
+            }
 
             System.exit(1);
         }
