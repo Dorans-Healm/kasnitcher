@@ -47,7 +47,7 @@ public enum AppCommandType {
      */
     CACHE(new String[]{"-c", "--cache"},
             DAEMON,
-            new AppSubCommandType[]{AMOUNT, INTERRUPT, RESET},
+            new AppSubCommandType[]{AMOUNT, KEEP_ALIVE, INTERRUPT, RESET},
             CacheService.class),
 
     /**

@@ -157,6 +157,20 @@ public abstract class AbstractServiceContextConfiguration {
                     }
                 }
             }
+
+            if (ArrayUtils.contains(KEEP_ALIVE.getSubCommands(), command)) {
+                if (!KEEP_ALIVE.isNullable()) {
+                    String timeout = subCommands[i + 1];
+
+                    try {
+                        cacheAdapter.setTimeout(Integer.parseInt(timeout));
+                        i++;
+                    } catch (NumberFormatException e) {
+                        throw new IllegalArgumentException(
+                                "%s is not a valid timeout.".formatted(timeout));
+                    }
+                }
+            }
         }
 
         return cacheAdapter;
