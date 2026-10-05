@@ -10,6 +10,7 @@ import prism.domain.model.Prism;
 import prism.utils.ArrayUtils;
 
 import java.time.Instant;
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -120,7 +121,7 @@ public class ColorCache {
                     ((Instant) cache[2]).plusSeconds(timeout);
 
             if (!expiration.isAfter(now)) {
-                ArrayUtils.alter(this.cache, cache);
+                Arrays.fill(cache, null);
             }
         }
 
