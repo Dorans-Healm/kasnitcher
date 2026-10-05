@@ -85,16 +85,20 @@ public class SocketSubscriber implements AutoCloseable {
             String message;
 
             while ((message = reader.readLine()) != null) {
-                Listened listened = this.mapper
-                        .readValue(message, Listened.class);
+                try {
+                    Listened listened = this.mapper
+                            .readValue(message, Listened.class);
 
-                String ext = listened.extractFirstImageFileExt();
-                if (ext.isBlank()) {
-                    continue;
+                    String ext = listened.extractFirstImageFileExt();
+                    if (ext.isBlank()) {
+                        continue;
+                    }
+
+                    consumer.accept(
+                            listened.extractCmdFile(ext));
+                } catch (Exception e) {
+                    log.log(Level.WARNING, "Ignored invalid or malformed listened message: " + e.getMessage());
                 }
-
-                consumer.accept(
-                        listened.extractCmdFile(ext));
             }
         } catch (IOException e) {
             log.log(Level.SEVERE,
