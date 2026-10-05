@@ -79,7 +79,10 @@ public class FileDataWriter {
                     String line = iterator.next();
 
                     if (line.startsWith("ID:")) {
-                        return;
+                        if (line.equals(prism.getId())) {
+                            return;
+                        }
+                        break;
                     }
                 }
             } catch (Exception e) {
@@ -103,7 +106,7 @@ public class FileDataWriter {
                 writer.write(prism.getFormatted());
             }
 
-            Files.move(path, temp,
+            Files.move(temp, path,
                     StandardCopyOption.ATOMIC_MOVE,
                     StandardCopyOption.REPLACE_EXISTING);
 
