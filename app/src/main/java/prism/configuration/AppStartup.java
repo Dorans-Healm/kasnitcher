@@ -72,7 +72,7 @@ public abstract class AppStartup {
 
                 // application.service
                 new WriteService(appExecutionContext),
-                new StorageService(appExecutionContext),
+                new StorageService(),
                 new ListeningService(),
                 new CacheService(),
 

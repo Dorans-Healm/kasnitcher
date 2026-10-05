@@ -342,7 +342,7 @@ public class DaemonOperation extends AppStartup {
             this.writePrism(context, imagePath);
 
             if (Objects.nonNull(context.getStorageAdapter())) {
-                this.appContext.getClass(StorageService.class).store();
+                this.appContext.getClass(StorageService.class).store(imagePath);
             }
 
             log.info("Prism applied for %s".formatted(imagePath));
@@ -446,7 +446,7 @@ public class DaemonOperation extends AppStartup {
                 this.appContext.getClass(ListeningService.class);
 
         try {
-            listeningService.subscribe();
+            listeningService.subscribeWithRetry();
             log.info("Listener subscribed");
 
             listeningService.listen(this::onListened);

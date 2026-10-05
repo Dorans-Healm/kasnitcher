@@ -28,6 +28,11 @@ public class ListeningService {
                 .newSingleThreadScheduledExecutor();
     }
 
+    public void subscribeWithRetry() {
+        this.subscribeWithRetry(1);
+    }
+
+
     private void subscribeWithRetry(int attempt) {
         try {
             this.subscribe();

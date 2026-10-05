@@ -39,8 +39,16 @@ public class FileDataWriter {
         String storageJson =
                 mapper.writeValueAsString(storage);
 
-        Path storageFilePath =
-                Path.of(StorageAdapter.STORAGE_PATH);
+        AbstractServiceContextConfiguration executionContext = this.appExecutionContext.get();
+        StorageAdapter storageAdapter = executionContext.getStorageAdapter();
+
+        if (storageAdapter == null) {
+            throw new IllegalStateException("Storage configuration not present");
+        }
+
+        String dir = storageAdapter.getDirectory();
+        String file = storageAdapter.getFile();
+        Path storageFilePath = Path.of(FileUtils.buildPath(dir, file));
 
         FileUtils.assertFileAndDirExistence(storageFilePath);
 

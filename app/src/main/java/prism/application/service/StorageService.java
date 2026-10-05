@@ -1,43 +1,31 @@
 package prism.application.service;
 
 import lombok.extern.java.Log;
-import org.jspecify.annotations.NonNull;
-import prism.configuration.adapter.StorageAdapter;
-import prism.configuration.context.AbstractServiceContextConfiguration;
 import prism.configuration.context.AppContext;
 import prism.domain.model.Storage;
 import prism.infrastructure.filesystem.FileDataWriter;
 
+import java.nio.file.Path;
 import java.util.function.Supplier;
 import java.util.logging.Level;
 
 @Log
 public class StorageService {
 
-    private final Supplier<? extends AbstractServiceContextConfiguration> appExecutionContext;
-
     private final Supplier<FileDataWriter> dataWriter;
 
-    public StorageService(@NonNull Supplier<? extends AbstractServiceContextConfiguration> appExecutionContext) {
-        this.appExecutionContext = appExecutionContext;
-
+    public StorageService() {
         this.dataWriter = AppContext
                 .getClassLazy(FileDataWriter.class);
     }
 
-    public boolean store() {
-        AbstractServiceContextConfiguration executionContext = appExecutionContext.get();
+    public void store(String file) {
+        Path imagePath = Path.of(file);
 
-        StorageAdapter storageAdapter = executionContext.getStorageAdapter();
-        if (storageAdapter == null) {
-            return false;
-        }
+        String fileName = imagePath.getFileName().toString();
+        String dir = imagePath.getParent().toString();
 
-        String file = storageAdapter.getFile();
-        String dir = storageAdapter.getDirectory();
-
-        Storage crrStorage =
-                new Storage(file, dir);
+        Storage crrStorage = new Storage(fileName, dir);
 
         try {
             dataWriter.get()
@@ -45,9 +33,6 @@ public class StorageService {
         } catch (Exception e) {
             log.log(Level.SEVERE, "Storage " +
                     "information could not be written to file", e);
-            return false;
         }
-
-        return true;
     }
 }
