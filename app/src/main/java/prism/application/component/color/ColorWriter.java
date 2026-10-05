@@ -142,11 +142,29 @@ public class ColorWriter {
                         r, g, b,
                         amount,
                         previousAmount,
-                        maxAmount,
+                        1.0,
                         shade
                 );
 
                 result[index] = createBucket(r, g, b, amount, shade);
+
+                int tweak = shade == Shade.LIGHTER ? -1 : 1;
+                while (isDuplicate(result, result[index], index, shade)) {
+                    int br = (result[index] >> 8) & 0xF;
+                    int bg = (result[index] >> 4) & 0xF;
+                    int bb = result[index] & 0xF;
+
+                    br = Math.max(0, Math.min(15, br + tweak));
+                    bg = Math.max(0, Math.min(15, bg + tweak));
+                    bb = Math.max(0, Math.min(15, bb + tweak));
+
+                    int newBucket = (br << 8) | (bg << 4) | bb;
+                    if (newBucket == result[index]) {
+                        tweak = -tweak;
+                    } else {
+                        result[index] = newBucket;
+                    }
+                }
             }
 
             previousAmount = amount;
