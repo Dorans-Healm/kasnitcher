@@ -162,9 +162,10 @@ public class WriteService {
      */
     public @NonNull Integer[] getLuxShade(@NonNull Integer[][] buckets) {
         Integer grayShade = this.contrastFinder.get()
-                .findBestByAverage(this.toBucketArray(buckets));
+                .findBestByWorst(this.toBucketArray(buckets));
+        Integer grayRgb = (grayShade << 16) | (grayShade << 8) | grayShade;
         return this.colorWriter.get()
-                .calculateSpectrum(ColorUtils.quantizeColor(grayShade));
+                .calculateSpectrum(ColorUtils.quantizeColor(grayRgb));
     }
 
     /**
