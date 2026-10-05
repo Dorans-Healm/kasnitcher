@@ -55,27 +55,29 @@ public class Prism {
     public String getFormatted() {
         StringBuilder builder = new StringBuilder();
 
-        this.appendType(builder, "lux", this.lux.getFormattedShades());
+        this.appendType(builder, "lux", this.lux.getShades());
         builder.append(System.lineSeparator());
 
-        this.appendType(builder, "core", this.core.getFormattedShades());
+        this.appendType(builder, "core", this.core.getShades());
         builder.append(System.lineSeparator());
 
-        this.appendType(builder, "wave", this.wave.getFormattedShades());
+        this.appendType(builder, "wave", this.wave.getShades());
         builder.append(System.lineSeparator());
 
-        this.appendType(builder, "flare", this.flare.getFormattedShades());
+        this.appendType(builder, "flare", this.flare.getShades());
         builder.append(System.lineSeparator());
 
-        this.appendType(builder, "spark", this.spark.getFormattedShades());
+        this.appendType(builder, "spark", this.spark.getShades());
 
         return builder.toString();
     }
 
     private StringBuilder appendType(StringBuilder builder, String type, String[] colors) {
-        for (String color : colors) {
+        for (int i = 0; i < colors.length; i++) {
             builder.append(type)
-                    .append(color)
+                    .append((i + 1) * 100)
+                    .append("::")
+                    .append(colors[i])
                     .append(System.lineSeparator());
         }
 
@@ -97,37 +99,26 @@ public class Prism {
     }
 
     private String getLuxId() {
-        return this.getShades(
-                this.lux.getShades());
+        return this.getShades(this.lux.getShades());
     }
 
     private String getCoreId() {
-        return this.getShades(
-                this.core.getShades());
+        return this.getShades(this.core.getShades());
     }
 
     private String getWaveId() {
-        return this.getShades(
-                this.wave.getShades());
+        return this.getShades(this.wave.getShades());
     }
 
     private String getFlareId() {
-        return this.getShades(
-                this.flare.getShades());
+        return this.getShades(this.flare.getShades());
     }
 
     private String getSparkId() {
-        return this.getShades(
-                this.spark.getShades());
+        return this.getShades(this.spark.getShades());
     }
 
     private String getShades(String[] shades) {
-        StringBuilder builder = new StringBuilder();
-
-        for (String shade : shades) {
-            builder.append(shade.charAt(shade.length() - 2));
-        }
-
-        return builder.toString();
+        return Integer.toHexString(java.util.Arrays.hashCode(shades));
     }
 }
