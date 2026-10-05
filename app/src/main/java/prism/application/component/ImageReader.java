@@ -40,6 +40,12 @@ public class ImageReader {
             for (int x = 0; x < image.getWidth(); x++) {
 
                 int rgb = image.getRGB(x, y);
+                int alpha = (rgb >> 24) & 0xff;
+
+                if (alpha == 0) {
+                    continue;
+                }
+
                 int bucket = ColorUtils.quantizeColor(rgb);
 
                 occurrences[bucket]++;
