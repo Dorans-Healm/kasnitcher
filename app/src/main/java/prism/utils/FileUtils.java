@@ -58,7 +58,7 @@ public class FileUtils {
     public static @NonNull String buildPath(String dir, String file) {
         String dirNoBar = dir;
         if (dir.endsWith("/")) {
-            dirNoBar = dir.substring(dir.lastIndexOf("/"));
+            dirNoBar = dir.substring(0, dir.length() - 1);
         }
 
         String fileNoBar = file;
