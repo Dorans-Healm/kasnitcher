@@ -109,15 +109,21 @@ public class WriteService {
 
         // Most used color between the 4
         Integer core = this.getMostUsedFrom(buckets);
-        buckets = ArrayUtils.remove(buckets, core);
+        if (buckets.length > 1) {
+            buckets = ArrayUtils.remove(buckets, core);
+        }
 
         // Brightest color between the 3 remaining colors
         Integer flare = ColorUtils.getBrightest(buckets);
-        buckets = ArrayUtils.remove(buckets, flare);
+        if (buckets.length > 1) {
+            buckets = ArrayUtils.remove(buckets, flare);
+        }
 
         // Most used color between the 2 remaining colors
         Integer wave = this.getMostUsedFrom(buckets);
-        buckets = ArrayUtils.remove(buckets, wave);
+        if (buckets.length > 1) {
+            buckets = ArrayUtils.remove(buckets, wave);
+        }
 
         // Leaving left over color to support
         Integer spark = buckets[0][0];
