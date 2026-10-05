@@ -224,16 +224,5 @@ public class ArrayUtils {
         }
     }
 
-    public static @NonNull Integer lastOccurrence(@Nullable Object[] array) {
-        int lastOccurrence = -1;
-        for (int i = array.length - 1; i >= 0; i--) {
-            if (array[i] == null) {
-                lastOccurrence = i;
-            } else {
-                break;
-            }
-        }
 
-        return lastOccurrence;
-    }
 }

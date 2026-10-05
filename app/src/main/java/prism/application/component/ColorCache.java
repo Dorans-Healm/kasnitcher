@@ -7,7 +7,6 @@ import org.jspecify.annotations.Nullable;
 import prism.configuration.adapter.CacheAdapter;
 import prism.configuration.context.AbstractServiceContextConfiguration;
 import prism.domain.model.Prism;
-import prism.utils.ArrayUtils;
 
 import java.time.Instant;
 import java.util.Arrays;
@@ -155,10 +154,7 @@ public class ColorCache {
 
         this.resizeIfNeeded();
 
-        int index = ArrayUtils.lastOccurrence(this.cache);
-        if (index == -1) {
-            index = this.lastUsed(this.cache);
-        }
+        int index = this.lastUsed(this.cache);
 
         this.cache[index] =
                 new Object[]{filePath, prism, Instant.now()};
