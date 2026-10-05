@@ -65,7 +65,7 @@ public enum AppSubCommandType {
 
         if (subCommands.length > 2) {
             throw new IllegalArgumentException(
-                    "subCommands must be exactly 2");
+                    "subCommands must be at most 2");
         }
 
         this.subCommands = subCommands;

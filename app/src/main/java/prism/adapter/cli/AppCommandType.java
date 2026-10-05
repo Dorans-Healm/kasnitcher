@@ -21,8 +21,7 @@ public enum AppCommandType {
      */
     LISTEN(new String[]{"-l", "--listen"},
             DAEMON,
-            new AppSubCommandType[]{DIRECTORY, FILE, INTERRUPT, RESET},
-            ListeningService.class),
+            new AppSubCommandType[]{DIRECTORY, FILE, INTERRUPT, RESET}),
 
     /**
      * Should the daemon store given file location and given directory of the current
@@ -30,8 +29,7 @@ public enum AppCommandType {
      */
     STORE(new String[]{"-s", "--store"},
             DAEMON,
-            new AppSubCommandType[]{DIRECTORY, FILE, INTERRUPT, RESET},
-            StorageService.class),
+            new AppSubCommandType[]{DIRECTORY, FILE, INTERRUPT, RESET}),
 
     /**
      * Should the daemon write (store in a system file), the fetched colors of an image? Or
@@ -39,24 +37,21 @@ public enum AppCommandType {
      */
     WRITE(new String[]{"-w", "--write"},
             POLYMATH,
-            new AppSubCommandType[]{DIRECTORY, FILE, TYPE, RESET},
-            WriteService.class),
+            new AppSubCommandType[]{DIRECTORY, FILE, TYPE, RESET}),
 
     /**
      * Should the daemon hold a small, temporary cache from the last (enumerated) files?
      */
     CACHE(new String[]{"-c", "--cache"},
             DAEMON,
-            new AppSubCommandType[]{AMOUNT, KEEP_ALIVE, INTERRUPT, RESET},
-            CacheService.class),
+            new AppSubCommandType[]{AMOUNT, KEEP_ALIVE, INTERRUPT, RESET}),
 
     /**
      * Should the system (daemon or executioner) use some argument on execution?
      */
     PARAMETER(new String[]{"-p", "--parameter"},
             POLYMATH,
-            new AppSubCommandType[]{FILE},
-            CacheService.class),
+            new AppSubCommandType[]{FILE})
 
     ;
 
@@ -68,9 +63,6 @@ public enum AppCommandType {
 
     @Getter
     private final AppSubCommandType[] subCommands;
-
-    @Getter
-    private final Class<?> service;
 
     private static final Object[] enumMap;
 
@@ -91,28 +83,26 @@ public enum AppCommandType {
     AppCommandType(
             String[] commands,
             AppServiceType appServiceType,
-            AppSubCommandType[] subCommands,
-            Class<?> service
+            AppSubCommandType[] subCommands
     ) {
         if (Objects.isNull(commands)) {
             throw new IllegalArgumentException(
-                    "subCommands is null");
+                    "commands is null");
         }
 
         if (commands.length <= 0) {
             throw new IllegalArgumentException(
-                    "subCommands is empty");
+                    "commands is empty");
         }
 
         if (commands.length > 2) {
             throw new IllegalArgumentException(
-                    "subCommands must be exactly 2");
+                    "commands must be at most 2");
         }
 
         this.commands = commands;
         this.workingType = appServiceType;
         this.subCommands = subCommands;
-        this.service = service;
     }
 
     public static @Nullable AppCommandType getByCommand(String command) {
