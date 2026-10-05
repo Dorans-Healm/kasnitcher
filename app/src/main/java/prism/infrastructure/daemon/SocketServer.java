@@ -31,7 +31,7 @@ public class SocketServer implements AutoCloseable {
      */
     @Getter
     @Setter
-    private static SocketStatusType socketStatusType;
+    private static volatile SocketStatusType socketStatusType;
 
     /**
      * The underlying Unix-domain server socket channel.
@@ -96,9 +96,10 @@ public class SocketServer implements AutoCloseable {
      *
      * @param consumer the callback invoked for each accepted connection
      */
-    @SuppressWarnings("EndlessStream")
     public void listen(@NonNull Consumer<@Nullable SocketChannel> consumer) {
-        Stream.generate(this::accept).forEach(consumer);
+        Stream.generate(this::accept)
+                .takeWhile(Objects::nonNull)
+                .forEach(consumer);
     }
 
     /**
@@ -126,7 +127,7 @@ public class SocketServer implements AutoCloseable {
             throw new SocketInterruptionException(
                     "Interrupted socket communication", SocketStatusType.FORCEFUL_INTERRUPTION);
         } catch (IOException e) {
-            throw new RuntimeException("Socket acceptance error.");
+            throw new RuntimeException("Socket acceptance error.", e);
         }
     }
 }
