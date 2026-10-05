@@ -55,28 +55,19 @@ public class Prism {
     public String getFormatted() {
         StringBuilder builder = new StringBuilder();
 
-        builder.append(this.appendType(
-                builder, "lux", this.lux.getFormattedShades()));
-
+        this.appendType(builder, "lux", this.lux.getFormattedShades());
         builder.append(System.lineSeparator());
 
-        builder.append(this.appendType(
-                builder, "core", this.core.getFormattedShades()));
-
+        this.appendType(builder, "core", this.core.getFormattedShades());
         builder.append(System.lineSeparator());
 
-        builder.append(this.appendType(
-                builder, "wave", this.wave.getFormattedShades()));
-
+        this.appendType(builder, "wave", this.wave.getFormattedShades());
         builder.append(System.lineSeparator());
 
-        builder.append(this.appendType(
-                builder, "flare", this.flare.getFormattedShades()));
-
+        this.appendType(builder, "flare", this.flare.getFormattedShades());
         builder.append(System.lineSeparator());
 
-        builder.append(this.appendType(
-                builder, "spark", this.spark.getFormattedShades()));
+        this.appendType(builder, "spark", this.spark.getFormattedShades());
 
         return builder.toString();
     }
