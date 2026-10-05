@@ -13,7 +13,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.StandardProtocolFamily;
 import java.net.UnixDomainSocketAddress;
+import java.nio.channels.AsynchronousCloseException;
 import java.nio.channels.Channels;
+import java.nio.channels.ClosedChannelException;
 import java.nio.channels.SocketChannel;
 import java.nio.charset.StandardCharsets;
 import java.util.function.Consumer;
@@ -62,20 +64,23 @@ public class SocketSubscriber implements AutoCloseable {
     }
 
     public void unsubscribe() {
-        if (this.socketChannel != null && this.socketChannel.isConnected()) {
+        if (this.socketChannel != null && this.socketChannel.isOpen()) {
             try {
-                this.socketChannel.finishConnect();
                 this.socketChannel.close();
-
-                this.socketChannel = null;
             } catch (IOException e) {
                 throw new RuntimeException("An error " +
                         "was thrown while trying to end connection", e);
+            } finally {
+                this.socketChannel = null;
             }
         }
     }
 
     public void listen(Consumer<String> consumer) {
+        if (this.socketChannel == null) {
+            throw new IllegalStateException("Cannot listen before subscribing");
+        }
+
         try {
             BufferedReader reader = new BufferedReader(
                     new InputStreamReader(
@@ -100,6 +105,8 @@ public class SocketSubscriber implements AutoCloseable {
                     log.log(Level.WARNING, "Ignored invalid or malformed listened message: " + e.getMessage());
                 }
             }
+        } catch (ClosedChannelException e) {
+            log.log(Level.INFO, "Connection stopped.");
         } catch (IOException e) {
             log.log(Level.SEVERE,
                     "Connection dropped or error reading: " + e.getMessage());
