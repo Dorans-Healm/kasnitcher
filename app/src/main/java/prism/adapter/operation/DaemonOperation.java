@@ -11,7 +11,7 @@ import prism.application.service.ListeningService;
 import prism.application.service.StorageService;
 import prism.application.service.WriteService;
 import prism.configuration.AppStartup;
-import prism.configuration.adapter.ArgumentAdapter;
+import prism.configuration.adapter.ParameterAdapter;
 import prism.configuration.context.AbstractServiceContextConfiguration;
 import prism.configuration.context.AppContext;
 import prism.configuration.context.DaemonContext;
@@ -325,13 +325,13 @@ public class DaemonOperation extends AppStartup {
      * @param context the daemon context
      */
     private void applyArgument(@NonNull DaemonContext context) {
-        ArgumentAdapter argumentAdapter = context.getArgumentAdapter();
+        ParameterAdapter parameterAdapter = context.getParameterAdapter();
 
-        if (Objects.isNull(argumentAdapter)) {
+        if (Objects.isNull(parameterAdapter)) {
             return;
         }
 
-        String imagePath = argumentAdapter.getFile();
+        String imagePath = parameterAdapter.getFile();
 
         if (Objects.isNull(imagePath) || imagePath.isBlank()) {
             log.warning("Argument given without a file, nothing to apply");

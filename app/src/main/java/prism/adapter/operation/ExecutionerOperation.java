@@ -3,7 +3,7 @@ package prism.adapter.operation;
 import lombok.extern.java.Log;
 import prism.application.service.WriteService;
 import prism.configuration.AppStartup;
-import prism.configuration.adapter.ArgumentAdapter;
+import prism.configuration.adapter.ParameterAdapter;
 import prism.configuration.context.ExecutionerContext;
 import prism.adapter.cli.input.Command;
 import prism.domain.exception.ArgumentNotFoundException;
@@ -74,12 +74,12 @@ public class ExecutionerOperation extends AppStartup {
     }
 
     private String getArgumentFile(ExecutionerContext executionerContext) {
-        ArgumentAdapter argumentAdapter = executionerContext.getArgumentAdapter();
+        ParameterAdapter parameterAdapter = executionerContext.getParameterAdapter();
 
-        if (argumentAdapter == null) {
+        if (parameterAdapter == null) {
             throw new ArgumentNotFoundException("No file argument found");
         }
 
-        return argumentAdapter.getFile();
+        return parameterAdapter.getFile();
     }
 }

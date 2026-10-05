@@ -53,7 +53,7 @@ public enum AppCommandType {
     /**
      * Should the system (daemon or executioner) use some argument on execution?
      */
-    ARGUMENT(new String[]{"-a", "--argument"},
+    PARAMETER(new String[]{"-p", "--parameter"},
             POLYMATH,
             new AppSubCommandType[]{FILE},
             CacheService.class),

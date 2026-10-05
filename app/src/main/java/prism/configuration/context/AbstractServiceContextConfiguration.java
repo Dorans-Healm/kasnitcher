@@ -282,13 +282,13 @@ public abstract class AbstractServiceContextConfiguration {
         return listenerAdapter;
     }
 
-    public @Nullable ArgumentAdapter getArgumentAdapter() {
-        throw new NoSuchDynamicMethodException("Argument adapter " +
+    public @Nullable ParameterAdapter getParameterAdapter() {
+        throw new NoSuchDynamicMethodException("Parameter adapter " +
                 "method should be created for each individual execution context.");
     }
 
-    protected @NonNull ArgumentAdapter getArgumentAdapter(@NonNull String[] subCommands) {
-        ArgumentAdapter argumentAdapter = new ArgumentAdapter();
+    protected @NonNull ParameterAdapter getParameterAdapter(@NonNull String[] subCommands) {
+        ParameterAdapter parameterAdapter = new ParameterAdapter();
 
         for (int i = 0; i < subCommands.length; i++) {
             String command = subCommands[i];
@@ -297,13 +297,13 @@ public abstract class AbstractServiceContextConfiguration {
 
             if (ArrayUtils.contains(FILE.getSubCommands(), command)) {
                 if (!FILE.isNullable()) {
-                    argumentAdapter.setFile(subCommands[i + 1]);
+                    parameterAdapter.setFile(subCommands[i + 1]);
                     i++;
                 }
             }
         }
 
-        return argumentAdapter;
+        return parameterAdapter;
     }
 
     /**

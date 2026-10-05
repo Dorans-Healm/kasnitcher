@@ -5,7 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class ArgumentAdapter {
+public class ParameterAdapter {
 
     private String file;
 }

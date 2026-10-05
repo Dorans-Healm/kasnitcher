@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.jspecify.annotations.NonNull;
 import prism.adapter.cli.input.Command;
-import prism.configuration.adapter.ArgumentAdapter;
+import prism.configuration.adapter.ParameterAdapter;
 import prism.configuration.adapter.WriterAdapter;
 
 /**
@@ -19,7 +19,7 @@ public class ExecutionerContext extends AbstractServiceContextConfiguration {
 
     private WriterAdapter writerAdapter = new WriterAdapter();
 
-    private ArgumentAdapter argumentAdapter;
+    private ParameterAdapter parameterAdapter;
 
     /**
      * Updates the executioner's internal adapter configurations based on the
@@ -35,8 +35,8 @@ public class ExecutionerContext extends AbstractServiceContextConfiguration {
                 case WRITE -> this.setWriterAdapter(
                         super.getWriterAdapter(this.writerAdapter, command.getSubCommands()));
 
-                case ARGUMENT -> this.setArgumentAdapter(
-                        super.getArgumentAdapter(command.getSubCommands()));
+                case PARAMETER -> this.setParameterAdapter(
+                        super.getParameterAdapter(command.getSubCommands()));
 
                 case null, default -> throw new IllegalArgumentException(
                         "No configuration found for %s specified value.".formatted(command.getCommand()));
@@ -44,11 +44,10 @@ public class ExecutionerContext extends AbstractServiceContextConfiguration {
         }
     }
 
-    @Override
-    public ArgumentAdapter getArgumentAdapter() {
-        ArgumentAdapter argumentAdapter = this.argumentAdapter;
-        this.argumentAdapter = null;
+    public ParameterAdapter getParameterAdapter() {
+        ParameterAdapter parameterAdapter = this.parameterAdapter;
+        this.parameterAdapter = null;
 
-        return argumentAdapter;
+        return parameterAdapter;
     }
 }

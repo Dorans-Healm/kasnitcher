@@ -24,7 +24,7 @@ public class DaemonContext extends AbstractServiceContextConfiguration {
 
     private CacheAdapter cacheAdapter;
 
-    private ArgumentAdapter argumentAdapter;
+    private ParameterAdapter parameterAdapter;
 
     /**
      * Updates the daemon's internal adapter configurations based on the
@@ -51,8 +51,8 @@ public class DaemonContext extends AbstractServiceContextConfiguration {
                 case LISTEN -> this.setListenerAdapter(
                         super.getListenerAdapter(this.listenerAdapter, subCommands));
 
-                case ARGUMENT -> this.setArgumentAdapter(
-                        super.getArgumentAdapter(subCommands));
+                case PARAMETER -> this.setParameterAdapter(
+                        super.getParameterAdapter(subCommands));
 
                 case null, default -> throw new IllegalArgumentException(
                         "No configuration found for %s specified value.".formatted(command.getCommand()));
@@ -60,11 +60,10 @@ public class DaemonContext extends AbstractServiceContextConfiguration {
         }
     }
 
-    @Override
-    public ArgumentAdapter getArgumentAdapter() {
-        ArgumentAdapter argumentAdapter = this.argumentAdapter;
-        this.argumentAdapter = null;
+    public ParameterAdapter getParameterAdapter() {
+        ParameterAdapter parameterAdapter = this.parameterAdapter;
+        this.parameterAdapter = null;
 
-        return argumentAdapter;
+        return parameterAdapter;
     }
 }
