@@ -48,9 +48,12 @@ public abstract class AbstractServiceContextConfiguration {
      * @throws IllegalArgumentException if an invalid sub-command or argument is provided
      */
     protected @NonNull WriterAdapter getWriterAdapter(@Nullable WriterAdapter adapter, @NonNull String[] subCommands) {
-        WriterAdapter writerAdapter = adapter == null
-                ? new WriterAdapter()
-                : adapter;
+        WriterAdapter writerAdapter = new WriterAdapter();
+        if (adapter != null) {
+            writerAdapter.setFile(adapter.getFile());
+            writerAdapter.setDirectory(adapter.getDirectory());
+            writerAdapter.setType(adapter.getType());
+        }
 
         for (int i = 0; i < subCommands.length; i++) {
             String command = subCommands[i];
@@ -121,9 +124,11 @@ public abstract class AbstractServiceContextConfiguration {
      * @throws IllegalArgumentException if an invalid amount or sub-command is provided
      */
     protected @Nullable CacheAdapter getCacheAdapter(@Nullable CacheAdapter adapter, @NonNull String[] subCommands) {
-        CacheAdapter cacheAdapter = adapter == null
-                ? new CacheAdapter()
-                : adapter;
+        CacheAdapter cacheAdapter = new CacheAdapter();
+        if (adapter != null) {
+            cacheAdapter.setAmount(adapter.getAmount());
+            cacheAdapter.setTimeout(adapter.getTimeout());
+        }
 
         for (int i = 0; i < subCommands.length; i++) {
             String command = subCommands[i];
@@ -175,9 +180,11 @@ public abstract class AbstractServiceContextConfiguration {
      * @throws IllegalArgumentException if an invalid directory or sub-command is provided
      */
     protected @Nullable StorageAdapter getStorageAdapter(@Nullable StorageAdapter adapter, @NonNull String[] subCommands) {
-        StorageAdapter storageAdapter = adapter == null
-                ? new StorageAdapter()
-                : adapter;
+        StorageAdapter storageAdapter = new StorageAdapter();
+        if (adapter != null) {
+            storageAdapter.setFile(adapter.getFile());
+            storageAdapter.setDirectory(adapter.getDirectory());
+        }
 
         for (int i = 0; i < subCommands.length; i++) {
 
@@ -238,9 +245,11 @@ public abstract class AbstractServiceContextConfiguration {
      * @throws IllegalArgumentException if an invalid directory or sub-command is provided
      */
     protected @Nullable ListenerAdapter getListenerAdapter(@Nullable ListenerAdapter adapter, @NonNull String[] subCommands) {
-        ListenerAdapter listenerAdapter = adapter == null
-                ? new ListenerAdapter()
-                : adapter;
+        ListenerAdapter listenerAdapter = new ListenerAdapter();
+        if (adapter != null) {
+            listenerAdapter.setFile(adapter.getFile());
+            listenerAdapter.setDirectory(adapter.getDirectory());
+        }
 
         for (int i = 0; i < subCommands.length; i++) {
             String command = subCommands[i];
