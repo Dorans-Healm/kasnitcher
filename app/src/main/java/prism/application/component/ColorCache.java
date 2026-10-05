@@ -14,6 +14,7 @@ import java.util.Arrays;
 import java.util.Objects;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
@@ -29,6 +30,8 @@ public class ColorCache {
     private final ScheduledExecutorService scheduler;
 
     private Object[][] cache;
+
+    private ScheduledFuture<?> watchTask;
 
     @Getter
     private boolean started;
@@ -80,6 +83,10 @@ public class ColorCache {
     }
 
     public void watch() {
+        if (this.started) {
+            return;
+        }
+
         CacheAdapter cacheAdapter =
                 this.appExecutionContext.get().getCacheAdapter();
 
@@ -93,12 +100,12 @@ public class ColorCache {
 
         this.started = true;
 
-        this.scheduler.scheduleAtFixedRate(
+        this.watchTask = this.scheduler.scheduleAtFixedRate(
                 () -> this.removeExpired(timeout), 0, WATCHER_WAIT_TIME, TimeUnit.MILLISECONDS);
     }
 
     public synchronized void unwatch() {
-        if (this.scheduler.isShutdown()) {
+        if (this.watchTask == null || this.watchTask.isCancelled()) {
             log.warning("Trying to stop cache watcher " +
                     "while watcher is not started. Request will be ignored");
             return;
@@ -106,7 +113,7 @@ public class ColorCache {
 
         this.started = false;
 
-        this.scheduler.shutdown();
+        this.watchTask.cancel(true);
     }
 
     private synchronized void removeExpired(@NonNull Integer timeout) {
