@@ -1,6 +1,5 @@
 package prism.configuration.context;
 
-import jdk.dynalink.NoSuchDynamicMethodException;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import prism.adapter.cli.AppSubCommandType;
@@ -306,7 +305,7 @@ public abstract class AbstractServiceContextConfiguration {
     }
 
     public @Nullable ParameterAdapter getParameterAdapter() {
-        throw new NoSuchDynamicMethodException("Parameter adapter " +
+        throw new UnsupportedOperationException("Parameter adapter " +
                 "method should be created for each individual execution context.");
     }
 
