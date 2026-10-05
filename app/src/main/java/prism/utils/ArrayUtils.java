@@ -3,6 +3,7 @@ package prism.utils;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
+import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.Objects;
 
@@ -126,7 +127,8 @@ public class ArrayUtils {
                     "Array for item removal can not be empty");
         }
 
-        O[] itemRemovedArray = (O[]) new Object[array.length - 1];
+        O[] itemRemovedArray = (O[]) Array.newInstance(
+                array.getClass().getComponentType(), array.length - 1);
 
         int newIndex = 0;
 
@@ -191,7 +193,8 @@ public class ArrayUtils {
             return array;
         }
 
-        O[][] result = (O[][]) new Object[array.length - 1][];
+        O[][] result = (O[][]) Array.newInstance(
+                array.getClass().getComponentType(), array.length - 1);
 
         for (int i = 0, j = 0; i < array.length; i++) {
             if (i != index) {
