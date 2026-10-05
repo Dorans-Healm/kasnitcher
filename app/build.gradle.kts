@@ -27,6 +27,9 @@ dependencies {
     implementation("tools.jackson.core:jackson-core:3.2.3")
     implementation("tools.jackson.core:jackson-databind:3.2.3")
 
+    // WebP Image Support
+    implementation("com.twelvemonkeys.imageio:imageio-webp:3.10.1")
+
     // ▗     ▗ ▘
     // ▜▘█▌▛▘▜▘▌▛▌▛▌
     // ▐▖▙▖▄▌▐▖▌▌▌▙▌
