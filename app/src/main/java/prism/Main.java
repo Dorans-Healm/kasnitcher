@@ -46,7 +46,7 @@ public class Main {
             }
 
             Command[] commands =
-                    ProcedureCaller.assertAndGetDaemonCall(args);
+                    ProcedureCaller.assertAndGetExecutionerCall(args);
 
             log.info("Single execution mode " +
                     "identified. Starting the process.");
