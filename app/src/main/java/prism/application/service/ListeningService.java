@@ -24,7 +24,7 @@ public class ListeningService {
     }
 
     public void subscribeWithRetry() {
-        for (int i = 1; i < MAX_ATTEMPTS; i++) {
+        for (int i = 1; i <= MAX_ATTEMPTS; i++) {
             try {
                 this.subscribe();
                 return;
