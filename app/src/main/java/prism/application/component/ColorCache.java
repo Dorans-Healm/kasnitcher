@@ -5,6 +5,7 @@ import lombok.extern.java.Log;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import prism.configuration.adapter.CacheAdapter;
+import prism.configuration.annotations.PostConstruct;
 import prism.configuration.context.AbstractServiceContextConfiguration;
 import prism.domain.model.Prism;
 
@@ -41,7 +42,12 @@ public class ColorCache {
         this.scheduler = Executors.newSingleThreadScheduledExecutor(
                 Thread.ofVirtual().factory()
         );
-        this.cache = new Object[this.getConfiguredAmount()][TOTAL_PROPERTIES];
+    }
+
+    @PostConstruct
+    private void setup() {
+        this.cache = new Object[
+                this.getConfiguredAmount()][TOTAL_PROPERTIES];
     }
 
     /**

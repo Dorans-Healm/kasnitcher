@@ -11,6 +11,12 @@ import prism.domain.exception.OrphanSubCommandTypeException;
 import prism.adapter.cli.input.Command;
 import prism.infrastructure.daemon.SocketServer;
 
+import java.net.StandardProtocolFamily;
+import java.net.UnixDomainSocketAddress;
+import java.nio.ByteBuffer;
+import java.nio.channels.SocketChannel;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.logging.Level;
@@ -42,6 +48,22 @@ public class Main {
                         "identified. Starting the process.");
 
                 DaemonOperation.start(commands);
+                return;
+            }
+
+            if (Files.exists(DaemonOperation.getSocketPath())) {
+                log.info("Daemon socket found. Forwarding call to the Daemon process.");
+
+                try (SocketChannel client = SocketChannel.open(StandardProtocolFamily.UNIX)) {
+                    client.connect(UnixDomainSocketAddress
+                            .of(DaemonOperation.getSocketPath()));
+
+                    String line = String.join(" ", args) + "\n";
+
+                    client.write(ByteBuffer
+                            .wrap(line.getBytes(StandardCharsets.UTF_8)));
+                }
+
                 return;
             }
 

@@ -63,8 +63,14 @@ public class ProcedureCaller {
             return;
         }
 
-        if (!Files.exists(DaemonOperation.getSocketPath())) {
-            String[] daemonCmds = AppCommandType.getDaemonCmds();
+        boolean daemonRunning = Files.exists(DaemonOperation.getSocketPath());
+        String[] daemonCmds = AppCommandType.getDaemonCmds();
+
+        if (daemonRunning) {
+            if (ArrayUtils.contains(daemonCmds, arg)) {
+                return;
+            }
+        } else {
             if (ArrayUtils.contains(daemonCmds, arg)) {
                 throw new DaemonDownOnCommandException(("Daemon command %s, " +
                         "should only be used after process is active and ready").formatted(arg));

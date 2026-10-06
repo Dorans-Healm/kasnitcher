@@ -9,6 +9,7 @@ import prism.application.service.StorageService;
 import prism.application.service.WriteService;
 import prism.utils.ArrayUtils;
 
+import java.util.Arrays;
 import java.util.Objects;
 
 import static prism.adapter.cli.AppSubCommandType.*;
@@ -134,7 +135,7 @@ public enum AppCommandType {
             }
         }
 
-        return cmds;
+        return Arrays.copyOf(cmds, index);
     }
 
     public static @NonNull String[] getDaemonNonPolymathCmds() {
@@ -151,7 +152,7 @@ public enum AppCommandType {
             }
         }
 
-        return cmds;
+        return Arrays.copyOf(cmds, index);
     }
 
     public static @NonNull String[] getExeCmds() {
@@ -169,7 +170,7 @@ public enum AppCommandType {
             }
         }
 
-        return cmds;
+        return Arrays.copyOf(cmds, index);
     }
 
     public static @NonNull String[] getExeNonPolymathCmds() {
@@ -186,6 +187,6 @@ public enum AppCommandType {
             }
         }
 
-        return cmds;
+        return Arrays.copyOf(cmds, index);
     }
 }
