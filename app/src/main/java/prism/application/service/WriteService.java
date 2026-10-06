@@ -5,33 +5,27 @@ import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import prism.application.component.ImageReader;
 import prism.application.component.color.ColorWriter;
-import prism.application.component.color.ContrastFinder;
+import prism.application.component.color.RoleSelector;
 import prism.configuration.adapter.WriterAdapter;
 import prism.configuration.context.AbstractServiceContextConfiguration;
 import prism.configuration.context.AppContext;
 import prism.domain.model.Prism;
+import prism.domain.vo.ColorCluster;
 import prism.domain.vo.ColorScaleVo;
-import prism.utils.ArrayUtils;
-import prism.utils.ColorUtils;
+import prism.domain.vo.Oklch;
 
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 import java.util.function.Supplier;
 import java.util.logging.Level;
 
 /**
- * Application service responsible for extracting prominent color palettes and assembling
- * the full {@link Prism} spectrum from quantized image buckets.
+ * Application service responsible for extracting prominent color clusters and assembling
+ * the full {@link Prism} spectrum from them.
  */
 @Log
 public class WriteService {
-
-    /**
-     * The number of top core colors to extract from the image buckets for Prism
-     * generation.
-     */
-    private static final int TOTAL_SPECTRUMS = 4;
 
     /**
      * Lazy supplier for the application configuration context holding user preferences.
@@ -42,11 +36,6 @@ public class WriteService {
      * Lazy supplier for the color writing service, resolving from the AppContext.
      */
     private final Supplier<ColorWriter> colorWriter;
-
-    /**
-     * Lazy supplier for the contrast finding service, resolving from the AppContext.
-     */
-    private final Supplier<ContrastFinder> contrastFinder;
 
     /**
      * Lazy supplier for the image reading port, resolving from the AppContext.
@@ -63,8 +52,6 @@ public class WriteService {
     public WriteService(@NonNull Supplier<? extends AbstractServiceContextConfiguration> appExecutionContext) {
         this.appExecutionContext = appExecutionContext;
 
-        this.contrastFinder = AppContext
-                .getClassLazy(ContrastFinder.class);
         this.colorWriter = AppContext
                 .getClassLazy(ColorWriter.class);
         this.imageReader = AppContext
@@ -72,17 +59,16 @@ public class WriteService {
     }
 
     /**
-     * Reads and processes an image from the given file path, extracting its color
-     * frequencies.
+     * Reads an image from the given file path and groups its pixels into color clusters.
      *
      * @param pathToImage the file path to the image
-     * @return a 2D array of {@code [bucket, count]} pairs, or {@code null} if an error
+     * @return clusters sorted by descending share of the image, or {@code null} if an error
      * occurs
      */
-    public @Nullable Integer[][] processImage(@NonNull String pathToImage) {
+    public @Nullable List<ColorCluster> processImage(@NonNull String pathToImage) {
         try {
             return this.imageReader
-                    .get().readColors(pathToImage);
+                    .get().readClusters(pathToImage);
         } catch (IOException e) {
             log.log(Level.SEVERE, ("Error reading image " +
                     "file from path %s").formatted(pathToImage), e);
@@ -92,92 +78,36 @@ public class WriteService {
     }
 
     /**
-     * Assembles a complete {@link Prism} spectrum from the given color buckets.
+     * Assembles a complete {@link Prism} spectrum from the image's color clusters.
      * <p>
-     * Iteratively extracts the contrast tone, core shade, brightest flare, and supporting wave
-     * colors, removing each from the available buckets as it goes.
+     * Picks a base color for each role (see {@link RoleSelector}) and expands each one into
+     * a 10-step scale on a shared lightness scale (see {@link ColorWriter}).
      *
-     * @param buckets a 2D array of {@code [bucket, count]} pairs
+     * @param clusters the image's color clusters
      * @return a fully populated {@link Prism} instance
      */
-    public @NonNull Prism getPrism(@NonNull Integer[][] buckets) {
-        buckets = this.getMostUsedIn(
-                buckets, TOTAL_SPECTRUMS);
-
-        // Best contrast between all the colors
-        ColorScaleVo lux = toScale(this.getLuxShade(buckets));
-
-        // Most used color between the 4
-        Integer core = this.getMostUsedFrom(buckets);
-        if (buckets.length > 1) {
-            buckets = ArrayUtils.remove(buckets, core);
-        }
-
-        // Brightest color between the 3 remaining colors
-        Integer flare = ColorUtils.getBrightest(buckets);
-        if (buckets.length > 1) {
-            buckets = ArrayUtils.remove(buckets, flare);
-        }
-
-        // Most used color between the 2 remaining colors
-        Integer wave = this.getMostUsedFrom(buckets);
-        if (buckets.length > 1) {
-            buckets = ArrayUtils.remove(buckets, wave);
-        }
-
-        // Leaving left over color to support
-        Integer spark = buckets[0][0];
+    public @NonNull Prism getPrism(@NonNull List<ColorCluster> clusters) {
+        RoleSelector.Roles roles = RoleSelector.select(clusters);
 
         return Prism.builder()
-                .lux(lux)
-                .core(toScale(core))
-                .flare(toScale(flare))
-                .wave(toScale(wave))
-                .spark(toScale(spark))
+                .lux(this.toScale(roles.lux()))
+                .core(this.toScale(roles.core()))
+                .wave(this.toScale(roles.wave()))
+                .flare(this.toScale(roles.flare()))
+                .spark(this.toScale(roles.spark()))
                 .build();
     }
 
-    /**
-     * Converts a single 12-bit color bucket into a fully formatted {@link ColorScaleVo}
-     * by generating a 10-step spectrum and formatting each shade.
-     *
-     * @param bucket a 12-bit quantized color bucket
-     * @return a populated {@link ColorScaleVo}
-     */
-    private @NonNull ColorScaleVo toScale(@NonNull Integer bucket) {
-        Integer[] spectrum = this.colorWriter.get().calculateSpectrum(bucket);
-        return toScale(spectrum);
-    }
-
-    /**
-     * Converts a pre-computed spectrum array into a fully formatted {@link ColorScaleVo}.
-     *
-     * @param spectrum an array of 10 bucket values representing the color spectrum
-     * @return a populated {@link ColorScaleVo}
-     */
-    private @NonNull ColorScaleVo toScale(@NonNull Integer[] spectrum) {
+    private @NonNull ColorScaleVo toScale(@NonNull Oklch base) {
+        Integer[] spectrum = this.colorWriter.get().calculateSpectrum(base);
         return ColorScaleVo.fromColorArray(this.formatColors(spectrum));
     }
 
     /**
-     * Extracts the best fitting color shade spectrum from the given buckets for lux prism
-     * color.
+     * Formats an array of packed {@code 0xRRGGBB} colors into string representations. The
+     * order is kept as given (the spectrum is already ordered from lightest to darkest).
      *
-     * @param buckets a 2D array of {@code [bucket, count]} pairs
-     * @return an array of bucket values representing the calculated gray spectrum
-     */
-    public @NonNull Integer[] getLuxShade(@NonNull Integer[][] buckets) {
-        Integer grayShade = this.contrastFinder.get()
-                .findBestByWorst(this.toBucketArray(buckets));
-        Integer grayRgb = (grayShade << 16) | (grayShade << 8) | grayShade;
-        return this.colorWriter.get()
-                .calculateSpectrum(ColorUtils.quantizeColor(grayRgb));
-    }
-
-    /**
-     * Formats an array of quantized color buckets into string representations.
-     *
-     * @param colors an array of 12-bit color buckets
+     * @param colors an array of 24-bit RGB colors
      * @return an array of formatted color strings
      * @throws IllegalArgumentException if an unsupported type is provided
      */
@@ -189,72 +119,22 @@ public class WriteService {
             type = adapter.getType();
         }
 
-        ColorUtils.sort(colors);
-
         if (!WriterAdapter.HEX.equalsIgnoreCase(type) && !WriterAdapter.RGB.equalsIgnoreCase(type)) {
             throw new IllegalArgumentException(
                     "Invalid color type: %s. Expected hex or rgb.".formatted(type));
         }
 
+        boolean hex = WriterAdapter.HEX.equalsIgnoreCase(type);
         String[] result = new String[colors.length];
 
         for (int i = 0; i < colors.length; i++) {
-            int color = colors[i];
+            int r = (colors[i] >> 16) & 0xFF;
+            int g = (colors[i] >> 8) & 0xFF;
+            int b = colors[i] & 0xFF;
 
-            result[i] = WriterAdapter.HEX.equalsIgnoreCase(type)
-                    ? ColorUtils.bucketToHex(color)
-                    : ColorUtils.bucketToRgb(color);
-        }
-
-        return result;
-    }
-
-    /**
-     * Extracts the top N most frequent color buckets by completely sorting a clone of the
-     * input array.
-     *
-     * @param buckets a 2D array of {@code [bucket, count]} pairs
-     * @param amount  the maximum number of elements to return
-     * @return a new 2D array containing the top {@code amount} most used buckets
-     */
-    @SuppressWarnings("SameParameterValue")
-    private @NonNull Integer[][] getMostUsedIn(@NonNull Integer[][] buckets, @NonNull Integer amount) {
-        Integer[][] sorted = buckets.clone();
-        Arrays.sort(sorted, (a, b) -> b[1] - a[1]);
-
-        int count = Math.min(amount, sorted.length);
-        return Arrays.copyOfRange(sorted, 0, count);
-    }
-
-    /**
-     * Finds and returns the single most frequent bucket-count pair from the given array.
-     *
-     * @param buckets a 2D array of {@code [bucket, count]} pairs
-     * @return the {@code [bucket, count]} pair with the highest frequency
-     */
-    private @NonNull Integer getMostUsedFrom(@NonNull Integer[][] buckets) {
-        Integer[] mostUsed = buckets[0];
-
-        for (int i = 1; i < buckets.length; i++) {
-            if (buckets[i][1] > mostUsed[1]) {
-                mostUsed = buckets[i];
-            }
-        }
-
-        return mostUsed[0];
-    }
-
-    /**
-     * Converts a 2D array of bucket-count pairs into a 1D array of just the bucket values.
-     *
-     * @param buckets a 2D array of {@code [bucket, count]} pairs
-     * @return a 1D array containing only the bucket integer values
-     */
-    private @NonNull Integer[] toBucketArray(@NonNull Integer[][] buckets) {
-        Integer[] result = new Integer[buckets.length];
-
-        for (int i = 0; i < buckets.length; i++) {
-            result[i] = buckets[i][0];
+            result[i] = hex
+                    ? "#%02X%02X%02X".formatted(r, g, b)
+                    : "rgb(%d, %d, %d)".formatted(r, g, b);
         }
 
         return result;

@@ -8,8 +8,10 @@ import prism.configuration.context.ExecutionerContext;
 import prism.adapter.cli.input.Command;
 import prism.domain.exception.ArgumentNotFoundException;
 import prism.domain.model.Prism;
+import prism.domain.vo.ColorCluster;
 import prism.infrastructure.filesystem.FileDataWriter;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.logging.Level;
 
@@ -56,7 +58,7 @@ public class ExecutionerOperation extends AppStartup {
 
             String filePath = this.getArgumentFile(context);
 
-            Integer[][] imageColors = writeService.processImage(filePath);
+            List<ColorCluster> imageColors = writeService.processImage(filePath);
 
             if (Objects.isNull(imageColors)) {
                 throw new IllegalStateException("Could not read colors from image %s".formatted(filePath));

@@ -16,6 +16,7 @@ import prism.configuration.context.AbstractServiceContextConfiguration;
 import prism.configuration.context.AppContext;
 import prism.configuration.context.DaemonContext;
 import prism.domain.model.Prism;
+import prism.domain.vo.ColorCluster;
 import prism.infrastructure.daemon.SocketServer;
 import prism.infrastructure.daemon.SocketStatusType;
 import prism.infrastructure.filesystem.FileDataWriter;
@@ -33,6 +34,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.PosixFilePermissions;
+import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.ReentrantLock;
@@ -410,7 +412,7 @@ public class DaemonOperation extends AppStartup {
             WriteService writeService =
                     this.appContext.getClass(WriteService.class);
 
-            Integer[][] imageColors = writeService.processImage(imagePath);
+            List<ColorCluster> imageColors = writeService.processImage(imagePath);
 
             if (Objects.isNull(imageColors)) {
                 throw new IllegalStateException(

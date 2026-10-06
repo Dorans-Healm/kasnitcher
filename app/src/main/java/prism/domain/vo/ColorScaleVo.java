@@ -67,23 +67,4 @@ public class ColorScaleVo {
                 shade1000
         };
     }
-
-    /**
-     * Returns all ten shades formatted with a leading semicolon delimiter.
-     * <p>
-     * Each entry is in the format hex/rgb, suitable for serialization into the spectrum
-     * file format.
-     *
-     * @return an array of semicolon-prefixed hex color strings
-     */
-    public @NonNull String[] getFormattedShades() {
-        String[] shades = this.getShades();
-        String[] formatted = new String[shades.length];
-
-        for (int i = 0; i < shades.length; i++) {
-            formatted[i] = "::%s".formatted(shades[i]);
-        }
-
-        return formatted;
-    }
 }
