@@ -81,11 +81,10 @@ public class SocketSubscriber implements AutoCloseable {
             throw new IllegalStateException("Cannot listen before subscribing");
         }
 
-        try {
-            BufferedReader reader = new BufferedReader(
-                    new InputStreamReader(
-                            Channels.newInputStream(this.socketChannel),
-                            StandardCharsets.UTF_8));
+        try (BufferedReader reader = new BufferedReader(
+                new InputStreamReader(
+                        Channels.newInputStream(this.socketChannel),
+                        StandardCharsets.UTF_8))) {
 
             String message;
 
