@@ -53,11 +53,6 @@ public class FileDataWriter {
         FileUtils.assertFileAndDirExistence(storageFilePath);
 
         try (FileWriter writer = new FileWriter(storageFilePath.toString())) {
-            writer.write(DO_NOT_CHANGE);
-
-            writer.append(System.lineSeparator());
-            writer.append(System.lineSeparator());
-
             writer.append(storageJson);
         } catch (Exception e) {
             throw new RuntimeException("Error while writing to storage file", e);
