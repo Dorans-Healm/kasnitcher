@@ -11,18 +11,20 @@ import org.jspecify.annotations.NonNull;
  * {@code "rgb(r, g, b)"}).
  */
 @Builder
-public class ColorScaleVo {
+public record ColorScaleVo
+        (
+                String shade100,
+                String shade200,
+                String shade300,
+                String shade400,
+                String shade500,
+                String shade600,
+                String shade700,
+                String shade800,
+                String shade900,
+                String shade1000
+        ) {
 
-    private @NonNull String shade100;
-    private @NonNull String shade200;
-    private @NonNull String shade300;
-    private @NonNull String shade400;
-    private @NonNull String shade500;
-    private @NonNull String shade600;
-    private @NonNull String shade700;
-    private @NonNull String shade800;
-    private @NonNull String shade900;
-    private @NonNull String shade1000;
 
     /**
      * Creates a {@code ColorScaleVo} from an array of pre-formatted color strings.
