@@ -23,6 +23,8 @@ import prism.infrastructure.filesystem.FileDataWriter;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.net.StandardProtocolFamily;
 import java.net.UnixDomainSocketAddress;
 import java.nio.channels.Channels;
@@ -157,8 +159,7 @@ public class DaemonOperation extends AppStartup {
 
         this.openServer(socketServer);
 
-        Runtime.getRuntime().addShutdownHook(
-                Thread.ofPlatform().name("prism-shutdown").unstarted(this::shutdown));
+        this.registerSignalHandlers();
 
         try {
             this.applyCommands(this.commands);
@@ -184,10 +185,37 @@ public class DaemonOperation extends AppStartup {
         log.info("Prism daemon stopped");
     }
 
+    private void registerSignalHandlers() {
+        try {
+            Class<?> signalClass = Class.forName("sun.misc.Signal");
+            Class<?> signalHandlerClass = Class.forName("sun.misc.SignalHandler");
+
+            Object handler = Proxy.newProxyInstance(
+                    DaemonOperation.class.getClassLoader(),
+                    new Class<?>[]{signalHandlerClass},
+                    (Object _, Method _, Object[] _) -> {
+                        this.shutdown();
+                        return null;
+                    }
+            );
+
+            for (String sig : new String[]{"TERM", "INT"}) {
+                Object signal = signalClass.getConstructor(String.class).newInstance(sig);
+                signalClass.getMethod("handle", signalClass, signalHandlerClass).invoke(null, signal, handler);
+            }
+        } catch (Exception e) {
+            log.log(Level.WARNING, "Could not register native " +
+                    "signal handlers. Falling back to JVM shutdown hook.", e);
+
+            Runtime.getRuntime().addShutdownHook(
+                    Thread.ofPlatform().name("prism-shutdown").unstarted(this::shutdown));
+        }
+    }
+
     /**
      * Opens and binds the daemon socket, restricting it to the current user, and marks the
      * server as {@link SocketStatusType#READY}.
-     *
+*
      * @param socketServer the server to open
      * @throws IllegalStateException if another daemon is running or the socket can not be
      *                               bound
