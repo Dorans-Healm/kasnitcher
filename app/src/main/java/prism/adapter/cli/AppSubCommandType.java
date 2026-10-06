@@ -5,6 +5,7 @@ import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import prism.utils.ArrayUtils;
 
+import java.util.Arrays;
 import java.util.Objects;
 
 public enum AppSubCommandType {
@@ -101,7 +102,7 @@ public enum AppSubCommandType {
             }
         }
 
-        return commands;
+        return Arrays.copyOf(commands, index);
     }
 
     public static String[] getSubCmds() {
@@ -116,6 +117,6 @@ public enum AppSubCommandType {
             }
         }
 
-        return cmds;
+        return Arrays.copyOf(cmds, index);
     }
 }
