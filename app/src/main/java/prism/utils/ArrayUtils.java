@@ -135,55 +135,6 @@ public class ArrayUtils {
     }
 
     /**
-     * Creates a new array with the first occurrence of the specified value removed.
-     *
-     * @param array the source array; must not be {@code null} or empty
-     * @param value the value to remove; may be {@code null}
-     * @return a new array with the matching element removed
-     * @throws IllegalArgumentException if {@code array} is {@code null} or empty
-     */
-    @SuppressWarnings("unchecked")
-    public static <O> @Nullable O[] remove(@Nullable O[] array, @Nullable O value) {
-        if (Objects.isNull(array) || array.length == 0) {
-            throw new IllegalArgumentException(
-                    "Array for item removal can not be empty");
-        }
-
-        O[] itemRemovedArray = (O[]) Array.newInstance(
-                array.getClass().getComponentType(), array.length - 1);
-
-        int newIndex = 0;
-
-        for (O o : array) {
-            if (!Objects.equals(o, value)) {
-                itemRemovedArray[newIndex] = o;
-                newIndex++;
-            }
-        }
-
-        return itemRemovedArray;
-    }
-
-    public static <O> void alter(@Nullable O[] array, @Nullable O value) {
-        if (array.length == 0) {
-            throw new IllegalArgumentException(
-                    "Array for item removal can not be empty");
-        }
-
-        for (int i = 0; i < array.length; i++) {
-            if (Objects.equals(array[i], value)) {
-
-                for (int j = i; j < array.length - 1; j++) {
-                    array[j] = array[j + 1];
-                }
-
-                array[array.length - 1] = null;
-                break;
-            }
-        }
-    }
-
-    /**
      * Removes the first row whose first element matches the given key from a 2D array.
      * <p>
      * Each row is expected to have its key at index {@code 0}. If no row matches, the
@@ -226,25 +177,4 @@ public class ArrayUtils {
 
         return result;
     }
-
-    public static <O> void alter(@Nullable O[][] array, @Nullable O key) {
-        if (array.length == 0) {
-            throw new IllegalArgumentException(
-                    "Array for item removal can not be empty");
-        }
-
-        for (int i = 0; i < array.length; i++) {
-            if (Objects.equals(array[i][0], key)) {
-
-                for (int j = i; j < array.length - 1; j++) {
-                    array[j] = array[j + 1];
-                }
-
-                array[array.length - 1] = null;
-                break;
-            }
-        }
-    }
-
-
 }
