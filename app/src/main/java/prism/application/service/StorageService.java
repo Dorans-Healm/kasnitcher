@@ -23,7 +23,8 @@ public class StorageService {
         Path imagePath = Path.of(file);
 
         String fileName = imagePath.getFileName().toString();
-        String dir = imagePath.getParent().toString();
+        Path parent = imagePath.getParent();
+        String dir = parent != null ? parent.toString() : "";
 
         Storage crrStorage = new Storage(fileName, dir);
 
