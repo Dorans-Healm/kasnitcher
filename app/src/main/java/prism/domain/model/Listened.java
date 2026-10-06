@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.jspecify.annotations.NonNull;
 import prism.infrastructure.filesystem.ActiveImageType;
+import prism.utils.ArrayUtils;
 
 import java.util.Objects;
 
@@ -50,17 +51,7 @@ public class Listened {
      * @return the command tokens, or an empty array if there is no command
      */
     private @NonNull String[] getCommandTokens() {
-        if (Objects.isNull(this.command) || this.command.isBlank()) {
-            return new String[]{};
-        }
-
-        String[] tokens = this.command.trim().split("\\s+");
-
-        for (int i = 0; i < tokens.length; i++) {
-            tokens[i] = tokens[i].replaceAll("^['\"]|['\"]$", "");
-        }
-
-        return tokens;
+        return ArrayUtils.splitCommand(this.command);
     }
 
     private @NonNull String getExtension(@NonNull String token) {

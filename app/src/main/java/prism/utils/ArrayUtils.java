@@ -14,6 +14,28 @@ import java.util.Objects;
 public class ArrayUtils {
 
     /**
+     * Splits a command line string by whitespace, honoring single and double quotes,
+     * and stripping the quotes from the resulting tokens.
+     *
+     * @param command the command string
+     * @return an array of parsed tokens
+     */
+    public static @NonNull String[] splitCommand(String command) {
+        if (command == null || command.isBlank()) {
+            return new String[0];
+        }
+
+        java.util.regex.Matcher m = java.util.regex.Pattern.compile("\"[^\"]*\"|'[^']*'|\\S+").matcher(command);
+        java.util.List<String> list = new java.util.ArrayList<>();
+
+        while (m.find()) {
+            list.add(m.group().replaceAll("^[\"']|[\"']$", ""));
+        }
+
+        return list.toArray(new String[0]);
+    }
+
+    /**
      * Creates a new array with the given value appended at the end.
      *
      * @param array the source array to append to; must not be {@code null} or empty

@@ -282,7 +282,7 @@ public class DaemonOperation extends AppStartup {
                     break;
                 }
 
-                this.handleCall(client);
+                Thread.ofVirtual().name("prism-client").start(() -> this.handleCall(client));
             }
         } catch (RuntimeException e) {
             if (SocketStatusType.GRACEFUL_INTERRUPTION.equals(SocketServer.getSocketStatusType())) {
@@ -307,14 +307,13 @@ public class DaemonOperation extends AppStartup {
             String line = reader.readLine();
 
             if (Objects.isNull(line) || line.isBlank()) {
-                log.warning("Received an empty call, ignoring it");
                 return;
             }
 
             log.info("Received call: %s".formatted(line));
 
             Command[] callCommands =
-                    ProcedureCaller.assertAndGetDaemonCall(line.trim().split("\\s+"));
+                    ProcedureCaller.assertAndGetDaemonCall(prism.utils.ArrayUtils.splitCommand(line));
 
             this.applyCommands(callCommands);
         } catch (Exception e) {
@@ -337,7 +336,7 @@ public class DaemonOperation extends AppStartup {
         try {
             context.updateConfiguration(callCommands);
 
-            this.reconcileListener(context);
+            this.reconcileListener(context, callCommands);
             this.reconcileCache(context);
 
             this.applyArgument(context);
@@ -436,9 +435,17 @@ public class DaemonOperation extends AppStartup {
      *
      * @param context the daemon context
      */
-    private void reconcileListener(@NonNull DaemonContext context) {
+    private void reconcileListener(@NonNull DaemonContext context, @NonNull Command[] callCommands) {
         boolean active = Objects.nonNull(context.getListenerAdapter());
         boolean running = Objects.nonNull(this.listenerThread) && this.listenerThread.isAlive();
+
+        boolean changed = java.util.Arrays.stream(callCommands)
+                .anyMatch(c -> prism.adapter.cli.AppCommandType.LISTEN.equals(c.getCommand()));
+
+        if (changed && running) {
+            this.stopListener();
+            running = false;
+        }
 
         if (active && !running) {
             this.listenerThread = Thread.ofVirtual()
