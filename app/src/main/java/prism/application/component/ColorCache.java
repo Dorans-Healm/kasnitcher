@@ -10,6 +10,7 @@ import prism.domain.model.Prism;
 
 import java.time.Instant;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Objects;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -57,8 +58,18 @@ public class ColorCache {
 
         Object[][] resized = new Object[amount][TOTAL_PROPERTIES];
 
-        System.arraycopy(this.cache, 0,
-                resized, 0, Math.min(amount, this.cache.length));
+        if (amount >= this.cache.length) {
+            System.arraycopy(this.cache, 0, resized, 0, this.cache.length);
+        } else {
+            Object[][] sorted = this.cache.clone();
+
+            Arrays.sort(sorted, Comparator.comparing(
+                    row -> (Instant) row[2],
+                    Comparator.nullsLast(Comparator.reverseOrder())
+            ));
+
+            System.arraycopy(sorted, 0, resized, 0, amount);
+        }
 
         this.cache = resized;
     }
