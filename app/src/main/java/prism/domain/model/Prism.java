@@ -55,24 +55,25 @@ public class Prism {
     public String getFormatted() {
         StringBuilder builder = new StringBuilder();
 
-        this.appendType(builder, "lux", this.lux.getShades());
-        builder.append(System.lineSeparator());
+        this.appendType(builder,
+                "lux", this.lux.getShades());
 
-        this.appendType(builder, "core", this.core.getShades());
-        builder.append(System.lineSeparator());
+        this.appendType(builder,
+                "core", this.core.getShades());
 
-        this.appendType(builder, "wave", this.wave.getShades());
-        builder.append(System.lineSeparator());
+        this.appendType(builder,
+                "wave", this.wave.getShades());
 
-        this.appendType(builder, "flare", this.flare.getShades());
-        builder.append(System.lineSeparator());
+        this.appendType(builder,
+                "flare", this.flare.getShades());
 
-        this.appendType(builder, "spark", this.spark.getShades());
+        this.appendType(builder,
+                "spark", this.spark.getShades());
 
         return builder.toString();
     }
 
-    private StringBuilder appendType(StringBuilder builder, String type, String[] colors) {
+    private void appendType(StringBuilder builder, String type, String[] colors) {
         for (int i = 0; i < colors.length; i++) {
             builder.append(type)
                     .append((i + 1) * 100)
@@ -83,7 +84,6 @@ public class Prism {
 
         builder.append(System.lineSeparator());
 
-        return builder;
     }
 
     public String getId() {

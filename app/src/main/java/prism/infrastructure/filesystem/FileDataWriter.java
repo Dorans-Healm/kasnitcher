@@ -106,6 +106,8 @@ public class FileDataWriter {
                 writer.write(prism.getId());
                 writer.newLine();
 
+                writer.newLine();
+
                 writer.write(prism.getFormatted());
             }
 
