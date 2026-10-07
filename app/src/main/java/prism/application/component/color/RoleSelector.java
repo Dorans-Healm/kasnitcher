@@ -3,6 +3,7 @@ package prism.application.component.color;
 import org.jspecify.annotations.NonNull;
 import prism.domain.vo.ColorCluster;
 import prism.domain.vo.Oklch;
+import prism.domain.vo.Roles;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -37,18 +38,6 @@ public final class RoleSelector {
     private static final double WAVE_MIN_DISTANCE = 0.10;
     private static final double SPARK_MIN_DISTANCE = 0.08;
 
-    public record Roles(
-            @NonNull Oklch lux,
-            @NonNull Oklch core,
-            @NonNull Oklch wave,
-            @NonNull Oklch flare,
-            @NonNull Oklch spark
-    ) {
-    }
-
-    private RoleSelector() {
-    }
-
     public static @NonNull Roles select(@NonNull List<ColorCluster> clusters) {
         if (clusters.isEmpty()) {
             throw new IllegalArgumentException("The image has no visible pixels");
@@ -65,7 +54,7 @@ public final class RoleSelector {
             pool = sorted.subList(0, Math.min(8, sorted.size()));
         }
 
-        Oklch core = pool.get(0).color();
+        Oklch core = pool.getFirst().color();
         boolean coreHasHue = core.c() > GRAY_CHROMA;
         List<Oklch> taken = new ArrayList<>(List.of(core));
 

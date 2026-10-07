@@ -25,7 +25,6 @@ public record ColorScaleVo
                 String shade1000
         ) {
 
-
     /**
      * Creates a {@code ColorScaleVo} from an array of pre-formatted color strings.
      * <p>
