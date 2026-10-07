@@ -6,7 +6,7 @@ import prism.application.component.ColorCache;
 import prism.application.component.color.ColorWriter;
 import prism.application.component.ImageReader;
 import prism.application.component.SocketSubscriber;
-import prism.application.component.color.ContrastFinder;
+import prism.application.component.color.RoleSelector;
 import prism.configuration.context.AbstractServiceContextConfiguration;
 import prism.configuration.context.AppContext;
 import prism.configuration.context.DaemonContext;
@@ -63,7 +63,7 @@ public abstract class AppStartup {
         this.appContext = AppContext.initialize(
                 // application.port.color
                 new ColorCache(appExecutionContext),
-                new ContrastFinder(),
+                new RoleSelector(),
 
                 // application.port
                 new SocketSubscriber(appExecutionContext),

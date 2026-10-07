@@ -13,6 +13,7 @@ import prism.domain.model.Prism;
 import prism.domain.vo.ColorCluster;
 import prism.domain.vo.ColorScaleVo;
 import prism.domain.vo.Oklch;
+import prism.domain.vo.Roles;
 
 import java.io.IOException;
 import java.util.List;
@@ -43,6 +44,11 @@ public class WriteService {
     private final Supplier<ImageReader> imageReader;
 
     /**
+     * Lazy supplier for the role selector utility class, resolving from the AppContext.
+     */
+    private final Supplier<RoleSelector> roleSelector;
+
+    /**
      * Constructs a new {@code WriteService}, initializing its dependencies lazily via the
      * global {@link AppContext}.
      *
@@ -56,6 +62,8 @@ public class WriteService {
                 .getClassLazy(ColorWriter.class);
         this.imageReader = AppContext
                 .getClassLazy(ImageReader.class);
+        this.roleSelector = AppContext.
+                getClassLazy(RoleSelector.class);
     }
 
     /**
@@ -87,7 +95,7 @@ public class WriteService {
      * @return a fully populated {@link Prism} instance
      */
     public @NonNull Prism getPrism(@NonNull List<ColorCluster> clusters) {
-        RoleSelector.Roles roles = RoleSelector.select(clusters);
+        Roles roles = roleSelector.get().select(clusters);
 
         return Prism.builder()
                 .lux(this.toScale(roles.lux()))

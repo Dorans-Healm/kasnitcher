@@ -27,18 +27,24 @@ import java.util.function.ToDoubleFunction;
  */
 public final class RoleSelector {
 
-    /** Clusters smaller than this share of the image can't become flare, wave or spark. */
+    /**
+     * Clusters smaller than this share of the image can't become flare, wave or spark.
+     */
     private static final double MIN_SHARE = 0.003;
 
-    /** Chroma below this is treated as gray (its hue is meaningless). */
+    /**
+     * Chroma below this is treated as gray (its hue is meaningless).
+     */
     private static final double GRAY_CHROMA = 0.02;
 
-    /** Roles must be at least this far apart from each other (OKLab distance). */
+    /**
+     * Roles must be at least this far apart from each other (OKLab distance).
+     */
     private static final double FLARE_MIN_DISTANCE = 0.08;
     private static final double WAVE_MIN_DISTANCE = 0.10;
     private static final double SPARK_MIN_DISTANCE = 0.08;
 
-    public static @NonNull Roles select(@NonNull List<ColorCluster> clusters) {
+    public @NonNull Roles select(@NonNull List<ColorCluster> clusters) {
         if (clusters.isEmpty()) {
             throw new IllegalArgumentException("The image has no visible pixels");
         }
@@ -83,7 +89,7 @@ public final class RoleSelector {
         return new Roles(lux, core, wave, flare, spark);
     }
 
-    private static Optional<Oklch> best(
+    private Optional<Oklch> best(
             List<ColorCluster> pool,
             List<Oklch> taken,
             double minDistance,
@@ -97,7 +103,7 @@ public final class RoleSelector {
                 .map(ColorCluster::color);
     }
 
-    private static double minHueGap(Oklch color, List<Oklch> taken) {
+    private double minHueGap(Oklch color, List<Oklch> taken) {
         return taken.stream()
                 .filter(t -> t.c() > GRAY_CHROMA)
                 .mapToDouble(t -> Oklch.hueGap(color.h(), t.h()))
