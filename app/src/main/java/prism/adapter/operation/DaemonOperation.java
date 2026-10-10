@@ -85,8 +85,14 @@ public class DaemonOperation extends AppStartup {
      */
     private static final String SOCKET_PERMISSIONS = "rw-------";
 
+    /**
+     * The parsed CLI commands initializing this daemon operation.
+     */
     private final Command[] commands;
 
+    /**
+     * The underlying context holding application state and configuration.
+     */
     private final AppContext appContext;
 
     /**
@@ -100,8 +106,14 @@ public class DaemonOperation extends AppStartup {
      */
     private final AtomicBoolean stopped = new AtomicBoolean(false);
 
+    /**
+     * The resolved path where the daemon socket will be created.
+     */
     private final Path socketPath = getSocketPath();
 
+    /**
+     * Reference to the background thread responsible for listening to external IPC signals.
+     */
     private volatile Thread listenerThread;
 
     /**
@@ -187,6 +199,11 @@ public class DaemonOperation extends AppStartup {
         log.info("Prism daemon stopped");
     }
 
+    /**
+     * Registers system signal handlers (e.g., SIGTERM, SIGINT) to gracefully shut down the daemon.
+     * Uses reflection to interact with `sun.misc.Signal` to avoid compile-time dependencies,
+     * falling back to a standard JVM shutdown hook if native registration fails.
+     */
     private void registerSignalHandlers() {
         try {
             Class<?> signalClass = Class.forName("sun.misc.Signal");

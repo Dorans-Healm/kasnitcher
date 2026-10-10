@@ -22,6 +22,11 @@ public final class AppContext {
 
     private static Map<Class<?>, Object> appClasses;
 
+    /**
+     * Constructs a new AppContext with the given array of instances.
+     *
+     * @param objs an array of instances to register in the context
+     */
     private AppContext(@NonNull Object... objs) {
         appClasses = new HashMap<>();
 
@@ -48,6 +53,12 @@ public final class AppContext {
         return instance;
     }
 
+    /**
+     * Invokes methods annotated with {@link PostConstruct} on all registered
+     * component instances.
+     *
+     * @throws RuntimeException if a post-construct method cannot be invoked
+     */
     private static void callPostConstruct() {
         for (Object inst : appClasses.values()) {
             Method[] methods = inst.getClass().getDeclaredMethods();

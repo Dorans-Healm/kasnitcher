@@ -15,6 +15,10 @@ import java.util.Objects;
 import static prism.adapter.cli.AppSubCommandType.*;
 import static prism.adapter.cli.AppServiceType.*;
 
+/**
+ * Defines the main commands available in the CLI application.
+ * Each command is associated with a specific service type and a set of allowed sub-commands.
+ */
 public enum AppCommandType {
 
     /**
@@ -56,15 +60,27 @@ public enum AppCommandType {
 
     ;
 
+    /**
+     * The string flags associated with this command (e.g., "-l", "--listen").
+     */
     @Getter
     private final String[] commands;
 
+    /**
+     * The type of service this command is intended for.
+     */
     @Getter
     private final AppServiceType workingType;
 
+    /**
+     * The sub-commands allowed to be used alongside this command.
+     */
     @Getter
     private final AppSubCommandType[] subCommands;
 
+    /**
+     * Precomputed map to quickly retrieve an enum constant by its command flag.
+     */
     private static final Object[] enumMap;
 
     static {
@@ -81,6 +97,13 @@ public enum AppCommandType {
         }
     }
 
+    /**
+     * Constructs a new command type.
+     *
+     * @param commands       the string flags for the command
+     * @param appServiceType the target service type
+     * @param subCommands    the allowed sub-commands
+     */
     AppCommandType(
             String[] commands,
             AppServiceType appServiceType,
@@ -106,6 +129,12 @@ public enum AppCommandType {
         this.subCommands = subCommands;
     }
 
+    /**
+     * Retrieves an AppCommandType by its command flag.
+     *
+     * @param command the command string (e.g., "-l")
+     * @return the corresponding AppCommandType, or null if not found
+     */
     public static @Nullable AppCommandType getByCommand(String command) {
         if (Objects.isNull(command) || command.isEmpty()) {
             return null;
@@ -120,6 +149,12 @@ public enum AppCommandType {
         return (AppCommandType) obj;
     }
 
+    /**
+     * Retrieves all commands that can be run by the daemon.
+     * Includes POLYMATH and DAEMON commands.
+     *
+     * @return an array of valid daemon command strings
+     */
     public static @NonNull String[] getDaemonCmds() {
         AppCommandType[] values = values();
 
@@ -138,6 +173,12 @@ public enum AppCommandType {
         return Arrays.copyOf(cmds, index);
     }
 
+    /**
+     * Retrieves commands exclusively intended for the daemon service.
+     * Excludes POLYMATH commands.
+     *
+     * @return an array of strictly daemon command strings
+     */
     public static @NonNull String[] getDaemonNonPolymathCmds() {
         AppCommandType[] values = values();
 
@@ -155,6 +196,12 @@ public enum AppCommandType {
         return Arrays.copyOf(cmds, index);
     }
 
+    /**
+     * Retrieves all commands that can be run by the executioner.
+     * Includes POLYMATH and SINGLE_EXECUTIONER commands.
+     *
+     * @return an array of valid executioner command strings
+     */
     public static @NonNull String[] getExeCmds() {
         AppCommandType[] values = values();
 
@@ -173,6 +220,12 @@ public enum AppCommandType {
         return Arrays.copyOf(cmds, index);
     }
 
+    /**
+     * Retrieves commands exclusively intended for the single executioner service.
+     * Excludes POLYMATH commands.
+     *
+     * @return an array of strictly executioner command strings
+     */
     public static @NonNull String[] getExeNonPolymathCmds() {
         AppCommandType[] values = values();
 

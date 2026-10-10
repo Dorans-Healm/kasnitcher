@@ -21,12 +21,23 @@ import java.util.Arrays;
 import java.util.Objects;
 import java.util.logging.Level;
 
+/**
+ * The main entry point for the Prism application.
+ * <p>
+ * This class handles initialization and command routing, deciding whether to run in 
+ * standalone execution mode, start a daemon process, or forward commands to an existing daemon.
+ */
 @Log
 public class Main {
 
+    /** The command used to start the daemon process. */
     public static final String START_CMD = "start";
-    public static final String STOP_CMD = "stop";
 
+    /**
+     * Parses command-line arguments and initiates the appropriate application behavior.
+     *
+     * @param args the command-line arguments provided by the user or system
+     */
     static void main(String... args) {
         try {
             if (args.length <= 0) {

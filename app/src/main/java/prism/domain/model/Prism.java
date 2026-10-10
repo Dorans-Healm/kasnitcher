@@ -52,6 +52,12 @@ public class Prism {
      */
     private @NonNull ColorScaleVo spark;
 
+    /**
+     * Returns a formatted multi-line string representation of the prism palette. Each shade
+     * is listed with its corresponding role, level, and color value.
+     *
+     * @return a formatted string of the prism colors
+     */
     public String getFormatted() {
         StringBuilder builder = new StringBuilder();
 
@@ -73,6 +79,13 @@ public class Prism {
         return builder.toString();
     }
 
+    /**
+     * Appends a formatted list of colors for a specific role type to the string builder.
+     *
+     * @param builder the StringBuilder to append to
+     * @param type    the name of the color role (e.g., "lux", "core")
+     * @param colors  the array of color shades
+     */
     private void appendType(StringBuilder builder, String type, String[] colors) {
         for (int i = 0; i < colors.length; i++) {
             builder.append(type)
@@ -86,6 +99,12 @@ public class Prism {
 
     }
 
+    /**
+     * Generates a unique identifier for this prism based on the hash codes of its
+     * constituent shades.
+     *
+     * @return the unique identifier string
+     */
     public String getId() {
         return "ID: " + this.getLuxId() +
                 "-" +
@@ -98,26 +117,58 @@ public class Prism {
                 this.getSparkId();
     }
 
+    /**
+     * Generates a short hash-based identifier for the lux shades.
+     *
+     * @return the hex string identifier for the lux shades
+     */
     private String getLuxId() {
         return this.getShades(this.lux.getShades());
     }
 
+    /**
+     * Generates a short hash-based identifier for the core shades.
+     *
+     * @return the hex string identifier for the core shades
+     */
     private String getCoreId() {
         return this.getShades(this.core.getShades());
     }
 
+    /**
+     * Generates a short hash-based identifier for the wave shades.
+     *
+     * @return the hex string identifier for the wave shades
+     */
     private String getWaveId() {
         return this.getShades(this.wave.getShades());
     }
 
+    /**
+     * Generates a short hash-based identifier for the flare shades.
+     *
+     * @return the hex string identifier for the flare shades
+     */
     private String getFlareId() {
         return this.getShades(this.flare.getShades());
     }
 
+    /**
+     * Generates a short hash-based identifier for the spark shades.
+     *
+     * @return the hex string identifier for the spark shades
+     */
     private String getSparkId() {
         return this.getShades(this.spark.getShades());
     }
 
+    /**
+     * Calculates a hex string identifier based on the hash code of a given array of
+     * shades.
+     *
+     * @param shades the array of color shades
+     * @return the hex string identifier
+     */
     private String getShades(String[] shades) {
         return Integer.toHexString(java.util.Arrays.hashCode(shades));
     }

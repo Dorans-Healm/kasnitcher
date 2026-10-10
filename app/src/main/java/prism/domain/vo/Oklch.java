@@ -6,6 +6,10 @@ package prism.domain.vo;
  * <p>
  * Distances in this space follow what the eye sees much better than distances in RGB,
  * and lightness can be changed without shifting the hue.
+ *
+ * @param l perceptual lightness from 0 to 1
+ * @param c chroma (0 is gray, ~0.3 is very vivid)
+ * @param h hue in degrees (0 to 360)
  */
 public record Oklch(double l, double c, double h) {
 
@@ -63,14 +67,32 @@ public record Oklch(double l, double c, double h) {
         return d > 180 ? 360 - d : d;
     }
 
+    /**
+     * Calculates the 'a' component (green-red) for the OKLab color space.
+     *
+     * @return the 'a' component
+     */
     private double a() {
         return c * Math.cos(Math.toRadians(h));
     }
 
+    /**
+     * Calculates the 'b' component (blue-yellow) for the OKLab color space.
+     *
+     * @return the 'b' component
+     */
     private double b() {
         return c * Math.sin(Math.toRadians(h));
     }
 
+    /**
+     * Converts lightness, chroma, and hue to linear RGB components.
+     *
+     * @param lightness the OKLCH lightness
+     * @param chroma the OKLCH chroma
+     * @param hueDeg the OKLCH hue in degrees
+     * @return an array containing the linear R, G, B components
+     */
     private static double[] linearRgb(double lightness, double chroma, double hueDeg) {
         double a = chroma * Math.cos(Math.toRadians(hueDeg));
         double b = chroma * Math.sin(Math.toRadians(hueDeg));
@@ -83,6 +105,12 @@ public record Oklch(double l, double c, double h) {
                 -0.0041960863 * l - 0.7034186147 * m + 1.7076147010 * s};
     }
 
+    /**
+     * Checks if the given linear RGB components are within the sRGB gamut.
+     *
+     * @param lin the linear RGB components
+     * @return true if the color is within gamut, false otherwise
+     */
     private static boolean inGamut(double[] lin) {
         for (double v : lin) {
             if (v < -0.0005 || v > 1.0005) {
@@ -92,6 +120,12 @@ public record Oklch(double l, double c, double h) {
         return true;
     }
 
+    /**
+     * Packs linear RGB components into an sRGB packed integer.
+     *
+     * @param lin the linear RGB components
+     * @return the packed sRGB integer
+     */
     private static int pack(double[] lin) {
         int rgb = 0;
         for (double v : lin) {
@@ -104,6 +138,12 @@ public record Oklch(double l, double c, double h) {
         return rgb;
     }
 
+    /**
+     * Converts a single sRGB channel value to linear RGB.
+     *
+     * @param c the sRGB channel value
+     * @return the linear RGB channel value
+     */
     private static double toLinear(double c) {
         return c <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
     }

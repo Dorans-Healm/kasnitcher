@@ -10,6 +10,10 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.logging.Level;
 
+/**
+ * Application service responsible for managing socket connections and
+ * listening for incoming events via a {@link SocketSubscriber}.
+ */
 @Log
 public class ListeningService {
 
@@ -18,11 +22,22 @@ public class ListeningService {
 
     private final Supplier<SocketSubscriber> socketSubscriber;
 
+    /**
+     * Constructs a new {@code ListeningService}, initializing its
+     * {@link SocketSubscriber} dependency lazily via the global {@link AppContext}.
+     */
     public ListeningService() {
         this.socketSubscriber =
                 AppContext.getClassLazy(SocketSubscriber.class);
     }
 
+    /**
+     * Attempts to subscribe to the socket connection, retrying up to a maximum
+     * number of attempts if the connection fails.
+     *
+     * @throws RuntimeException if the maximum number of attempts is reached
+     *                          without successfully connecting, or if interrupted
+     */
     public void subscribeWithRetry() {
         for (int i = 1; i <= MAX_ATTEMPTS; i++) {
             try {
@@ -45,6 +60,11 @@ public class ListeningService {
                 "Listening to socket will not be possible");
     }
 
+    /**
+     * Subscribes to the socket connection.
+     *
+     * @throws RuntimeException if an I/O error occurs while subscribing
+     */
     public void subscribe() {
         try {
             this.socketSubscriber.get().subscribe();
@@ -54,6 +74,12 @@ public class ListeningService {
         }
     }
 
+    /**
+     * Listens for incoming messages on the socket and processes them using
+     * the provided consumer. Ensures the socket is properly closed after listening.
+     *
+     * @param consumer the consumer to handle incoming messages
+     */
     public void listen(Consumer<String> consumer) {
         try {
             this.socketSubscriber

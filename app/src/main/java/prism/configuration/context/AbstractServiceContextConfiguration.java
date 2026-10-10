@@ -304,11 +304,25 @@ public abstract class AbstractServiceContextConfiguration {
         return listenerAdapter;
     }
 
+    /**
+     * Retrieves the {@link ParameterAdapter} if supported by the context. Default
+     * implementation throws {@link UnsupportedOperationException}.
+     *
+     * @return the parameter adapter
+     * @throws UnsupportedOperationException if not supported by the context
+     */
     public @Nullable ParameterAdapter getParameterAdapter() {
         throw new UnsupportedOperationException("Parameter adapter " +
                 "method should be created for each individual execution context.");
     }
 
+    /**
+     * Parses sub-commands to construct a {@link ParameterAdapter}.
+     *
+     * @param subCommands an array of raw sub-commands
+     * @return a populated {@link ParameterAdapter}
+     * @throws IllegalArgumentException if an invalid sub-command is provided
+     */
     protected @NonNull ParameterAdapter getParameterAdapter(@NonNull String[] subCommands) {
         ParameterAdapter parameterAdapter = new ParameterAdapter();
 
@@ -342,10 +356,22 @@ public abstract class AbstractServiceContextConfiguration {
         }
     }
 
+    /**
+     * Checks if the given sub-command indicates an interruption command.
+     *
+     * @param subCommand the sub-command to check
+     * @return {@code true} if the sub-command is an interruption command, {@code false} otherwise
+     */
     private boolean isInterruption(String subCommand) {
         return ArrayUtils.contains(INTERRUPT.getSubCommands(), subCommand);
     }
 
+    /**
+     * Checks if the given sub-command indicates a reset command.
+     *
+     * @param subCommand the sub-command to check
+     * @return {@code true} if the sub-command is a reset command, {@code false} otherwise
+     */
     private boolean isReset(String subCommand) {
         return ArrayUtils.contains(RESET.getSubCommands(), subCommand);
     }

@@ -44,6 +44,13 @@ public final class RoleSelector {
     private static final double WAVE_MIN_DISTANCE = 0.10;
     private static final double SPARK_MIN_DISTANCE = 0.08;
 
+    /**
+     * Selects the most appropriate colors for each Prism role based on the given clusters.
+     *
+     * @param clusters a list of color clusters extracted from an image
+     * @return a {@link Roles} record containing the base colors for the palette
+     * @throws IllegalArgumentException if the provided clusters list is empty
+     */
     public @NonNull Roles select(@NonNull List<ColorCluster> clusters) {
         if (clusters.isEmpty()) {
             throw new IllegalArgumentException("The image has no visible pixels");
@@ -89,6 +96,18 @@ public final class RoleSelector {
         return new Roles(lux, core, wave, flare, spark);
     }
 
+    /**
+     * Finds the best candidate color for a role from the available pool,
+     * ensuring it maintains a minimum perceptual distance from already chosen colors
+     * and satisfies specific eligibility and scoring criteria.
+     *
+     * @param pool the available color clusters
+     * @param taken the colors that have already been assigned to roles
+     * @param minDistance the minimum required distance from any taken color
+     * @param eligible a predicate to filter valid candidates
+     * @param score a function to score and compare candidates
+     * @return the best matching color, or {@link Optional#empty()} if none fit
+     */
     private Optional<Oklch> best(
             List<ColorCluster> pool,
             List<Oklch> taken,
@@ -103,6 +122,14 @@ public final class RoleSelector {
                 .map(ColorCluster::color);
     }
 
+    /**
+     * Calculates the minimum hue gap between a given color and a list of already taken colors,
+     * ignoring taken colors that are close to gray.
+     *
+     * @param color the color to evaluate
+     * @param taken the list of colors already assigned
+     * @return the smallest distance in hue degrees (0-180), or 180 if no valid comparators exist
+     */
     private double minHueGap(Oklch color, List<Oklch> taken) {
         return taken.stream()
                 .filter(t -> t.c() > GRAY_CHROMA)

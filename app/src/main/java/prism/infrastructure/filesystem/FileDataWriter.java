@@ -18,6 +18,13 @@ import java.util.Iterator;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+/**
+ * Writes data structures such as {@link prism.domain.model.Storage} and {@link prism.domain.model.Prism} configurations
+ * to their respective files on the filesystem.
+ * <p>
+ * This class utilizes the application's execution context to determine the proper
+ * directories and file names for data persistence.
+ */
 public class FileDataWriter {
 
     private static final String DO_NOT_CHANGE = """
@@ -29,12 +36,25 @@ public class FileDataWriter {
 
     private final ObjectMapper mapper;
 
+    /**
+     * Constructs a new {@code FileDataWriter} with the given execution context supplier.
+     *
+     * @param appExecutionContext a supplier providing the current application context configuration
+     */
     public FileDataWriter(@NonNull Supplier<? extends AbstractServiceContextConfiguration> appExecutionContext) {
         this.appExecutionContext = appExecutionContext;
 
         this.mapper = new ObjectMapper();
     }
 
+    /**
+     * Serializes the given {@link prism.domain.model.Storage} instance to JSON and writes it to the
+     * storage file defined in the application's configuration.
+     *
+     * @param storage the storage domain model to serialize and write
+     * @throws IllegalStateException if the storage adapter configuration is missing
+     * @throws RuntimeException      if an error occurs during file writing
+     */
     public void writeStorage(@NonNull Storage storage) {
         String storageJson =
                 mapper.writeValueAsString(storage);
@@ -59,6 +79,19 @@ public class FileDataWriter {
         }
     }
 
+    /**
+     * Writes the given {@link prism.domain.model.Prism} active configuration to the spectrum file defined in
+     * the application's configuration.
+     * <p>
+     * If the target file already exists and its active configuration ID matches the given
+     * prism's ID, the writing process is skipped. Otherwise, a temporary file is created,
+     * populated with a warning header, the prism's ID, and its formatted content, and then
+     * atomically moved to replace the target file.
+     *
+     * @param prism the prism domain model representing the active configuration to write
+     * @throws IllegalStateException if the writer adapter configuration is missing
+     * @throws RuntimeException      if an error occurs during validation or file writing
+     */
     public void writeSpectrum(@NonNull Prism prism) {
         AbstractServiceContextConfiguration executionContext = this.appExecutionContext.get();
         WriterAdapter writerAdapter = executionContext.getWriterAdapter();

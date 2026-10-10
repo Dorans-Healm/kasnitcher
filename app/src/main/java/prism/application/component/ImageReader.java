@@ -76,6 +76,17 @@ public class ImageReader {
         return toClusters(count, sumR, sumG, sumB, total);
     }
 
+    /**
+     * Consolidates pixel statistics into sorted color clusters, merging perceptually
+     * similar colors based on their true RGB means.
+     *
+     * @param count the frequency of pixels per bucket
+     * @param sumR the sum of red channel values per bucket
+     * @param sumG the sum of green channel values per bucket
+     * @param sumB the sum of blue channel values per bucket
+     * @param total the total number of non-transparent pixels
+     * @return a list of clustered colors, sorted by their share of the image in descending order
+     */
     private @NonNull List<ColorCluster> toClusters(
             long[] count, long[] sumR, long[] sumG, long[] sumB, long total
     ) {
@@ -130,6 +141,15 @@ public class ImageReader {
         return clusters;
     }
 
+    /**
+     * Computes the average RGB color from the sums of its channels and a total count.
+     *
+     * @param sumR the sum of red channel values
+     * @param sumG the sum of green channel values
+     * @param sumB the sum of blue channel values
+     * @param count the total number of pixels
+     * @return the packed 24-bit RGB mean color
+     */
     private static int mean(double sumR, double sumG, double sumB, double count) {
         return ((int) Math.round(sumR / count) << 16)
                 | ((int) Math.round(sumG / count) << 8)
@@ -174,6 +194,14 @@ public class ImageReader {
         return toColorCountPairs(occurrences);
     }
 
+    /**
+     * Converts a flat array of color frequencies into a 2D array of {@code [bucket, count]} pairs,
+     * omitting buckets with zero occurrences.
+     *
+     * @param occurrences an array where the index is the color bucket and the value is the frequency
+     * @return a 2D array of active color counts
+     * @throws IllegalArgumentException if the occurrences array is empty or null
+     */
     private @NonNull Integer[][] toColorCountPairs(@NonNull Integer[] occurrences) {
         if (ArrayUtils.isEmpty(occurrences)) {
             throw new IllegalArgumentException(

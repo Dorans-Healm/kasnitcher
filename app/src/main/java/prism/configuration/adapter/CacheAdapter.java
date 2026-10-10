@@ -10,8 +10,14 @@ import lombok.Setter;
 @Setter
 public class CacheAdapter {
 
+    /**
+     * The default maximum number of items to retain in the cache.
+     */
     public static final Integer AMOUNT = 3;
 
+    /**
+     * The default timeout in seconds to keep a single cache item alive.
+     */
     public static final Integer KEEP_ALIVE = 60;
 
     /**

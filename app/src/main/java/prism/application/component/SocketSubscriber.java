@@ -22,6 +22,10 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.logging.Level;
 
+/**
+ * Component responsible for establishing and managing a Unix Domain Socket connection,
+ * allowing the application to listen for incoming {@link Listened} events.
+ */
 @Log
 public class SocketSubscriber implements AutoCloseable {
 
@@ -31,17 +35,31 @@ public class SocketSubscriber implements AutoCloseable {
 
     ObjectMapper mapper;
 
+    /**
+     * Constructs a new {@code SocketSubscriber} with the provided application context.
+     *
+     * @param appExecutionContext a supplier providing the application configuration
+     */
     public SocketSubscriber(@NonNull Supplier<? extends AbstractServiceContextConfiguration> appExecutionContext) {
         this.appExecutionContext = appExecutionContext;
 
         this.mapper = new ObjectMapper();
     }
 
+    /**
+     * Closes the socket subscriber, ensuring the underlying socket connection is terminated.
+     */
     @Override
     public void close() {
         this.unsubscribe();
     }
 
+    /**
+     * Establishes a Unix Domain Socket connection based on the path configured
+     * in the application context.
+     *
+     * @throws IOException if the socket connection cannot be opened or connected
+     */
     public void subscribe() throws IOException {
         ListenerAdapter adapter =
                 appExecutionContext.get().getListenerAdapter();
@@ -63,6 +81,10 @@ public class SocketSubscriber implements AutoCloseable {
         this.socketChannel.connect(address);
     }
 
+    /**
+     * Closes the active socket connection if it is currently open, swallowing
+     * any I/O exceptions that occur during closure but wrapping them in a runtime exception.
+     */
     public void unsubscribe() {
         if (this.socketChannel != null && this.socketChannel.isOpen()) {
             try {
@@ -76,6 +98,13 @@ public class SocketSubscriber implements AutoCloseable {
         }
     }
 
+    /**
+     * Listens continuously on the connected socket, parsing incoming JSON messages
+     * into {@link Listened} objects and passing the extracted file commands to the consumer.
+     *
+     * @param consumer the consumer to process the extracted commands
+     * @throws IllegalStateException if the socket has not been successfully subscribed to
+     */
     public void listen(Consumer<String> consumer) {
         if (this.socketChannel == null) {
             throw new IllegalStateException("Cannot listen before subscribing");

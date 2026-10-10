@@ -130,51 +130,13 @@ public class ArrayUtils {
         return false;
     }
 
+    /**
+     * Checks whether the given array is {@code null} or contains no elements.
+     *
+     * @param array the array to check; may be {@code null}
+     * @return {@code true} if the array is empty or {@code null}, {@code false} otherwise
+     */
     public static @NonNull Boolean isEmpty(@Nullable Object[] array) {
         return array == null || array.length == 0;
-    }
-
-    /**
-     * Removes the first row whose first element matches the given key from a 2D array.
-     * <p>
-     * Each row is expected to have its key at index {@code 0}. If no row matches, the
-     * original array is returned unchanged.
-     *
-     * @param array the 2D source array; must not be {@code null} or empty
-     * @param key   the key to match against each row's first element; may be {@code null}
-     * @return a new 2D array without the matching row, or the original array if no match is
-     * found
-     * @throws IllegalArgumentException if {@code array} is {@code null} or empty
-     */
-    @SuppressWarnings("unchecked")
-    public static <O> @Nullable O[][] remove(@Nullable O[][] array, @Nullable O key) {
-        if (Objects.isNull(array) || array.length == 0) {
-            throw new IllegalArgumentException(
-                    "Array for item removal can not be empty");
-        }
-
-        int index = -1;
-
-        for (int i = 0; i < array.length; i++) {
-            if (Objects.equals(array[i][0], key)) {
-                index = i;
-                break;
-            }
-        }
-
-        if (index == -1) {
-            return array;
-        }
-
-        O[][] result = (O[][]) Array.newInstance(
-                array.getClass().getComponentType(), array.length - 1);
-
-        for (int i = 0, j = 0; i < array.length; i++) {
-            if (i != index) {
-                result[j++] = array[i];
-            }
-        }
-
-        return result;
     }
 }

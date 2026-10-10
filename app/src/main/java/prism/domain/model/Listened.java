@@ -10,15 +10,31 @@ import prism.utils.ArrayUtils;
 
 import java.util.Objects;
 
+/**
+ * Represents a parsed command that has been listened to or received by the system.
+ * Contains information about the sender and the raw command string.
+ */
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class Listened {
 
+    /**
+     * The sender or origin of the command.
+     */
     private String sender;
+
+    /**
+     * The raw command string received.
+     */
     private String command;
 
+    /**
+     * Extracts the first file extension from the command tokens that matches an active image type.
+     *
+     * @return the matching file extension, or an empty string if none is found
+     */
     public @NonNull String extractFirstImageFileExt() {
         for (String token : this.getCommandTokens()) {
             String ext = this.getExtension(token);
@@ -31,6 +47,12 @@ public class Listened {
         return "";
     }
 
+    /**
+     * Extracts the command token (file name) that matches the specified file extension.
+     *
+     * @param ext the file extension to search for
+     * @return the matching command token, or an empty string if none is found or if ext is blank
+     */
     public @NonNull String extractCmdFile(@NonNull String ext) {
         if (ext.isBlank()) {
             return "";
@@ -54,6 +76,12 @@ public class Listened {
         return ArrayUtils.splitCommand(this.command);
     }
 
+    /**
+     * Extracts the file extension from a given token.
+     *
+     * @param token the command token or file name
+     * @return the file extension, or an empty string if none is found
+     */
     private @NonNull String getExtension(@NonNull String token) {
         int dotIndex = token.lastIndexOf('.');
 

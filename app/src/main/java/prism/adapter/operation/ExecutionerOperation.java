@@ -24,6 +24,9 @@ import java.util.logging.Level;
 @Log
 public class ExecutionerOperation extends AppStartup {
 
+    /**
+     * The array of parsed CLI commands guiding the execution.
+     */
     private final Command[] commands;
 
     /**
@@ -48,7 +51,11 @@ public class ExecutionerOperation extends AppStartup {
     }
 
     /**
-     * Process one-off execution call.
+     * Processes a one-off execution call.
+     * Updates the given context based on the CLI commands, parses the target image,
+     * extracts color data, builds the color prism, and writes the output spectrum.
+     *
+     * @param context the execution context managing application configuration
      */
     private void startSingleExecution(ExecutionerContext context) {
         try {
@@ -75,6 +82,13 @@ public class ExecutionerOperation extends AppStartup {
         }
     }
 
+    /**
+     * Retrieves the file path argument provided in the execution context.
+     *
+     * @param executionerContext the context to check for parameters
+     * @return the string representation of the target file path
+     * @throws ArgumentNotFoundException if no file argument is present in the configuration
+     */
     private String getArgumentFile(ExecutionerContext executionerContext) {
         ParameterAdapter parameterAdapter = executionerContext.getParameterAdapter();
 

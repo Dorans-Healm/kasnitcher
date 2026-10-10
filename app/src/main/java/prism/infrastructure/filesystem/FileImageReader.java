@@ -13,7 +13,10 @@ import java.util.Iterator;
 import java.util.Objects;
 
 /**
- * General utilities to read from the filesystem, images, text files, etc.
+ * Utility class dedicated to reading and processing image files from the filesystem.
+ * <p>
+ * Provides functionality to read images while automatically applying sub-sampling
+ * to prevent excessive memory consumption when loading large image files.
  */
 public class FileImageReader {
 

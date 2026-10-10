@@ -44,6 +44,11 @@ public class ExecutionerContext extends AbstractServiceContextConfiguration {
         }
     }
 
+    /**
+     * Retrieves the current {@link ParameterAdapter} and consumes it (resets it to {@code null}).
+     *
+     * @return the current parameter adapter
+     */
     public ParameterAdapter getParameterAdapter() {
         ParameterAdapter parameterAdapter = this.parameterAdapter;
         this.parameterAdapter = null;

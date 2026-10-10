@@ -106,6 +106,12 @@ public class WriteService {
                 .build();
     }
 
+    /**
+     * Converts a base OKLCH color into a 10-step {@link ColorScaleVo}.
+     *
+     * @param base the base OKLCH color
+     * @return the generated color scale
+     */
     private @NonNull ColorScaleVo toScale(@NonNull Oklch base) {
         Integer[] spectrum = this.colorWriter.get().calculateSpectrum(base);
         return ColorScaleVo.fromColorArray(this.formatColors(spectrum));

@@ -10,8 +10,14 @@ import lombok.Setter;
 @Setter
 public class ListenerAdapter {
 
+    /**
+     * The default specific file name used to subscribe to sockets.
+     */
     public static final String FILE = "gbx.socket";
 
+    /**
+     * The default directory path to monitor for incoming changes.
+     */
     public static final String DIR = "/tmp";
 
     /**

@@ -16,10 +16,20 @@ import prism.utils.ArrayUtils;
 import java.nio.file.Files;
 import java.util.Objects;
 
+/**
+ * Utility class for validating and expanding CLI command procedures.
+ * Ensures the proper association between main commands and their sub-commands.
+ */
 public class ProcedureCaller {
 
     private static final int SHORT_FLAG_LENGTH = 2;
 
+    /**
+     * Expands combined short arguments (e.g., "-ls") into separate arguments ("-l", "-s").
+     *
+     * @param args the original array of arguments
+     * @return a new array with combined arguments expanded
+     */
     public static String[] expandArgs(String... args) {
         String[] expandedArgs = new String[]{};
 
@@ -32,6 +42,12 @@ public class ProcedureCaller {
         return expandedArgs;
     }
 
+    /**
+     * Helper to expand a single combined argument string.
+     *
+     * @param arg the argument to expand
+     * @return an array of individual short arguments, or the original if not expandable
+     */
     private static String[] expandCombinedCommand(String arg) {
         if (Objects.isNull(arg)
                 || arg.length() <= SHORT_FLAG_LENGTH
@@ -41,13 +57,21 @@ public class ProcedureCaller {
         }
 
         String[] expanded = new String[]{};
-        AppCommandType[] seen = new AppCommandType[]{};
+        Object[] seen = new Object[]{};
 
         for (int i = 1; i < arg.length(); i++) {
             String single = "-" + arg.charAt(i);
-            AppCommandType type = AppCommandType.getByCommand(single);
+            Object type = AppCommandType.getByCommand(single);
 
-            if (Objects.isNull(type) || ArrayUtils.contains(seen, type)) {
+            if (type == null) {
+                type = AppSubCommandType.getByCommand(single);
+
+                if (type == null) {
+                    return new String[]{arg};
+                }
+            }
+
+            if (ArrayUtils.contains(seen, type)) {
                 return new String[]{arg};
             }
 
@@ -58,10 +82,21 @@ public class ProcedureCaller {
         return expanded;
     }
 
+    /**
+     * Asserts whether a given command argument is valid for the current application state.
+     * Checks if the daemon is running and enforces corresponding allowed commands.
+     *
+     * @param arg the command argument to check
+     * @throws prism.domain.exception.DaemonDownOnCommandException if a daemon-only command is called without a running daemon
+     * @throws prism.domain.exception.OrphanSubCommandTypeException if a sub-command is called on its own
+     * @throws prism.domain.exception.CommandNotFoundException if the command is unrecognized
+     */
     public static void assertCall(String arg) {
         if (Main.START_CMD.equalsIgnoreCase(arg)) {
             return;
         }
+
+        arg = expandArgs(arg)[0];
 
         boolean daemonRunning = Files.exists(DaemonOperation.getSocketPath());
         String[] daemonCmds = AppCommandType.getDaemonCmds();
@@ -93,18 +128,44 @@ public class ProcedureCaller {
                 "not found. Check --help for system usages.").formatted(arg));
     }
 
+    /**
+     * Asserts that the provided arguments are valid for single execution and parses them into Commands.
+     * Rejects commands that are exclusively for daemon operations.
+     *
+     * @param args the command line arguments
+     * @return an array of parsed Command objects
+     * @throws IllegalStateException if a daemon-only command is found
+     */
     public static Command[] assertAndGetExecutionerCall(String... args) {
         return assertAndGetCommands(
                 AppCommandType.getDaemonNonPolymathCmds(), "Daemon command %s, should not be " +
                         "used as a single execution system command. Check --help for system usages.", args);
     }
 
+    /**
+     * Asserts that the provided arguments are valid for daemon execution and parses them into Commands.
+     * Rejects commands that are exclusively for single execution operations.
+     *
+     * @param args the command line arguments
+     * @return an array of parsed Command objects
+     * @throws IllegalStateException if a single-execution-only command is found
+     */
     public static Command[] assertAndGetDaemonCall(String... args) {
         return assertAndGetCommands(
                 AppCommandType.getExeNonPolymathCmds(), "Single execution command %s, " +
                         "should not be used as a Daemon system command. Check --help for system usages.", args);
     }
 
+    /**
+     * Core assertion and parsing method for CLI commands. Validates dependencies between
+     * commands and sub-commands, verifying that forbidden commands are not present.
+     *
+     * @param rejectedCommands an array of commands that are not permitted in the current context
+     * @param rejectedMessage  the error message template if a rejected command is found
+     * @param args             the raw command line arguments
+     * @return an array of properly formatted Command objects
+     * @throws IllegalStateException if commands are invalid or missing required values
+     */
     private static Command[] assertAndGetCommands(
             String[] rejectedCommands,
             String rejectedMessage,
@@ -186,6 +247,12 @@ public class ProcedureCaller {
         return commandsArray;
     }
 
+    /**
+     * Checks if a given argument corresponds to any valid main command or sub-command.
+     *
+     * @param arg the argument to check
+     * @return true if the argument is a known command or sub-command, false otherwise
+     */
     private static Boolean isAnyCommandType(String arg) {
         AppCommandType appCommandType = AppCommandType.getByCommand(arg);
         if (Objects.nonNull(appCommandType)) {

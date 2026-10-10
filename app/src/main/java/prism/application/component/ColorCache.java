@@ -19,6 +19,12 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
+/**
+ * A size-capped, optionally time-expiring cache for storing generated {@link Prism} color palettes.
+ * <p>
+ * The cache maintains a fixed capacity, displacing the least recently used entries
+ * when full. It also supports an optional watcher task that clears expired entries periodically.
+ */
 @Log
 public class ColorCache {
 
@@ -37,6 +43,12 @@ public class ColorCache {
     @Getter
     private boolean started;
 
+    /**
+     * Constructs a new {@code ColorCache} using the provided application context.
+     * Initializes a single-threaded virtual thread executor for the watcher task.
+     *
+     * @param appExecutionContext a supplier providing the application configuration context
+     */
     public ColorCache(@NonNull Supplier<? extends AbstractServiceContextConfiguration> appExecutionContext) {
         this.appExecutionContext = appExecutionContext;
         this.scheduler = Executors.newSingleThreadScheduledExecutor(
@@ -44,6 +56,10 @@ public class ColorCache {
         );
     }
 
+    /**
+     * Initializes the underlying cache array based on the configured maximum amount.
+     * Automatically invoked after dependency injection via {@link PostConstruct}.
+     */
     @PostConstruct
     private void setup() {
         this.cache = new Object[
@@ -80,6 +96,13 @@ public class ColorCache {
         this.cache = resized;
     }
 
+    /**
+     * Retrieves the configured maximum cache amount from the application configuration.
+     * Falls back to a default value if not explicitly set.
+     *
+     * @return the maximum number of items the cache can hold
+     * @throws IllegalArgumentException if the configured amount is less than 1
+     */
     private int getConfiguredAmount() {
         CacheAdapter cacheAdapter =
                 this.appExecutionContext.get().getCacheAdapter();
@@ -98,6 +121,11 @@ public class ColorCache {
         return amount;
     }
 
+    /**
+     * Starts the periodic watcher task that removes expired entries from the cache.
+     * The expiration timeout is determined by the cache configuration.
+     * If the watcher is already running, this method does nothing.
+     */
     public void watch() {
         if (this.started) {
             return;
@@ -120,6 +148,10 @@ public class ColorCache {
                 () -> this.removeExpired(timeout), 0, WATCHER_WAIT_TIME, TimeUnit.MILLISECONDS);
     }
 
+    /**
+     * Stops the periodic watcher task, preventing further removal of expired entries.
+     * Logs a warning if the watcher is not currently running.
+     */
     public synchronized void unwatch() {
         if (this.watchTask == null || this.watchTask.isCancelled()) {
             log.warning("Trying to stop cache watcher " +
@@ -132,6 +164,12 @@ public class ColorCache {
         this.watchTask.cancel(true);
     }
 
+    /**
+     * Periodically invoked by the watcher task to clean up cache entries
+     * that have exceeded their time-to-live.
+     *
+     * @param timeout the time-to-live in seconds for cache entries
+     */
     private synchronized void removeExpired(@NonNull Integer timeout) {
         Instant now = Instant.now();
 
@@ -162,6 +200,14 @@ public class ColorCache {
         }
     }
 
+    /**
+     * Adds or updates a {@link Prism} entry in the cache for the given file path.
+     * If the cache is full, displaces the least recently used entry.
+     *
+     * @param filePath the path to the image file, used as the cache key
+     * @param prism the generated color spectrum to cache
+     * @throws IllegalArgumentException if the provided file path is empty
+     */
     public synchronized void add(@NonNull String filePath, @NonNull Prism prism) {
         if (filePath.isEmpty()) {
             throw new IllegalArgumentException(
@@ -177,6 +223,14 @@ public class ColorCache {
                 new Object[]{filePath, prism, Instant.now()};
     }
 
+    /**
+     * Retrieves a cached {@link Prism} color spectrum for the given file path,
+     * updating its last-used timestamp to prevent it from being displaced.
+     *
+     * @param filePath the path to the image file
+     * @return the cached {@link Prism}, or {@code null} if not found in the cache
+     * @throws IllegalArgumentException if the provided file path is empty
+     */
     public synchronized @Nullable Prism get(@NonNull String filePath) {
         if (filePath.isEmpty()) {
             throw new IllegalArgumentException(
@@ -193,10 +247,21 @@ public class ColorCache {
         return null;
     }
 
+    /**
+     * Clears all entries from the cache, resetting it to an empty state
+     * while retaining its configured capacity.
+     */
     public synchronized void clear() {
         this.cache = new Object[this.cache.length][3];
     }
 
+    /**
+     * Finds the index of the least recently used entry in the cache, or the
+     * first available empty slot if the cache is not full.
+     *
+     * @param array the 2D array representing the cache
+     * @return the index of the least recently used or empty slot
+     */
     private int lastUsed(@NonNull Object[][] array) {
         int lastUsedIndex = 0;
 

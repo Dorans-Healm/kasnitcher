@@ -55,6 +55,14 @@ public class FileUtils {
         }
     }
 
+    /**
+     * Builds a full path by concatenating a directory string and a file string,
+     * ensuring that there is exactly one slash separating them.
+     *
+     * @param dir  the directory path string
+     * @param file the file or sub-path string
+     * @return the combined path string
+     */
     public static @NonNull String buildPath(String dir, String file) {
         String dirNoBar = dir;
         if (dir.endsWith("/")) {
@@ -69,6 +77,15 @@ public class FileUtils {
         return dirNoBar + "/" + fileNoBar;
     }
 
+    /**
+     * Asserts the existence of the given file and its parent directories.
+     * <p>
+     * If the parent directories do not exist, they are created. If the file itself
+     * does not exist, an empty file is created at the path.
+     *
+     * @param filePath the path of the file to check and create if necessary
+     * @throws RuntimeException if an I/O error occurs during the creation process
+     */
     public static void assertFileAndDirExistence(Path filePath) {
         try {
             if (!Files.isDirectory(filePath.getParent())) {
